@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply antialiased;
+  }
+}
+
+@layer utilities {
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .animate-pulse-ring {
+    animation: pulse-ring 3s ease-in-out infinite;
+  }
+  
+  .animate-blink {
+    animation: blink 1s infinite;
+  }
+}
+
+/* Smooth scroll behavior */
+.scroll-container {
+  scroll-behavior: smooth;
+}
+
+
