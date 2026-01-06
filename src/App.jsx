@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Header from './components/Header.jsx';
-import Hero from './components/Hero.jsx';
-import Skills from './components/Skills.jsx';
-import Services from './components/Services.jsx';
-import Projects from './components/Projects.jsx';
-import Education from './components/Education.jsx';
-import Contact from './components/Contact.jsx';
-import Footer from './components/Footer.jsx';
-import ProjectDetails from './components/ProjectDetails.jsx';
-import Blog from './components/Blog.jsx';
-import BlogPost from './components/BlogPost.jsx';
-import Testimonials from './components/Testimonials.jsx';
-import ScrollToTop from './components/ScrollToTop.jsx';
-import LoadingScreen from './components/LoadingScreen.jsx';
+import Header from './Components/Header.jsx';
+import Hero from './Components/Hero.jsx';
+import Skills from './Components/Skills.jsx';
+import Services from './Components/Services.jsx';
+import Projects from './Components/Projects.jsx';
+import Education from './Components/Education.jsx';
+import Contact from './Components/Contact.jsx';
+import Footer from './Components/Footer.jsx';
+import ProjectDetails from './Components/ProjectDetails.jsx';
+import Blog from './Components/Blog.jsx';
+import BlogPost from './Components/BlogPost.jsx';
+import Testimonials from './Components/Testimonials.jsx';
+import ScrollToTop from './Components/ScrollToTop.jsx';
+import LoadingScreen from './Components/LoadingScreen.jsx';
 import './App.css';
 
 function App() {
