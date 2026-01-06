@@ -105,7 +105,7 @@ const Header = ({ darkMode, toggleDarkMode, activeSection, onSectionChange, scro
               <div className="flex items-center gap-2">
                 <span className="text-xl font-bold font-mono-developer text-terminal whitespace-nowrap">
                   {isTyping ? (
-                    <span className="typewriter">maks@portfolio:~$</span>
+                    <span className="typewriter">maks:~$</span>
                   ) : (
                     'maks'
                   )}
