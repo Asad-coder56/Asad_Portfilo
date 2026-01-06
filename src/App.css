@@ -10,8 +10,8 @@
   --bg-secondary: #f3f3f3;
   --bg-tertiary: #e4e4e4;
   --text-primary: #24292e;
-  --text-secondary: #586069;
-  --text-tertiary: #959da5;
+  --text-secondary: #676a6c;
+  --text-tertiary: #626466;
   --border-color: #e1e4e8;
   --accent-blue: #0366d6;
   --accent-green: #28a745;
@@ -21,7 +21,7 @@
   --accent-yellow: #ffd33d;
   --code-bg: #f6f8fa;
   --terminal-bg: #0d1117;
-  --terminal-text: #c9d1d9;
+  --terminal-text: #8e9398;
 }
 
 .dark {

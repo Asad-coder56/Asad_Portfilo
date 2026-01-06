@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { motion, useAnimation } from 'framer-motion';
 import { 
   FaEnvelope, 
   FaPhone, 
@@ -13,11 +14,14 @@ import {
   FaUser,
   FaGlobe,
   FaTerminal,
-  FaCode
+  FaCode,
+  FaChevronRight,
+  FaArrowRight
 } from 'react-icons/fa';
 
 const Contact = ({ setActiveSection, isStandalone = false }) => {
   const sectionRef = useRef(null);
+  const controls = useAnimation();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -31,6 +35,7 @@ const Contact = ({ setActiveSection, isStandalone = false }) => {
     message: ''
   });
   const [terminalOutput, setTerminalOutput] = useState('');
+  const [hoveredInfo, setHoveredInfo] = useState(null);
 
   useEffect(() => {
     if (!isStandalone) {
@@ -38,6 +43,7 @@ const Contact = ({ setActiveSection, isStandalone = false }) => {
         ([entry]) => {
           if (entry.isIntersecting) {
             setActiveSection('contact');
+            controls.start('visible');
           }
         },
         { threshold: 0.3 }
@@ -49,7 +55,7 @@ const Contact = ({ setActiveSection, isStandalone = false }) => {
 
       return () => observer.disconnect();
     }
-  }, [setActiveSection, isStandalone]);
+  }, [setActiveSection, isStandalone, controls]);
 
   const handleChange = (e) => {
     setFormData({
@@ -96,10 +102,10 @@ const Contact = ({ setActiveSection, isStandalone = false }) => {
 
   const languages = ['English', 'Urdu', 'Saraiki', 'Pashto'];
   const socialLinks = [
-    { icon: FaGithub, label: 'GitHub', url: 'https://github.com' },
-    { icon: FaLinkedin, label: 'LinkedIn', url: 'https://linkedin.com' },
-    { icon: FaTwitter, label: 'Twitter', url: 'https://twitter.com' },
-    { icon: FaInstagram, label: 'Instagram', url: 'https://instagram.com' }
+    { icon: FaGithub, label: 'GitHub', url: 'https://github.com', color: 'text-terminal', hoverColor: 'text-syntax-blue' },
+    { icon: FaLinkedin, label: 'LinkedIn', url: 'https://linkedin.com', color: 'text-terminal', hoverColor: 'text-syntax-blue' },
+    { icon: FaTwitter, label: 'Twitter', url: 'https://twitter.com', color: 'text-terminal', hoverColor: 'text-syntax-blue' },
+    { icon: FaInstagram, label: 'Instagram', url: 'https://instagram.com', color: 'text-terminal', hoverColor: 'text-syntax-blue' }
   ];
 
   const contactInfo = [
@@ -107,64 +113,143 @@ const Contact = ({ setActiveSection, isStandalone = false }) => {
       icon: FaEnvelope,
       title: "Email",
       value: "kamalasad57@gmail.com",
-      color: "syntax-blue"
+      color: "syntax-blue",
+      bgColor: '#61DAFB20',
+      iconColor: '#61DAFB'
     },
     {
       icon: FaPhone,
       title: "Phone",
       value: "+92 305 1958933",
-      color: "syntax-green"
+      color: "syntax-green",
+      bgColor: '#3C873A20',
+      iconColor: '#3C873A'
     },
     {
       icon: FaMapMarkerAlt,
       title: "Location",
       value: "Mianawala, Isa Khel, Mianwali, Punjab, Pakistan",
-      color: "syntax-purple"
+      color: "syntax-purple",
+      bgColor: '#764ABC20',
+      iconColor: '#764ABC'
     },
     {
       icon: FaGlobe,
       title: "Languages",
       value: languages.join(', '),
-      color: "syntax-orange"
+      color: "syntax-orange",
+      bgColor: '#FD971F20',
+      iconColor: '#FD971F'
     }
   ];
 
-  const colorClasses = {
-    'syntax-blue': 'text-syntax-blue border-syntax-blue',
-    'syntax-green': 'text-syntax-green border-syntax-green',
-    'syntax-purple': 'text-syntax-purple border-syntax-purple',
-    'syntax-orange': 'text-syntax-orange border-syntax-orange'
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
   };
 
-  const colorBGs = {
-    'syntax-blue': 'bg-syntax-blue/10',
-    'syntax-green': 'bg-syntax-green/10',
-    'syntax-purple': 'bg-syntax-purple/10',
-    'syntax-orange': 'bg-syntax-orange/10'
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30, scale: 0.9 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 15
+      }
+    }
+  };
+
+  const terminalVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut"
+      }
+    }
+  };
+
+  const formVariants = {
+    hidden: { opacity: 0, x: -30 },
+    visible: (i) => ({
+      opacity: 1,
+      x: 0,
+      transition: {
+        delay: i * 0.1,
+        duration: 0.6,
+        ease: "easeOut"
+      }
+    })
   };
 
   return (
-    <section id="contact" ref={sectionRef} className={`py-20 bg-terminal ${isStandalone ? 'pt-24' : ''}`}>
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16 animate-fadeIn">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-developer-secondary text-syntax-blue text-sm font-mono-developer mb-4 border border-developer">
+    <section id="contact" ref={sectionRef} className={`py-20 bg-terminal relative overflow-hidden ${isStandalone ? 'pt-24' : ''}`}>
+      {/* Background pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `radial-gradient(circle at 20px 20px, var(--color-developer) 1px, transparent 0)`,
+          backgroundSize: '40px 40px',
+        }}></div>
+      </div>
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={controls}
+          variants={{
+            visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+          }}
+          className="text-center mb-16"
+        >
+          <motion.span 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.1 }}
+            className="inline-block px-4 py-1.5 rounded-full bg-developer-secondary text-syntax-blue text-sm font-mono-developer mb-4 border border-developer shadow-lg"
+          >
             $ contact --start
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-bold text-terminal mb-4">
+          </motion.span>
+          <motion.h2 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="text-3xl sm:text-4xl font-bold text-terminal mb-4"
+          >
             <span className="text-syntax-blue">async</span>{' '}
             <span className="text-syntax-green">function</span>{' '}
             <span className="text-syntax-purple">contact</span>
             <span className="text-syntax-blue">()</span>{' '}
             <span className="text-syntax-blue">{'{'}</span>
-          </h2>
-          <p className="text-lg text-developer-secondary max-w-2xl mx-auto font-mono-developer">
+          </motion.h2>
+          <motion.p 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="text-lg text-developer-secondary max-w-2xl mx-auto font-mono-developer"
+          >
             // Have a project in mind? Let's discuss how we can work together
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {/* Terminal Output */}
         {terminalOutput && (
-          <div className="mb-8 terminal-window animate-slideDown">
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8 terminal-window"
+          >
             <div className="terminal-header">
               <div className="terminal-dot red"></div>
               <div className="terminal-dot yellow"></div>
@@ -178,12 +263,16 @@ const Contact = ({ setActiveSection, isStandalone = false }) => {
                 {terminalOutput}
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Status Message */}
         {status.message && !terminalOutput && (
-          <div className={`mb-6 p-4 rounded-lg border ${status.success ? 'border-syntax-green text-syntax-green' : status.error ? 'border-syntax-red text-syntax-red' : 'border-syntax-blue text-syntax-blue'} animate-fadeIn`}>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className={`mb-6 p-4 rounded-lg border ${status.success ? 'border-syntax-green text-syntax-green' : status.error ? 'border-syntax-red text-syntax-red' : 'border-syntax-blue text-syntax-blue'}`}
+          >
             <div className="flex items-center gap-3 font-mono-developer">
               {status.success ? (
                 <FaCheckCircle />
@@ -192,72 +281,124 @@ const Contact = ({ setActiveSection, isStandalone = false }) => {
               ) : null}
               <span>{status.message}</span>
             </div>
-          </div>
+          </motion.div>
         )}
 
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Contact Info */}
-          <div className="animate-fadeIn" style={{ animationDelay: '0.2s' }}>
-            <div className="bg-developer-secondary rounded-xl p-6 border border-developer h-full">
-              <h3 className="text-2xl font-bold mb-8 text-terminal font-mono-developer">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate={controls}
+            className="space-y-6"
+          >
+            <div className="bg-developer-secondary rounded-xl p-6 border border-developer h-full card-developer">
+              <motion.h3 
+                variants={itemVariants}
+                className="text-2xl font-bold mb-8 text-terminal font-mono-developer"
+              >
                 $ contact_info
-              </h3>
+              </motion.h3>
               
               <div className="space-y-6 mb-8">
                 {contactInfo.map((info, index) => (
-                  <div 
+                  <motion.div 
                     key={info.title}
-                    className="flex items-start gap-4 p-4 rounded-lg bg-terminal border border-developer hover:border-syntax-blue transition-colors animate-slideUp"
-                    style={{ animationDelay: `${0.3 + index * 0.1}s` }}
+                    variants={itemVariants}
+                    custom={index}
+                    whileHover={{ 
+                      y: -4,
+                      transition: { duration: 0.3 }
+                    }}
+                    onHoverStart={() => setHoveredInfo(info.title)}
+                    onHoverEnd={() => setHoveredInfo(null)}
+                    className="flex items-start gap-4 p-4 rounded-lg bg-terminal border border-developer transition-colors relative overflow-hidden group"
                   >
-                    <div className={`${colorClasses[info.color].split(' ')[0]}`}>
-                      <info.icon className="text-xl" />
+                    {/* Hover effect background */}
+                    <div 
+                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      style={{ backgroundColor: info.bgColor }}
+                    ></div>
+                    
+                    <div className="relative z-10">
+                      <motion.div 
+                        className={`w-12 h-12 rounded-lg border border-developer flex items-center justify-center mb-4`}
+                        style={{ backgroundColor: info.bgColor }}
+                        whileHover={{ scale: 1.1, rotate: 5 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
+                        <info.icon className="text-xl" style={{ color: info.iconColor }} />
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                      </motion.div>
                     </div>
-                    <div>
-                      <h4 className="font-bold text-terminal mb-1 font-mono-developer">
+                    <div className="relative z-10 flex-1">
+                      <h4 className="font-bold text-terminal mb-1 font-mono-developer group-hover:text-syntax-blue transition-colors">
                         // {info.title}
                       </h4>
                       <p className="text-developer-secondary text-sm">
                         {info.value}
                       </p>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
 
               <div>
-                <h4 className="font-bold text-terminal mb-4 font-mono-developer">
+                <motion.h4 
+                  variants={itemVariants}
+                  className="font-bold text-terminal mb-4 font-mono-developer"
+                >
                   $ social_links
-                </h4>
+                </motion.h4>
                 <div className="flex gap-4">
                   {socialLinks.map((social, index) => (
-                    <a
+                    <motion.a
                       key={social.label}
+                      variants={itemVariants}
+                      custom={index}
+                      whileHover={{ 
+                        y: -6,
+                        scale: 1.1,
+                        transition: { duration: 0.3 }
+                      }}
                       href={social.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-12 h-12 rounded-lg bg-terminal border border-developer flex items-center justify-center text-terminal hover:text-syntax-blue hover:border-syntax-blue transition-all animate-slideUp"
-                      style={{ animationDelay: `${0.6 + index * 0.1}s` }}
+                      className="w-12 h-12 rounded-lg bg-terminal border border-developer flex items-center justify-center hover:shadow-lg transition-all relative overflow-hidden group"
                       title={social.label}
                     >
-                      <social.icon className="text-xl" />
-                    </a>
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-syntax-blue/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                      <social.icon className={`text-xl ${social.color} group-hover:${social.hoverColor} transition-colors relative z-10`} />
+                    </motion.a>
                   ))}
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Contact Form */}
-          <div className="animate-fadeIn" style={{ animationDelay: '0.4s' }}>
-            <div className="bg-developer-secondary rounded-xl p-6 border border-developer h-full">
-              <h3 className="text-2xl font-bold mb-8 text-terminal font-mono-developer">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate={controls}
+            className="space-y-6"
+          >
+            <div className="bg-developer-secondary rounded-xl p-6 border border-developer h-full card-developer">
+              <motion.h3 
+                variants={itemVariants}
+                className="text-2xl font-bold mb-8 text-terminal font-mono-developer"
+              >
                 $ send_message()
-              </h3>
+              </motion.h3>
               
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
-                  <div>
+                  <motion.div
+                    custom={0}
+                    variants={formVariants}
+                    initial="hidden"
+                    animate={controls}
+                  >
                     <label htmlFor="name" className="block text-terminal mb-2 font-mono-developer text-sm">
                       // Name *
                     </label>
@@ -275,9 +416,14 @@ const Contact = ({ setActiveSection, isStandalone = false }) => {
                         disabled={status.sending}
                       />
                     </div>
-                  </div>
+                  </motion.div>
 
-                  <div>
+                  <motion.div
+                    custom={1}
+                    variants={formVariants}
+                    initial="hidden"
+                    animate={controls}
+                  >
                     <label htmlFor="email" className="block text-terminal mb-2 font-mono-developer text-sm">
                       // Email *
                     </label>
@@ -295,10 +441,15 @@ const Contact = ({ setActiveSection, isStandalone = false }) => {
                         disabled={status.sending}
                       />
                     </div>
-                  </div>
+                  </motion.div>
                 </div>
 
-                <div>
+                <motion.div
+                  custom={2}
+                  variants={formVariants}
+                  initial="hidden"
+                  animate={controls}
+                >
                   <label htmlFor="subject" className="block text-terminal mb-2 font-mono-developer text-sm">
                     // Subject *
                   </label>
@@ -313,9 +464,14 @@ const Contact = ({ setActiveSection, isStandalone = false }) => {
                     required
                     disabled={status.sending}
                   />
-                </div>
+                </motion.div>
 
-                <div>
+                <motion.div
+                  custom={3}
+                  variants={formVariants}
+                  initial="hidden"
+                  animate={controls}
+                >
                   <label htmlFor="message" className="block text-terminal mb-2 font-mono-developer text-sm">
                     // Message *
                   </label>
@@ -330,35 +486,55 @@ const Contact = ({ setActiveSection, isStandalone = false }) => {
                     required
                     disabled={status.sending}
                   ></textarea>
-                </div>
+                </motion.div>
 
-                <button
+                <motion.button
+                  custom={4}
+                  variants={formVariants}
+                  initial="hidden"
+                  animate={controls}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   type="submit"
                   disabled={status.sending}
-                  className="w-full bg-terminal border border-developer text-terminal py-3.5 rounded-lg font-mono-developer hover:border-syntax-blue hover:text-syntax-blue transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="w-full bg-terminal border border-developer text-terminal py-3.5 rounded-lg font-mono-developer hover:border-syntax-blue hover:text-syntax-blue transition-all disabled:opacity-70 disabled:cursor-not-allowed relative overflow-hidden group"
                 >
-                  {status.sending ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <div className="animate-spin rounded-full h-5 w-5 border-2 border-terminal border-t-transparent"></div>
-                      Sending...
-                    </span>
-                  ) : (
-                    <span className="flex items-center justify-center gap-2">
-                      <FaPaperPlane /> submit_form()
-                    </span>
-                  )}
-                </button>
+                  <div className="absolute inset-0 bg-gradient-to-r from-syntax-blue/0 via-syntax-blue/10 to-syntax-blue/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                  <span className="relative z-10 flex items-center justify-center gap-2">
+                    {status.sending ? (
+                      <>
+                        <div className="animate-spin rounded-full h-5 w-5 border-2 border-terminal border-t-transparent"></div>
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <FaPaperPlane /> submit_form()
+                      </>
+                    )}
+                  </span>
+                </motion.button>
 
-                <p className="text-sm text-developer-secondary text-center font-mono-developer">
+                <motion.p
+                  custom={5}
+                  variants={formVariants}
+                  initial="hidden"
+                  animate={controls}
+                  className="text-sm text-developer-secondary text-center font-mono-developer"
+                >
                   // I typically respond within 24 hours
-                </p>
+                </motion.p>
               </form>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Terminal Window - Availability */}
-        <div className="mt-12 terminal-window animate-fadeIn" style={{ animationDelay: '0.6s' }}>
+        <motion.div
+          variants={terminalVariants}
+          initial="hidden"
+          animate={controls}
+          className="mt-12 terminal-window"
+        >
           <div className="terminal-header">
             <div className="terminal-dot red"></div>
             <div className="terminal-dot yellow"></div>
@@ -369,30 +545,57 @@ const Contact = ({ setActiveSection, isStandalone = false }) => {
           </div>
           <div className="terminal-body">
             <div className="grid md:grid-cols-3 gap-6">
-              <div className="text-center">
+              <motion.div 
+                whileHover={{ scale: 1.05 }}
+                className="text-center"
+              >
                 <div className="font-mono-developer text-syntax-green">$ work_availability</div>
                 <div className="text-2xl font-bold text-terminal mt-2">Remote</div>
                 <div className="text-developer-secondary text-sm">Work Available</div>
-              </div>
-              <div className="text-center">
+              </motion.div>
+              <motion.div 
+                whileHover={{ scale: 1.05 }}
+                className="text-center"
+              >
                 <div className="font-mono-developer text-syntax-green">$ working_hours</div>
                 <div className="text-2xl font-bold text-terminal mt-2">Flexible</div>
                 <div className="text-developer-secondary text-sm">Time Zone: UTC+5</div>
-              </div>
-              <div className="text-center">
+              </motion.div>
+              <motion.div 
+                whileHover={{ scale: 1.05 }}
+                className="text-center"
+              >
                 <div className="font-mono-developer text-syntax-green">$ client_base</div>
                 <div className="text-2xl font-bold text-terminal mt-2">Worldwide</div>
                 <div className="text-developer-secondary text-sm">Global Clients</div>
-              </div>
+              </motion.div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Code Example */}
-        <div className="mt-12 code-block animate-fadeIn" style={{ animationDelay: '0.8s' }}>
+        <motion.div
+          variants={terminalVariants}
+          initial="hidden"
+          animate={controls}
+          transition={{ delay: 0.2 }}
+          className="mt-12 code-block"
+        >
           <div className="font-mono-developer text-sm">
-            <div className="text-syntax-blue">const</div>
-            <div className="ml-4">
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+              className="text-syntax-blue"
+            >
+              const
+            </motion.div>
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+              className="ml-4"
+            >
               <span className="text-syntax-blue">{'{'}</span>{' '}
               <span className="text-syntax-green">name</span>,{' '}
               <span className="text-syntax-green">email</span>,{' '}
@@ -401,9 +604,13 @@ const Contact = ({ setActiveSection, isStandalone = false }) => {
               <span className="text-syntax-blue">=</span>{' '}
               <span className="text-syntax-blue">useState</span>(
               <span className="text-syntax-orange">''</span>);
-            </div>
+            </motion.div>
             <br />
-            <div>
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 }}
+            >
               <span className="text-syntax-purple">const</span>{' '}
               <span className="text-syntax-green">handleSubmit</span>{' '}
               <span className="text-syntax-blue">=</span>{' '}
@@ -411,12 +618,22 @@ const Contact = ({ setActiveSection, isStandalone = false }) => {
               <span className="text-syntax-blue">()</span>{' '}
               <span className="text-syntax-blue">{'=>'}</span>{' '}
               <span className="text-syntax-blue">{'{'}</span>
-            </div>
-            <div className="ml-4">
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.6 }}
+              className="ml-4"
+            >
               <span className="text-syntax-blue">try</span>{' '}
               <span className="text-syntax-blue">{'{'}</span>
-            </div>
-            <div className="ml-8">
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.7 }}
+              className="ml-8"
+            >
               <span className="text-syntax-blue">await</span>{' '}
               <span className="text-syntax-green">sendEmail</span>(
               <span className="text-syntax-blue">{'{'}</span>{' '}
@@ -424,33 +641,131 @@ const Contact = ({ setActiveSection, isStandalone = false }) => {
               <span className="text-syntax-green">email</span>,{' '}
               <span className="text-syntax-green">message</span>{' '}
               <span className="text-syntax-blue">{'}'}</span>);
-            </div>
-            <div className="ml-8">
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.8 }}
+              className="ml-8"
+            >
               <span className="text-syntax-green">console</span>.<span className="text-syntax-blue">log</span>(
               <span className="text-syntax-orange">'✓ Message sent successfully!'</span>);
-            </div>
-            <div className="ml-4">
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.9 }}
+              className="ml-4"
+            >
               <span className="text-syntax-blue">{'}'}</span>{' '}
               <span className="text-syntax-blue">catch</span>{' '}
               <span className="text-syntax-blue">(</span>
               <span className="text-syntax-blue">error</span>
               <span className="text-syntax-blue">)</span>{' '}
               <span className="text-syntax-blue">{'{'}</span>
-            </div>
-            <div className="ml-8">
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 1.0 }}
+              className="ml-8"
+            >
               <span className="text-syntax-green">console</span>.<span className="text-syntax-blue">error</span>(
               <span className="text-syntax-orange">'✗ Error sending message:'</span>,{' '}
               <span className="text-syntax-blue">error</span>);
-            </div>
-            <div className="ml-4">
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 1.1 }}
+              className="ml-4"
+            >
               <span className="text-syntax-blue">{'}'}</span>
-            </div>
-            <div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 1.2 }}
+            >
               <span className="text-syntax-blue">{'}'}</span>;
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
+
+        {/* CTA Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8, duration: 0.8 }}
+          className="mt-20 bg-gradient-to-r from-syntax-blue/20 via-syntax-green/20 to-syntax-purple/20 rounded-2xl p-8 md:p-12 text-center border border-developer relative overflow-hidden"
+        >
+          {/* Animated background */}
+          <div className="absolute inset-0">
+            <div className="absolute inset-0 bg-gradient-to-r from-syntax-blue/5 via-syntax-green/5 to-syntax-purple/5"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(102,217,239,0.1),transparent_50%)]"></div>
+          </div>
+
+          <div className="relative z-10">
+            <motion.h3 
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.9 }}
+              className="text-2xl md:text-3xl font-bold text-terminal mb-4 font-mono-developer"
+            >
+              $ start_collaboration()
+            </motion.h3>
+            <motion.p 
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 1.0 }}
+              className="text-developer-secondary mb-8 max-w-2xl mx-auto font-mono-developer text-sm md:text-base"
+            >
+              // Let's build something amazing together. Contact me to discuss your project
+            </motion.p>
+            <motion.div 
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 1.1 }}
+              className="flex flex-col sm:flex-row gap-4 justify-center"
+            >
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+                className="px-8 py-3 bg-terminal border border-developer text-terminal rounded-lg font-mono-developer hover:border-syntax-blue hover:text-syntax-blue transition-colors relative overflow-hidden group"
+              >
+                <span className="relative z-10 flex items-center gap-2">
+                  contact_me() <FaArrowRight />
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-syntax-blue/0 via-syntax-blue/10 to-syntax-blue/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => window.location.href = 'mailto:kamalasad57@gmail.com'}
+                className="px-8 py-3 border border-syntax-green text-syntax-green rounded-lg font-mono-developer hover:bg-syntax-green/10 transition-colors relative overflow-hidden group"
+              >
+                <span className="relative z-10 flex items-center gap-2">
+                  send_direct_email() <FaArrowRight />
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-syntax-green/0 via-syntax-green/10 to-syntax-green/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+              </motion.button>
+            </motion.div>
+          </div>
+        </motion.div>
       </div>
+
+      <style jsx>{`
+        .card-developer {
+          transition: all 0.3s ease;
+        }
+
+        .card-developer:hover {
+          transform: translateY(-8px);
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2),
+                      0 0 80px rgba(102, 217, 239, 0.1);
+        }
+      `}</style>
     </section>
   );
 };
