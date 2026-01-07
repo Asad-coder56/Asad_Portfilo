@@ -1,6 +1,6 @@
 // src/components/Services.jsx
 import React, { useEffect, useRef, useState } from 'react';
-import { motion, useAnimation } from 'framer-motion';
+import { motion, useAnimation, AnimatePresence } from 'framer-motion';
 import { 
   FaCode, 
   FaServer, 
@@ -16,14 +16,49 @@ import {
   FaRocket,
   FaTerminal,
   FaArrowRight,
-  FaChevronRight
+  FaChevronRight,
+  FaKeyboard,
+  FaBug,
+  
+ 
+  FaCodeBranch,
+  FaSync,
+  FaPlay,
+  FaPause,
+  FaMicrochip,
+  FaNetworkWired,
+   FaBrain,
+   FaLock,
+    FaKey,
+  
 } from 'react-icons/fa';
+import { 
+  SiTypescript, 
+  SiJavascript, 
+  SiPython, 
+  SiReact, 
+  SiNextdotjs,
+  SiNodedotjs,
+  SiMongodb,
+  SiAwsamplify,
+  SiDocker,
+ 
 
-const Services = ({ setActiveSection }) => {
+  
+} from 'react-icons/si';
+
+const Services = ({ setActiveSection, darkMode = true }) => {
   const sectionRef = useRef(null);
   const controls = useAnimation();
   const [hoveredService, setHoveredService] = useState(null);
   const [visibleProcess, setVisibleProcess] = useState(0);
+  const [binaryMatrix, setBinaryMatrix] = useState([]);
+  const [activeTab, setActiveTab] = useState('services');
+  const [codeExecution, setCodeExecution] = useState(0);
+  const [isRunningCommand, setIsRunningCommand] = useState(false);
+  const [commandOutput, setCommandOutput] = useState([]);
+  const [terminalText, setTerminalText] = useState('');
+  const [cursorVisible, setCursorVisible] = useState(true);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -39,6 +74,9 @@ const Services = ({ setActiveSection }) => {
               setVisibleProcess(prev => Math.max(prev, step));
             }, index * 500);
           });
+
+          // Start code execution simulation
+          simulateCodeExecution();
         }
       },
       { threshold: 0.2 }
@@ -51,94 +89,234 @@ const Services = ({ setActiveSection }) => {
     return () => observer.disconnect();
   }, [setActiveSection, controls]);
 
+  // Initialize binary matrix for background
+  useEffect(() => {
+    const generateBinaryMatrix = () => {
+      const matrix = [];
+      for (let i = 0; i < 40; i++) {
+        matrix.push({
+          id: i,
+          char: Math.random() > 0.5 ? '0' : '1',
+          color: darkMode ? 'text-syntax-green' : 'text-green-500',
+          opacity: 0.05 + Math.random() * 0.1,
+          speed: 3 + Math.random() * 7,
+          left: `${Math.random() * 100}%`,
+          delay: Math.random() * 8,
+          size: Math.random() > 0.5 ? 'text-xs' : 'text-[10px]'
+        });
+      }
+      return matrix;
+    };
+    
+    setBinaryMatrix(generateBinaryMatrix());
+  }, [darkMode]);
+
+  // Cursor blink effect
+  useEffect(() => {
+    const cursorInterval = setInterval(() => {
+      setCursorVisible(prev => !prev);
+    }, 530);
+    return () => clearInterval(cursorInterval);
+  }, []);
+
+  // Typing effect for terminal
+  useEffect(() => {
+    const commands = [
+      '$ npm run services',
+      '> Starting service deployment...',
+      '> Deploying web applications...',
+      '> Configuring cloud infrastructure...',
+      '> Building AI/ML models...',
+      '> Service deployment complete! ✅'
+    ];
+
+    let currentCommand = 0;
+    let currentChar = 0;
+    let isDeleting = false;
+
+    const typeCommand = () => {
+      if (currentCommand < commands.length) {
+        const command = commands[currentCommand];
+        
+        if (!isDeleting && currentChar <= command.length) {
+          setTerminalText(command.substring(0, currentChar));
+          currentChar++;
+          setTimeout(typeCommand, 50);
+        } else if (isDeleting && currentChar >= 0) {
+          setTerminalText(command.substring(0, currentChar));
+          currentChar--;
+          setTimeout(typeCommand, 30);
+        } else {
+          isDeleting = !isDeleting;
+          if (!isDeleting) {
+            currentCommand++;
+          }
+          setTimeout(typeCommand, 1000);
+        }
+      } else {
+        // Reset and start again
+        currentCommand = 0;
+        currentChar = 0;
+        isDeleting = false;
+        setTimeout(typeCommand, 2000);
+      }
+    };
+
+    typeCommand();
+  }, []);
+
+  const simulateCodeExecution = () => {
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 2;
+      setCodeExecution(progress);
+      
+      if (progress >= 100) {
+        clearInterval(interval);
+        setTimeout(() => {
+          setCommandOutput(prev => [
+            ...prev,
+            { text: '✓ All services compiled successfully', type: 'success' }
+          ]);
+        }, 500);
+      }
+    }, 50);
+  };
+
+  const runCommand = (command) => {
+    setIsRunningCommand(true);
+    setCommandOutput(prev => [
+      ...prev,
+      { text: `$ ${command}`, type: 'command' }
+    ]);
+    
+    setTimeout(() => {
+      const outputs = [
+        'Installing dependencies...',
+        'Building project...',
+        'Running tests...',
+        'Deployment successful!'
+      ];
+      
+      outputs.forEach((output, index) => {
+        setTimeout(() => {
+          setCommandOutput(prev => [
+            ...prev,
+            { text: `→ ${output}`, type: 'output' }
+          ]);
+        }, index * 800);
+      });
+      
+      setTimeout(() => {
+        setIsRunningCommand(false);
+      }, outputs.length * 800);
+    }, 1000);
+  };
+
   const services = [
     {
       icon: FaLaptopCode,
-      title: "Web Application Development",
-      description: "Custom web applications built with modern frameworks and best practices.",
-      features: ["React/Next.js", "Responsive Design", "Performance Optimization", "Cross-browser Compatibility"],
+      title: "Web Development",
+      description: "Modern web applications with React, Next.js, and cutting-edge technologies",
+      features: ["React/Next.js", "TypeScript", "Responsive Design", "Performance", "SEO", "PWA"],
       price: "$50-80/hr",
       popular: true,
-      color: "syntax-blue",
-      bgColor: '#61DAFB20',
-      iconColor: '#61DAFB'
+      color: darkMode ? 'syntax-blue' : 'blue-500',
+      bgColor: darkMode ? '#61DAFB20' : '#3B82F620',
+      iconColor: '#61DAFB',
+      tech: [SiReact, SiNextdotjs, SiTypescript],
+      command: "npm run build:web"
     },
     {
       icon: FaServer,
-      title: "Backend & API Development",
-      description: "Scalable server-side solutions with robust APIs and microservices architecture.",
-      features: ["Node.js/Express", "REST/GraphQL APIs", "Database Design", "Authentication"],
+      title: "Backend & API",
+      description: "Scalable server-side solutions with microservices and robust APIs",
+      features: ["Node.js/Express", "REST/GraphQL", "Authentication", "Microservices", "WebSockets"],
       price: "$60-90/hr",
       popular: false,
-      color: "syntax-green",
-      bgColor: '#33993320',
-      iconColor: '#339933'
+      color: darkMode ? 'syntax-green' : 'green-500',
+      bgColor: darkMode ? '#33993320' : '#10B98120',
+      iconColor: '#339933',
+      tech: [SiNodedotjs, SiPython, FaDatabase],
+      command: "node server.js"
     },
     {
       icon: FaDatabase,
-      title: "Database Solutions",
-      description: "Efficient database design, optimization, and management for high-performance apps.",
-      features: ["MongoDB/PostgreSQL", "Database Optimization", "Data Modeling", "Redis Caching"],
+      title: "Database Design",
+      description: "Efficient database architecture and optimization for high-performance apps",
+      features: ["MongoDB", "PostgreSQL", "Redis", "Data Modeling", "Optimization"],
       price: "$55-85/hr",
       popular: false,
-      color: "syntax-purple",
-      bgColor: '#764ABC20',
-      iconColor: '#764ABC'
+      color: darkMode ? 'syntax-purple' : 'purple-500',
+      bgColor: darkMode ? '#764ABC20' : '#8B5CF620',
+      iconColor: '#764ABC',
+      tech: [SiMongodb, FaDatabase, FaSync],
+      command: "mongod --dbpath ./data"
     },
     {
       icon: FaRobot,
-      title: "AI/ML Integration",
-      description: "Integrating machine learning models and AI capabilities into applications.",
-      features: ["Python ML Models", "TensorFlow/PyTorch", "Model Deployment", "API Integration"],
+      title: "AI/ML Solutions",
+      description: "Machine learning models and AI integration for intelligent applications",
+      features: ["Python AI", "TensorFlow", "Model Training", "API Integration", "Data Analysis"],
       price: "$70-100/hr",
       popular: true,
-      color: "syntax-orange",
-      bgColor: '#FD971F20',
-      iconColor: '#FD971F'
+      color: darkMode ? 'syntax-orange' : 'orange-500',
+      bgColor: darkMode ? '#FD971F20' : '#F9731620',
+      iconColor: '#FD971F',
+      tech: [SiPython, FaRobot, FaBrain],
+      command: "python train_model.py"
     },
     {
       icon: FaMobileAlt,
-      title: "Mobile Development",
-      description: "Cross-platform mobile applications with React Native and Flutter.",
-      features: ["React Native", "iOS & Android", "Push Notifications", "App Store Deployment"],
+      title: "Mobile Apps",
+      description: "Cross-platform mobile applications with React Native and Flutter",
+      features: ["React Native", "iOS & Android", "Push Notifications", "App Store", "CI/CD"],
       price: "$65-95/hr",
       popular: false,
-      color: "syntax-yellow",
-      bgColor: '#F7DF1E20',
-      iconColor: '#F7DF1E'
+      color: darkMode ? 'syntax-yellow' : 'yellow-500',
+      bgColor: darkMode ? '#F7DF1E20' : '#FBBF2420',
+      iconColor: '#F7DF1E',
+      tech: [SiReact, FaMobileAlt, FaCode],
+      command: "react-native run-ios"
     },
     {
       icon: FaCloud,
       title: "DevOps & Cloud",
-      description: "CI/CD pipelines, containerization, and cloud deployment solutions.",
-      features: ["Docker/Kubernetes", "AWS/Azure", "CI/CD Pipelines", "Monitoring"],
+      description: "Cloud infrastructure, CI/CD pipelines, and deployment automation",
+      features: ["AWS/Azure", "Docker", "Kubernetes", "CI/CD", "Monitoring", "Security"],
       price: "$60-90/hr",
       popular: false,
-      color: "syntax-blue",
-      bgColor: '#2496ED20',
-      iconColor: '#2496ED'
+      color: darkMode ? 'syntax-cyan' : 'cyan-500',
+      bgColor: darkMode ? '#2496ED20' : '#06B6D420',
+      iconColor: '#2496ED',
+      tech: [SiAwsamplify, SiDocker, FaCloud],
+      command: "docker-compose up"
     },
     {
       icon: FaShieldAlt,
-      title: "Security Solutions",
-      description: "Implementing security best practices and protection measures.",
-      features: ["JWT/OAuth", "Data Encryption", "Security Audits", "GDPR Compliance"],
+      title: "Security",
+      description: "Comprehensive security solutions and best practices implementation",
+      features: ["JWT/OAuth", "Encryption", "Security Audits", "GDPR Compliance", "Pen Testing"],
       price: "$75-110/hr",
       popular: false,
-      color: "syntax-red",
-      bgColor: '#F9267220',
-      iconColor: '#F92672'
+      color: darkMode ? 'syntax-red' : 'red-500',
+      bgColor: darkMode ? '#F9267220' : '#EF444420',
+      iconColor: '#F92672',
+      tech: [FaShieldAlt, FaLock, FaKey],
+      command: "security-audit --full"
     },
     {
       icon: FaChartLine,
       title: "Analytics & BI",
-      description: "Data visualization and business intelligence dashboards.",
-      features: ["Chart.js/D3.js", "Real-time Analytics", "Dashboard Design", "Data Warehousing"],
+      description: "Data visualization and business intelligence dashboards",
+      features: ["Dashboard Design", "Real-time Analytics", "Chart.js/D3.js", "Reporting"],
       price: "$65-95/hr",
       popular: false,
-      color: "syntax-purple",
-      bgColor: '#AE81FF20',
-      iconColor: '#AE81FF'
+      color: darkMode ? 'syntax-pink' : 'pink-500',
+      bgColor: darkMode ? '#AE81FF20' : '#EC489920',
+      iconColor: '#AE81FF',
+      tech: [FaChartLine, FaDatabase, FaNetworkWired],
+      command: "analytics --start"
     }
   ];
 
@@ -168,44 +346,47 @@ const Services = ({ setActiveSection }) => {
   };
 
   const processSteps = [
-  {
-    step: "01",
-    title: "Discovery & Planning",
-    description: "Understanding requirements, project scope, and creating detailed specifications.",
-    icon: FaRocket,
-    color: "syntax-blue",
-    bgColor: "#61DAFB20",
-    iconColor: "#61DAFB"
-  },
-  {
-    step: "02",
-    title: "Design & Prototyping",
-    description: "Creating wireframes, mockups, and interactive prototypes.",
-    icon: FaPaintBrush,
-    color: "syntax-green",
-    bgColor: "#3C873A20",
-    iconColor: "#3C873A"
-  },
-  {
-    step: "03",
-    title: "Development",
-    description: "Building the application with clean, maintainable code and best practices.",
-    icon: FaCode,
-    color: "syntax-purple",
-    bgColor: "#764ABC20",
-    iconColor: "#764ABC"
-  },
-  {
-    step: "04",
-    title: "Testing & Deployment",
-    description: "Rigorous testing, optimization, and deployment to production.",
-    icon: FaCogs,
-    color: "syntax-orange",
-    bgColor: "#FD971F20",
-    iconColor: "#FD971F"
-  }
-];
-
+    {
+      step: "01",
+      title: "Discovery & Planning",
+      description: "Understanding requirements, project scope, and creating detailed specifications.",
+      icon: FaRocket,
+      color: darkMode ? "syntax-blue" : "blue-500",
+      bgColor: darkMode ? "#61DAFB20" : "#3B82F620",
+      iconColor: "#61DAFB",
+      command: "npm init project"
+    },
+    {
+      step: "02",
+      title: "Design & Prototyping",
+      description: "Creating wireframes, mockups, and interactive prototypes.",
+      icon: FaPaintBrush,
+      color: darkMode ? "syntax-green" : "green-500",
+      bgColor: darkMode ? "#3C873A20" : "#10B98120",
+      iconColor: "#3C873A",
+      command: "design-system build"
+    },
+    {
+      step: "03",
+      title: "Development",
+      description: "Building the application with clean, maintainable code and best practices.",
+      icon: FaCode,
+      color: darkMode ? "syntax-purple" : "purple-500",
+      bgColor: darkMode ? "#764ABC20" : "#8B5CF620",
+      iconColor: "#764ABC",
+      command: "npm run dev"
+    },
+    {
+      step: "04",
+      title: "Testing & Deployment",
+      description: "Rigorous testing, optimization, and deployment to production.",
+      icon: FaCogs,
+      color: darkMode ? "syntax-orange" : "orange-500",
+      bgColor: darkMode ? "#FD971F20" : "#F9731620",
+      iconColor: "#FD971F",
+      command: "npm run deploy"
+    }
+  ];
 
   const processVariants = {
     hidden: { opacity: 0, x: -50 },
@@ -221,222 +402,583 @@ const Services = ({ setActiveSection }) => {
   };
 
   return (
-    <section id="services" ref={sectionRef} className="py-20 bg-terminal relative overflow-hidden">
-      {/* Background pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(circle at 20px 20px, var(--color-developer) 1px, transparent 0)`,
-          backgroundSize: '40px 40px',
-        }}></div>
+    <section 
+      id="services" 
+      ref={sectionRef} 
+      className="min-h-screen py-20 relative overflow-hidden"
+      style={{ 
+        backgroundColor: darkMode ? '#0a0a0a' : '#000000',
+        backgroundImage: darkMode 
+          ? `radial-gradient(circle at 20% 30%, rgba(102, 217, 239, 0.05) 0%, transparent 50%),
+             radial-gradient(circle at 80% 70%, rgba(16, 185, 129, 0.05) 0%, transparent 50%)`
+          : `radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+             radial-gradient(circle at 80% 70%, rgba(34, 197, 94, 0.05) 0%, transparent 50%)`
+      }}
+    >
+      {/* Binary Matrix Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {binaryMatrix.map((binary) => (
+          <motion.div
+            key={binary.id}
+            className={`absolute ${binary.color} ${binary.size} font-mono-developer font-bold`}
+            style={{ 
+              left: binary.left,
+              opacity: binary.opacity
+            }}
+            animate={{ 
+              y: ['-100%', '100vh'],
+            }}
+            transition={{
+              y: {
+                duration: binary.speed,
+                repeat: Infinity,
+                delay: binary.delay,
+                ease: "linear"
+              }
+            }}
+          >
+            {binary.char}
+          </motion.div>
+        ))}
       </div>
 
+      {/* Grid Pattern */}
+      <div 
+        className="absolute inset-0 opacity-5"
+        style={{
+          backgroundImage: darkMode
+            ? `linear-gradient(to right, rgba(102, 217, 239, 0.1) 1px, transparent 1px),
+               linear-gradient(to bottom, rgba(102, 217, 239, 0.1) 1px, transparent 1px)`
+            : `linear-gradient(to right, rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+               linear-gradient(to bottom, rgba(59, 130, 246, 0.1) 1px, transparent 1px)`,
+          backgroundSize: '40px 40px',
+        }}
+      ></div>
+
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Header */}
+        {/* Terminal Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={controls}
           variants={{
-            visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+            visible: { 
+              opacity: 1, 
+              y: 0, 
+              transition: { duration: 0.6, ease: "easeOut" }
+            }
           }}
           className="text-center mb-16"
         >
-          <span className="inline-block px-4 py-1.5 rounded-full bg-developer-secondary text-syntax-blue text-sm font-mono-developer mb-4 border border-developer shadow-lg">
-            $ services --list
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-bold text-terminal mb-4">
-            <span className="text-syntax-blue">interface</span>{' '}
-            <span className="text-syntax-green">Services</span>{' '}
-            <span className="text-syntax-blue">{'{'}</span>
+          <motion.div 
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/50 backdrop-blur-sm border border-gray-800 mb-4"
+            whileHover={{ scale: 1.05 }}
+          >
+            <FaTerminal className={darkMode ? 'text-syntax-blue' : 'text-blue-500'} />
+            <span className={`font-mono-developer text-sm ${darkMode ? 'text-terminal' : 'text-white'}`}>
+              $ services --list --interactive
+            </span>
+            <motion.div 
+              className="w-2 h-4 bg-syntax-green ml-2"
+              animate={{ opacity: [1, 0, 1] }}
+              transition={{ duration: 1, repeat: Infinity }}
+            ></motion.div>
+          </motion.div>
+          
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+            <span className={darkMode ? 'text-syntax-blue' : 'text-blue-500'}>export</span>{' '}
+            <span className={darkMode ? 'text-syntax-green' : 'text-green-500'}>default</span>{' '}
+            <span className={darkMode ? 'text-terminal' : 'text-white'}>class</span>{' '}
+            <span className={darkMode ? 'text-syntax-purple' : 'text-purple-500'}>Services</span>{' '}
+            <span className={darkMode ? 'text-terminal' : 'text-white'}>{'{'}</span>
           </h2>
-          <p className="text-lg text-developer-secondary max-w-2xl mx-auto font-mono-developer">
+          
+          <p className={`text-lg max-w-2xl mx-auto font-mono-developer ${darkMode ? 'text-developer-secondary' : 'text-gray-400'}`}>
             // Comprehensive development services tailored to bring your digital vision to life
           </p>
         </motion.div>
 
-        {/* Services Grid */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate={controls}
-          className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-        >
-          {services.map((service, index) => (
-            <motion.div
-              key={service.title}
-              variants={itemVariants}
-              custom={index}
-              whileHover={{ 
-                y: -8,
-                transition: { duration: 0.3 }
-              }}
-              onHoverStart={() => setHoveredService(service.title)}
-              onHoverEnd={() => setHoveredService(null)}
-              className="relative group"
-            >
-              <div className="bg-developer-secondary rounded-xl p-6 border border-developer transition-all duration-300 card-developer h-full flex flex-col">
-                {service.popular && (
-                  <motion.div 
-                    className="absolute -top-3 left-1/2 transform -translate-x-1/2"
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: index * 0.1 + 0.3 }}
-                  >
-                    <span className="bg-terminal text-syntax-green px-4 py-1 rounded-lg text-sm font-mono-developer border border-developer shadow-lg flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-syntax-green animate-pulse"></span>
-                      $ popular
-                    </span>
-                  </motion.div>
-                )}
-                
-                <div className="mb-6 flex-grow">
-                  <motion.div 
-                    className="w-14 h-14 rounded-lg border border-developer flex items-center justify-center mb-4 relative overflow-hidden"
-                    style={{ backgroundColor: service.bgColor }}
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    <service.icon className="text-2xl" style={{ color: service.iconColor }} />
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-                  </motion.div>
-                  
-                  <h3 className="text-xl font-bold text-terminal mb-3 font-mono-developer group-hover:text-syntax-blue transition-colors">
-                    {service.title}
-                  </h3>
-                  <p className="text-developer-secondary mb-6 text-sm leading-relaxed">
-                    {service.description}
-                  </p>
-                  
-                  <div className="mb-6">
-                    <h4 className="font-semibold text-terminal mb-3 font-mono-developer flex items-center gap-2">
-                      <FaChevronRight className="text-syntax-green text-sm" /> // Features:
-                    </h4>
-                    <ul className="space-y-2">
-                      {service.features.map((feature, idx) => (
-                        <motion.li 
-                          key={idx}
-                          className="flex items-center"
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: index * 0.1 + idx * 0.05 }}
-                        >
-                          <span className="mr-2 text-syntax-green">→</span>
-                          <span className="text-developer-secondary text-sm">{feature}</span>
-                        </motion.li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-6 border-t border-developer">
-                  <div className="relative">
-                    <span className="text-2xl font-bold text-terminal font-mono-developer">
-                      {service.price}
-                    </span>
-                    <span className="text-developer-secondary text-sm ml-1">/ hour</span>
-                    {hoveredService === service.title && (
-                      <motion.div 
-                        className="absolute -right-2 -top-2 w-3 h-3 rounded-full bg-syntax-green animate-ping"
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                      ></motion.div>
-                    )}
-                  </div>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="px-4 py-2 rounded-lg font-mono-developer hover:shadow-lg transition-shadow text-sm flex items-center gap-2"
-                    style={{ 
-                      backgroundColor: service.bgColor,
-                      color: service.iconColor,
-                      borderColor: service.iconColor,
-                      borderWidth: '1px'
-                    }}
-                  >
-                    get_quote() <FaArrowRight />
-                  </motion.button>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Process Section */}
-        <motion.div
+        {/* Tabs */}
+        <motion.div 
+          className="flex justify-center mb-12"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-          className="mt-20"
+          transition={{ delay: 0.3 }}
         >
-          <h3 className="text-2xl font-bold text-center text-terminal mb-12 font-mono-developer">
-            // Development Process
-          </h3>
-          
-          <div className="relative max-w-6xl mx-auto">
-            {/* Timeline line */}
-            <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-syntax-blue via-syntax-green to-syntax-purple hidden lg:block">
-              <motion.div 
-                className="h-full bg-gradient-to-b from-syntax-blue to-syntax-purple"
-                initial={{ scaleY: 0 }}
-                animate={{ scaleY: 1 }}
-                transition={{ duration: 2, ease: "easeInOut" }}
-                style={{ originY: 0 }}
-              ></motion.div>
-            </div>
+          <div className="inline-flex bg-black/50 backdrop-blur-sm rounded-lg border border-gray-800 p-1">
+            {['services', 'process', 'pricing'].map((tab) => (
+              <motion.button
+                key={tab}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setActiveTab(tab)}
+                className={`px-6 py-2 rounded-md font-mono-developer text-sm transition-all ${
+                  activeTab === tab
+                    ? `${darkMode ? 'bg-syntax-blue text-terminal' : 'bg-blue-500 text-white'}`
+                    : `${darkMode ? 'text-developer-secondary hover:text-terminal' : 'text-gray-400 hover:text-white'}`
+                }`}
+              >
+                {tab === 'services' && <FaCode className="inline mr-2" />}
+                {tab === 'process' && <FaCogs className="inline mr-2" />}
+                {tab === 'pricing' && <FaChartLine className="inline mr-2" />}
+                {tab}
+              </motion.button>
+            ))}
+          </div>
+        </motion.div>
 
-            {/* Process steps */}
-            <div className="space-y-12 lg:space-y-0">
-              {processSteps.map((process, index) => (
-                <motion.div 
-                  key={process.step}
+        {/* Services Grid */}
+        <AnimatePresence mode="wait">
+          {activeTab === 'services' && (
+            <motion.div
+              key="services"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              exit={{ opacity: 0, y: -20 }}
+              className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+            >
+              {services.map((service, index) => (
+                <motion.div
+                  key={service.title}
+                  variants={itemVariants}
                   custom={index}
-                  variants={processVariants}
-                  initial="hidden"
-                  animate={visibleProcess >= index ? "visible" : "hidden"}
-                  className={`relative flex flex-col lg:flex-row items-center lg:items-start gap-6 ${
-                    index % 2 === 0 ? 'lg:flex-row-reverse' : ''
-                  }`}
+                  whileHover={{ 
+                    y: -8,
+                    scale: 1.02,
+                    transition: { duration: 0.3 }
+                  }}
+                  onHoverStart={() => setHoveredService(service.title)}
+                  onHoverEnd={() => setHoveredService(null)}
+                  className="relative group"
                 >
-                  {/* Process step circle */}
-                  <motion.div 
-                    className="relative z-10"
-                    whileHover={{ scale: 1.1 }}
-                    transition={{ type: "spring", stiffness: 200 }}
-                  >
-                    <div className={`w-14 h-14 rounded-full border-2 flex items-center justify-center text-terminal text-lg font-bold font-mono-developer shadow-lg`}
+                  <div className="bg-black/50 backdrop-blur-sm rounded-xl p-6 border border-gray-800 transition-all duration-300 h-full flex flex-col relative overflow-hidden">
+                    {/* Animated border */}
+                    <motion.div 
+                      className="absolute inset-0 rounded-xl"
                       style={{ 
-                        borderColor: process.iconColor,
-                        backgroundColor: process.bgColor.replace('20', '30')
+                        background: `linear-gradient(45deg, transparent, ${service.iconColor}20, transparent)`,
+                        opacity: 0
                       }}
-                    >
-                      {process.step}
-                    </div>
-                    <motion.div 
-                      className="absolute inset-0 rounded-full border-2 animate-ping"
-                      style={{ borderColor: process.iconColor }}
-                      initial={{ scale: 1 }}
-                      animate={{ scale: 1.5, opacity: 0 }}
-                      transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
+                      animate={{ 
+                        opacity: hoveredService === service.title ? 1 : 0,
+                        x: ['-100%', '100%']
+                      }}
+                      transition={{ 
+                        opacity: { duration: 0.3 },
+                        x: { 
+                          duration: 2, 
+                          repeat: Infinity,
+                          ease: "linear"
+                        }
+                      }}
                     ></motion.div>
-                  </motion.div>
-                  
-                  {/* Process content */}
-                  <div className={`lg:w-5/12 ${index % 2 === 0 ? 'lg:pr-12 lg:text-right' : 'lg:pl-12'}`}>
-                    <motion.div 
-                      className={`flex items-center gap-3 ${index % 2 === 0 ? 'lg:flex-row-reverse' : ''} mb-4`}
-                      whileHover={{ x: index % 2 === 0 ? -5 : 5 }}
-                    >
-                      <process.icon className={`text-2xl`} style={{ color: process.iconColor }} />
-                      <h4 className={`text-xl font-bold font-mono-developer`} style={{ color: process.iconColor }}>
-                        {process.title}
-                      </h4>
-                    </motion.div>
-                    <p className={`text-developer-secondary text-sm leading-relaxed ${index % 2 === 0 ? 'lg:text-right' : ''}`}>
-                      {process.description}
-                    </p>
+
+                    {service.popular && (
+                      <motion.div 
+                        className="absolute -top-3 left-1/2 transform -translate-x-1/2"
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: index * 0.1 + 0.3 }}
+                      >
+                        <span className={`bg-black ${darkMode ? 'border-syntax-green' : 'border-green-500'} border px-4 py-1 rounded-lg text-sm font-mono-developer flex items-center gap-2 backdrop-blur-sm`}>
+                          <span className={`w-2 h-2 rounded-full ${darkMode ? 'bg-syntax-green' : 'bg-green-500'} animate-pulse`}></span>
+                          <span className={darkMode ? 'text-syntax-green' : 'text-green-500'}>$ popular</span>
+                        </span>
+                      </motion.div>
+                    )}
+                    
+                    <div className="mb-6 flex-grow relative z-10">
+                      <motion.div 
+                        className="w-14 h-14 rounded-lg border border-gray-800 flex items-center justify-center mb-4 relative overflow-hidden"
+                        style={{ backgroundColor: service.bgColor }}
+                        whileHover={{ 
+                          scale: 1.1, 
+                          rotate: 5,
+                          boxShadow: `0 0 20px ${service.iconColor}40`
+                        }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
+                        <service.icon className="text-2xl" style={{ color: service.iconColor }} />
+                        
+                        {/* Tech stack icons */}
+                        <div className="absolute -bottom-2 -right-2 flex">
+                          {service.tech.map((TechIcon, idx) => (
+                            <motion.div
+                              key={idx}
+                              className="w-5 h-5 rounded-full bg-black border border-gray-800 flex items-center justify-center -ml-1"
+                              initial={{ x: 10, opacity: 0 }}
+                              animate={{ x: 0, opacity: 1 }}
+                              transition={{ delay: index * 0.1 + idx * 0.1 }}
+                            >
+                              <TechIcon className="text-xs" style={{ color: service.iconColor }} />
+                            </motion.div>
+                          ))}
+                        </div>
+                      </motion.div>
+                      
+                      <h3 className={`text-xl font-bold mb-3 font-mono-developer ${darkMode ? 'text-terminal' : 'text-white'} group-hover:${service.color} transition-colors`}>
+                        {service.title}
+                      </h3>
+                      <p className={`${darkMode ? 'text-developer-secondary' : 'text-gray-400'} mb-6 text-sm leading-relaxed`}>
+                        {service.description}
+                      </p>
+                      
+                      <div className="mb-6">
+                        <h4 className={`font-semibold mb-3 font-mono-developer flex items-center gap-2 ${darkMode ? 'text-terminal' : 'text-white'}`}>
+                          <FaChevronRight className={`text-sm ${darkMode ? 'text-syntax-green' : 'text-green-500'}`} /> // Features
+                        </h4>
+                        <ul className="space-y-2">
+                          {service.features.map((feature, idx) => (
+                            <motion.li 
+                              key={idx}
+                              className="flex items-center"
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: index * 0.1 + idx * 0.05 }}
+                            >
+                              <span className={`mr-2 ${darkMode ? 'text-syntax-green' : 'text-green-500'}`}>→</span>
+                              <span className={`text-sm ${darkMode ? 'text-developer-secondary' : 'text-gray-400'}`}>{feature}</span>
+                            </motion.li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-6 border-t border-gray-800 relative z-10">
+                      <div className="relative">
+                        <span className={`text-2xl font-bold font-mono-developer ${darkMode ? 'text-terminal' : 'text-white'}`}>
+                          {service.price}
+                        </span>
+                        <span className={`text-sm ml-1 ${darkMode ? 'text-developer-secondary' : 'text-gray-400'}`}>/ hour</span>
+                        {hoveredService === service.title && (
+                          <motion.div 
+                            className={`absolute -right-2 -top-2 w-3 h-3 rounded-full ${darkMode ? 'bg-syntax-green' : 'bg-green-500'} animate-ping`}
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                          ></motion.div>
+                        )}
+                      </div>
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => {
+                          runCommand(service.command);
+                          document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+                        }}
+                        className="px-4 py-2 rounded-lg font-mono-developer hover:shadow-lg transition-shadow text-sm flex items-center gap-2 backdrop-blur-sm"
+                        style={{ 
+                          backgroundColor: service.bgColor,
+                          color: service.iconColor,
+                          borderColor: service.iconColor,
+                          borderWidth: '1px'
+                        }}
+                      >
+                        get_quote() <FaArrowRight />
+                      </motion.button>
+                    </div>
                   </div>
                 </motion.div>
               ))}
+            </motion.div>
+          )}
+
+          {/* Process Tab */}
+          {activeTab === 'process' && (
+            <motion.div
+              key="process"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="mt-20"
+            >
+              <h3 className={`text-2xl font-bold text-center mb-12 font-mono-developer ${darkMode ? 'text-terminal' : 'text-white'}`}>
+                // Development Process
+              </h3>
+              
+              <div className="relative max-w-6xl mx-auto">
+                {/* Timeline line */}
+                <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-syntax-blue via-syntax-green to-syntax-purple hidden lg:block">
+                  <motion.div 
+                    className="h-full bg-gradient-to-b from-syntax-blue to-syntax-purple"
+                    initial={{ scaleY: 0 }}
+                    animate={{ scaleY: 1 }}
+                    transition={{ duration: 2, ease: "easeInOut" }}
+                    style={{ originY: 0 }}
+                  ></motion.div>
+                </div>
+
+                {/* Process steps */}
+                <div className="space-y-12 lg:space-y-0">
+                  {processSteps.map((process, index) => (
+                    <motion.div 
+                      key={process.step}
+                      custom={index}
+                      variants={processVariants}
+                      initial="hidden"
+                      animate={visibleProcess >= index ? "visible" : "hidden"}
+                      className={`relative flex flex-col lg:flex-row items-center lg:items-start gap-6 ${
+                        index % 2 === 0 ? 'lg:flex-row-reverse' : ''
+                      }`}
+                    >
+                      {/* Process step circle */}
+                      <motion.div 
+                        className="relative z-10 group/process"
+                        whileHover={{ scale: 1.1 }}
+                        transition={{ type: "spring", stiffness: 200 }}
+                      >
+                        <div className={`w-16 h-16 rounded-full border-2 flex items-center justify-center text-lg font-bold font-mono-developer shadow-lg backdrop-blur-sm`}
+                          style={{ 
+                            borderColor: process.iconColor,
+                            backgroundColor: process.bgColor.replace('20', '30')
+                          }}
+                        >
+                          {process.step}
+                        </div>
+                        <motion.div 
+                          className="absolute inset-0 rounded-full border-2 animate-ping"
+                          style={{ borderColor: process.iconColor }}
+                          initial={{ scale: 1 }}
+                          animate={{ scale: 1.5, opacity: 0 }}
+                          transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
+                        ></motion.div>
+                        
+                        {/* Command preview */}
+                        <motion.div 
+                          className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-black border border-gray-800 px-3 py-2 rounded-lg text-xs font-mono-developer opacity-0 group-hover/process:opacity-100 transition-opacity whitespace-nowrap backdrop-blur-sm"
+                          initial={{ y: 10 }}
+                          animate={{ y: -5 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <span className={darkMode ? 'text-syntax-green' : 'text-green-500'}>$</span>{' '}
+                          <span className={darkMode ? 'text-terminal' : 'text-white'}>{process.command}</span>
+                        </motion.div>
+                      </motion.div>
+                      
+                      {/* Process content */}
+                      <div className={`lg:w-5/12 ${index % 2 === 0 ? 'lg:pr-12 lg:text-right' : 'lg:pl-12'}`}>
+                        <motion.div 
+                          className={`flex items-center gap-3 ${index % 2 === 0 ? 'lg:flex-row-reverse' : ''} mb-4`}
+                          whileHover={{ x: index % 2 === 0 ? -5 : 5 }}
+                        >
+                          <process.icon className={`text-2xl`} style={{ color: process.iconColor }} />
+                          <h4 className={`text-xl font-bold font-mono-developer`} style={{ color: process.iconColor }}>
+                            {process.title}
+                          </h4>
+                        </motion.div>
+                        <p className={`${darkMode ? 'text-developer-secondary' : 'text-gray-400'} text-sm leading-relaxed ${index % 2 === 0 ? 'lg:text-right' : ''}`}>
+                          {process.description}
+                        </p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Pricing Tab */}
+          {activeTab === 'pricing' && (
+            <motion.div
+              key="pricing"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="mt-8"
+            >
+              <div className="bg-black/50 backdrop-blur-sm rounded-xl p-8 border border-gray-800">
+                <div className="grid md:grid-cols-3 gap-8">
+                  <motion.div 
+                    className="p-6 border border-gray-800 rounded-xl"
+                    whileHover={{ y: -5, scale: 1.02 }}
+                  >
+                    <h3 className={`text-xl font-bold mb-4 font-mono-developer ${darkMode ? 'text-terminal' : 'text-white'}`}>
+                      <span className={darkMode ? 'text-syntax-blue' : 'text-blue-500'}>const</span> basicPlan
+                    </h3>
+                    <div className="mb-6">
+                      <span className={`text-3xl font-bold ${darkMode ? 'text-terminal' : 'text-white'}`}>$50-70</span>
+                      <span className={`ml-2 ${darkMode ? 'text-developer-secondary' : 'text-gray-400'}`}>/ hour</span>
+                    </div>
+                    <ul className="space-y-3 mb-8">
+                      {['Web Development', 'API Integration', 'Basic DevOps', 'Code Review'].map((item, idx) => (
+                        <li key={idx} className="flex items-center">
+                          <FaChevronRight className={`mr-2 ${darkMode ? 'text-syntax-green' : 'text-green-500'}`} />
+                          <span className={darkMode ? 'text-developer-secondary' : 'text-gray-400'}>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="w-full py-3 rounded-lg font-mono-developer border border-gray-800 hover:border-syntax-blue transition-colors"
+                    >
+                      select_plan()
+                    </motion.button>
+                  </motion.div>
+
+                  <motion.div 
+                    className="p-6 border border-syntax-blue rounded-xl relative overflow-hidden"
+                    whileHover={{ y: -5, scale: 1.02 }}
+                  >
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                      <span className="bg-syntax-blue text-black px-4 py-1 rounded-lg text-sm font-mono-developer">
+                        $ recommended
+                      </span>
+                    </div>
+                    <h3 className={`text-xl font-bold mb-4 font-mono-developer ${darkMode ? 'text-terminal' : 'text-white'}`}>
+                      <span className={darkMode ? 'text-syntax-blue' : 'text-blue-500'}>const</span> proPlan
+                    </h3>
+                    <div className="mb-6">
+                      <span className={`text-3xl font-bold ${darkMode ? 'text-terminal' : 'text-white'}`}>$70-100</span>
+                      <span className={`ml-2 ${darkMode ? 'text-developer-secondary' : 'text-gray-400'}`}>/ hour</span>
+                    </div>
+                    <ul className="space-y-3 mb-8">
+                      {['Full Stack Dev', 'Cloud Architecture', 'AI Integration', 'Team Collaboration', 'Priority Support'].map((item, idx) => (
+                        <li key={idx} className="flex items-center">
+                          <FaChevronRight className={`mr-2 ${darkMode ? 'text-syntax-green' : 'text-green-500'}`} />
+                          <span className={darkMode ? 'text-developer-secondary' : 'text-gray-400'}>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="w-full py-3 rounded-lg font-mono-developer bg-syntax-blue text-black hover:bg-syntax-blue/90 transition-colors"
+                    >
+                      select_plan()
+                    </motion.button>
+                  </motion.div>
+
+                  <motion.div 
+                    className="p-6 border border-gray-800 rounded-xl"
+                    whileHover={{ y: -5, scale: 1.02 }}
+                  >
+                    <h3 className={`text-xl font-bold mb-4 font-mono-developer ${darkMode ? 'text-terminal' : 'text-white'}`}>
+                      <span className={darkMode ? 'text-syntax-blue' : 'text-blue-500'}>const</span> enterprisePlan
+                    </h3>
+                    <div className="mb-6">
+                      <span className={`text-3xl font-bold ${darkMode ? 'text-terminal' : 'text-white'}`}>$100+</span>
+                      <span className={`ml-2 ${darkMode ? 'text-developer-secondary' : 'text-gray-400'}`}>/ hour</span>
+                    </div>
+                    <ul className="space-y-3 mb-8">
+                      {['Custom Solutions', '24/7 Support', 'Dedicated Team', 'Security Audits', 'Scalability Planning'].map((item, idx) => (
+                        <li key={idx} className="flex items-center">
+                          <FaChevronRight className={`mr-2 ${darkMode ? 'text-syntax-green' : 'text-green-500'}`} />
+                          <span className={darkMode ? 'text-developer-secondary' : 'text-gray-400'}>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="w-full py-3 rounded-lg font-mono-developer border border-gray-800 hover:border-syntax-green transition-colors"
+                    >
+                      contact_sales()
+                    </motion.button>
+                  </motion.div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Live Terminal */}
+        <motion.div 
+          className="mt-16 bg-black/50 backdrop-blur-sm rounded-xl border border-gray-800 overflow-hidden"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+        >
+          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-800 bg-black/50">
+            <div className="flex items-center gap-2">
+              <div className="flex gap-1">
+                <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+              </div>
+              <div className={`ml-3 text-sm font-mono-developer ${darkMode ? 'text-terminal' : 'text-white'}`}>
+                <span className={darkMode ? 'text-syntax-green' : 'text-green-500'}>services-terminal</span>
+                <span className="mx-2">—</span>
+                <span>bash</span>
+              </div>
+            </div>
+            <div className={`text-sm font-mono-developer ${darkMode ? 'text-developer-secondary' : 'text-gray-400'}`}>
+              {isRunningCommand ? (
+                <span className="flex items-center gap-2">
+                  <span className={darkMode ? 'text-syntax-yellow' : 'text-yellow-500'}>●</span>
+                  <span>Running...</span>
+                </span>
+              ) : (
+                <span className="flex items-center gap-2">
+                  <span className={darkMode ? 'text-syntax-green' : 'text-green-500'}>●</span>
+                  <span>Ready</span>
+                </span>
+              )}
+            </div>
+          </div>
+          
+          <div className="p-6">
+            <div className="font-mono-developer text-sm">
+              {/* Terminal typing effect */}
+              <div className="mb-4">
+                <span className={darkMode ? 'text-syntax-green' : 'text-green-500'}>$</span>
+                <span className={`ml-2 ${darkMode ? 'text-terminal' : 'text-white'}`}>
+                  {terminalText}
+                  <span className={`inline-block w-2 h-4 ml-1 ${darkMode ? 'bg-syntax-green' : 'bg-green-500'} ${cursorVisible ? 'opacity-100' : 'opacity-0'} transition-opacity`}></span>
+                </span>
+              </div>
+
+              {/* Command output */}
+              <div className="space-y-2">
+                <AnimatePresence>
+                  {commandOutput.map((output, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 20 }}
+                      className={`font-mono-developer text-sm ${
+                        output.type === 'success' 
+                          ? (darkMode ? 'text-syntax-green' : 'text-green-500')
+                          : output.type === 'command'
+                          ? (darkMode ? 'text-syntax-blue' : 'text-blue-500')
+                          : (darkMode ? 'text-developer-secondary' : 'text-gray-400')
+                      }`}
+                    >
+                      {output.type === 'command' ? (
+                        <span>{output.text}</span>
+                      ) : (
+                        <span className="ml-4">{output.text}</span>
+                      )}
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+
+              {/* Code execution progress */}
+              <motion.div 
+                className="mt-6 pt-4 border-t border-gray-800"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1 }}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className={`font-mono-developer text-sm ${darkMode ? 'text-terminal' : 'text-white'}`}>
+                    <FaCode className="inline mr-2" />
+                    Service Compilation Progress
+                  </div>
+                  <div className={`text-sm font-mono-developer ${darkMode ? 'text-syntax-green' : 'text-green-500'}`}>
+                    {codeExecution}%
+                  </div>
+                </div>
+                <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+                  <motion.div 
+                    className="h-2 bg-gradient-to-r from-syntax-blue via-syntax-green to-syntax-purple"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${codeExecution}%` }}
+                    transition={{ duration: 2 }}
+                  ></motion.div>
+                </div>
+              </motion.div>
             </div>
           </div>
         </motion.div>
@@ -446,7 +988,7 @@ const Services = ({ setActiveSection }) => {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.2, duration: 0.8 }}
-          className="mt-20 bg-gradient-to-r from-syntax-blue/20 via-syntax-green/20 to-syntax-purple/20 rounded-2xl p-8 md:p-12 text-center border border-developer relative overflow-hidden"
+          className="mt-20 bg-gradient-to-r from-syntax-blue/10 via-syntax-green/10 to-syntax-purple/10 rounded-2xl p-8 md:p-12 text-center border border-gray-800 relative overflow-hidden backdrop-blur-sm"
         >
           {/* Animated background */}
           <div className="absolute inset-0">
@@ -455,63 +997,104 @@ const Services = ({ setActiveSection }) => {
           </div>
 
           <div className="relative z-10">
-            <h3 className="text-2xl md:text-3xl font-bold text-terminal mb-4 font-mono-developer">
+            <h3 className={`text-2xl md:text-3xl font-bold mb-4 font-mono-developer ${darkMode ? 'text-terminal' : 'text-white'}`}>
               $ ready_to_start()
             </h3>
-            <p className="text-developer-secondary mb-8 max-w-2xl mx-auto font-mono-developer text-sm md:text-base">
+            <p className={`${darkMode ? 'text-developer-secondary' : 'text-gray-400'} mb-8 max-w-2xl mx-auto font-mono-developer text-sm md:text-base`}>
               // Let's discuss your project requirements and create a tailored solution
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-                className="px-8 py-3 bg-terminal border border-developer text-terminal rounded-lg font-mono-developer hover:border-syntax-blue hover:text-syntax-blue transition-colors relative overflow-hidden group"
+                onClick={() => {
+                  runCommand('contact --start');
+                  document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="px-8 py-3 bg-black/50 border border-gray-800 rounded-lg font-mono-developer hover:border-syntax-blue transition-colors relative overflow-hidden group backdrop-blur-sm"
               >
-                <span className="relative z-10 flex items-center gap-2">
+                <span className={`relative z-10 flex items-center gap-2 ${darkMode ? 'text-terminal' : 'text-white'}`}>
                   get_consultation() <FaArrowRight />
                 </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-syntax-blue/0 via-syntax-blue/10 to-syntax-blue/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                <div className={`absolute inset-0 bg-gradient-to-r from-transparent via-syntax-blue/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ${
+                  darkMode ? '' : 'via-blue-500/20'
+                }`}></div>
               </motion.button>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => window.location.href = 'mailto:kamalasad57@gmail.com'}
-                className="px-8 py-3 border border-syntax-green text-syntax-green rounded-lg font-mono-developer hover:bg-syntax-green/10 transition-colors relative overflow-hidden group"
+                onClick={() => {
+                  runCommand('mail --send');
+                  window.location.href = 'mailto:kamalasad57@gmail.com';
+                }}
+                className="px-8 py-3 border border-syntax-green rounded-lg font-mono-developer hover:bg-syntax-green/10 transition-colors relative overflow-hidden group backdrop-blur-sm"
               >
-                <span className="relative z-10 flex items-center gap-2">
+                <span className={`relative z-10 flex items-center gap-2 ${darkMode ? 'text-syntax-green' : 'text-green-500'}`}>
                   send_email() <FaArrowRight />
                 </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-syntax-green/0 via-syntax-green/10 to-syntax-green/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                <div className={`absolute inset-0 bg-gradient-to-r from-transparent via-syntax-green/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ${
+                  darkMode ? '' : 'via-green-500/20'
+                }`}></div>
               </motion.button>
             </div>
           </div>
         </motion.div>
       </div>
 
-      <style>
-  {`
-    .card-developer {
-      transition: all 0.3s ease;
-    }
+      <style jsx>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+        }
 
-    .card-developer:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2),
-                  0 0 80px rgba(102, 217, 239, 0.1);
-    }
+        .animate-float {
+          animation: float 3s ease-in-out infinite;
+        }
 
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
+        .card-developer:hover {
+          transform: translateY(-8px);
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2),
+                      0 0 80px rgba(102, 217, 239, 0.1);
+        }
 
-    .animate-float {
-      animation: float 3s ease-in-out infinite;
-    }
-  `}
-</style>
+        @keyframes scan-line {
+          0% {
+            transform: translateY(-100%);
+          }
+          100% {
+            transform: translateY(100%);
+          }
+        }
 
+        .scan-line {
+          animation: scan-line 10s linear infinite;
+        }
+
+        @keyframes glitch {
+          0% {
+            transform: translate(0);
+          }
+          20% {
+            transform: translate(-2px, 2px);
+          }
+          40% {
+            transform: translate(-2px, -2px);
+          }
+          60% {
+            transform: translate(2px, 2px);
+          }
+          80% {
+            transform: translate(2px, -2px);
+          }
+          100% {
+            transform: translate(0);
+          }
+        }
+
+        .glitch-effect {
+          animation: glitch 0.5s infinite;
+        }
+      `}</style>
     </section>
   );
 };

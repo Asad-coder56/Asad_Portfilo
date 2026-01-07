@@ -581,3 +581,201 @@
   text-align: right;
   color: var(--text-tertiary);
 }
+
+
+/* App.css - Add these animations */
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.animate-fade-out {
+  animation: fade-out 2s ease-out forwards;
+}
+
+@keyframes glitch {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+.glitch-effect {
+  animation: glitch 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@keyframes terminal-flicker {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.terminal-flicker {
+  animation: terminal-flicker 2s infinite;
+}
+
+@keyframes code-rain {
+  0% {
+    transform: translateY(-100px) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.code-rain {
+  animation: code-rain 10s linear infinite;
+}
+
+/* Page transition animations */
+.page-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.page-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* Developer Theme Colors */
+.developer-theme {
+  --color-terminal: #ffffff;
+  --color-developer: #374151;
+  --color-developer-secondary: #9ca3af;
+  --color-developer-tertiary: #6b7280;
+  --color-syntax-blue: #66d9ef;
+  --color-syntax-green: #10b981;
+  --color-syntax-purple: #8b5cf6;
+  --color-syntax-orange: #f59e0b;
+  --color-syntax-yellow: #fbbf24;
+  --color-syntax-red: #ef4444;
+}
+
+.developer-theme.dark {
+  --color-terminal: #ffffff;
+  --color-developer: #374151;
+  --color-developer-secondary: #9ca3af;
+  --color-developer-tertiary: #6b7280;
+  --color-syntax-blue: #66d9ef;
+  --color-syntax-green: #10b981;
+  --color-syntax-purple: #8b5cf6;
+  --color-syntax-orange: #f59e0b;
+  --color-syntax-yellow: #fbbf24;
+  --color-syntax-red: #ef4444;
+  background-color: #000000;
+}
+
+/* Custom scrollbar for developer theme */
+.developer-theme ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.developer-theme ::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+}
+
+.developer-theme ::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #66d9ef, #10b981);
+  border-radius: 5px;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+}
+
+.developer-theme ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #8b5cf6, #f59e0b);
+}
+
+/* Selection color */
+.developer-theme ::selection {
+  background-color: rgba(102, 217, 239, 0.3);
+  color: white;
+}
+
+/* Smooth transitions */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* Terminal-like font for developer elements */
+.font-mono-developer {
+  font-family: 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-variant-ligatures: normal;
+}
+
+/* Loading screen specific styles */
+.loading-screen-enter {
+  opacity: 0;
+}
+
+.loading-screen-enter-active {
+  opacity: 1;
+  transition: opacity 300ms;
+}
+
+.loading-screen-exit {
+  opacity: 1;
+}
+
+.loading-screen-exit-active {
+  opacity: 0;
+  transition: opacity 300ms;
+}
+
+/* Grid pattern for backgrounds */
+.grid-pattern {
+  background-image: 
+    linear-gradient(rgba(102, 217, 239, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(102, 217, 239, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .developer-theme ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+}
