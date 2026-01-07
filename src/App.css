@@ -779,3 +779,89 @@
     height: 6px;
   }
 }
+
+
+/* App.css - Add these minimal styles */
+
+/* Smooth transitions */
+.loading-screen-enter {
+  opacity: 0;
+}
+
+.loading-screen-enter-active {
+  opacity: 1;
+  transition: opacity 200ms;
+}
+
+.loading-screen-exit {
+  opacity: 1;
+}
+
+.loading-screen-exit-active {
+  opacity: 0;
+  transition: opacity 200ms;
+}
+
+/* Optimized animations */
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s ease-in-out infinite;
+}
+
+/* Terminal text selection */
+.terminal-text::selection {
+  background: rgba(59, 130, 246, 0.3);
+}
+
+.terminal-text::-moz-selection {
+  background: rgba(59, 130, 246, 0.3);
+}
+
+/* Optimized scrollbar */
+.slim-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.slim-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.slim-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.5);
+  border-radius: 2px;
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6, #10b981);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glass effect */
+.glass-effect {
+  background: rgba(17, 24, 39, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .loading-screen-content {
+    padding: 1rem;
+  }
+  
+  .tech-stack-container {
+    gap: 1rem;
+  }
+}

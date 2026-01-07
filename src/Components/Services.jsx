@@ -1,4 +1,3 @@
-// src/components/Services.jsx
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, useAnimation, AnimatePresence } from 'framer-motion';
 import { 
@@ -19,18 +18,16 @@ import {
   FaChevronRight,
   FaKeyboard,
   FaBug,
-  
- 
   FaCodeBranch,
   FaSync,
   FaPlay,
   FaPause,
   FaMicrochip,
   FaNetworkWired,
-   FaBrain,
-   FaLock,
-    FaKey,
-  
+  FaBrain,
+  FaLock,
+  FaKey,
+  FaReact
 } from 'react-icons/fa';
 import { 
   SiTypescript, 
@@ -42,9 +39,9 @@ import {
   SiMongodb,
   SiAwsamplify,
   SiDocker,
- 
-
-  
+  SiPostgresql,
+  SiRedux,
+  SiExpress
 } from 'react-icons/si';
 
 const Services = ({ setActiveSection, darkMode = true }) => {
@@ -119,15 +116,15 @@ const Services = ({ setActiveSection, darkMode = true }) => {
     return () => clearInterval(cursorInterval);
   }, []);
 
-  // Typing effect for terminal
+  // Typing effect for terminal - Updated for MERN
   useEffect(() => {
     const commands = [
-      '$ npm run services',
-      '> Starting service deployment...',
-      '> Deploying web applications...',
-      '> Configuring cloud infrastructure...',
-      '> Building AI/ML models...',
-      '> Service deployment complete! ✅'
+      '$ npm run mern-services',
+      '> Starting MERN stack deployment...',
+      '> Deploying React frontend...',
+      '> Configuring Node.js backend...',
+      '> Setting up MongoDB database...',
+      '> MERN stack deployment complete! ✅'
     ];
 
     let currentCommand = 0;
@@ -176,7 +173,7 @@ const Services = ({ setActiveSection, darkMode = true }) => {
         setTimeout(() => {
           setCommandOutput(prev => [
             ...prev,
-            { text: '✓ All services compiled successfully', type: 'success' }
+            { text: '✓ MERN Stack Services compiled successfully', type: 'success' }
           ]);
         }, 500);
       }
@@ -192,10 +189,12 @@ const Services = ({ setActiveSection, darkMode = true }) => {
     
     setTimeout(() => {
       const outputs = [
-        'Installing dependencies...',
-        'Building project...',
-        'Running tests...',
-        'Deployment successful!'
+        'Initializing MERN project structure...',
+        'Installing React, Express, Mongoose...',
+        'Setting up MongoDB connection...',
+        'Creating API routes and controllers...',
+        'Building React components with TypeScript...',
+        'MERN application ready for deployment!'
       ];
       
       outputs.forEach((output, index) => {
@@ -213,110 +212,111 @@ const Services = ({ setActiveSection, darkMode = true }) => {
     }, 1000);
   };
 
+  // Updated services array for MERN stack
   const services = [
     {
       icon: FaLaptopCode,
-      title: "Web Development",
-      description: "Modern web applications with React, Next.js, and cutting-edge technologies",
-      features: ["React/Next.js", "TypeScript", "Responsive Design", "Performance", "SEO", "PWA"],
-      price: "$50-80/hr",
+      title: "MERN Stack Development",
+      description: "Complete MERN stack applications with React, Node.js, Express, and MongoDB",
+      features: ["Full Stack Development", "React/Node.js", "MongoDB Integration", "REST APIs", "Real-time Features", "Deployment"],
+      price: "$60-90/hr",
       popular: true,
       color: darkMode ? 'syntax-blue' : 'blue-500',
       bgColor: darkMode ? '#61DAFB20' : '#3B82F620',
       iconColor: '#61DAFB',
-      tech: [SiReact, SiNextdotjs, SiTypescript],
-      command: "npm run build:web"
+      tech: [SiReact, SiNodedotjs, SiMongodb],
+      command: "npm run build:mern"
     },
     {
       icon: FaServer,
-      title: "Backend & API",
-      description: "Scalable server-side solutions with microservices and robust APIs",
-      features: ["Node.js/Express", "REST/GraphQL", "Authentication", "Microservices", "WebSockets"],
-      price: "$60-90/hr",
-      popular: false,
+      title: "Backend API Development",
+      description: "Scalable backend APIs with Node.js, Express, and database integration",
+      features: ["Node.js/Express", "REST/GraphQL APIs", "JWT Authentication", "Mongoose ODM", "API Documentation", "WebSocket APIs"],
+      price: "$55-85/hr",
+      popular: true,
       color: darkMode ? 'syntax-green' : 'green-500',
       bgColor: darkMode ? '#33993320' : '#10B98120',
       iconColor: '#339933',
-      tech: [SiNodedotjs, SiPython, FaDatabase],
-      command: "node server.js"
+      tech: [SiNodedotjs, SiExpress, FaDatabase],
+      command: "node api-server.js"
     },
     {
-      icon: FaDatabase,
-      title: "Database Design",
-      description: "Efficient database architecture and optimization for high-performance apps",
-      features: ["MongoDB", "PostgreSQL", "Redis", "Data Modeling", "Optimization"],
-      price: "$55-85/hr",
+      icon: FaReact,
+      title: "React Frontend Development",
+      description: "Modern React applications with TypeScript, Redux, and responsive design",
+      features: ["React 18+", "TypeScript", "Redux Toolkit", "Responsive UI", "Performance Opt", "SEO Friendly"],
+      price: "$50-80/hr",
       popular: false,
       color: darkMode ? 'syntax-purple' : 'purple-500',
       bgColor: darkMode ? '#764ABC20' : '#8B5CF620',
       iconColor: '#764ABC',
-      tech: [SiMongodb, FaDatabase, FaSync],
-      command: "mongod --dbpath ./data"
+      tech: [SiReact, SiTypescript, SiRedux],
+      command: "npm start"
     },
     {
-      icon: FaRobot,
-      title: "AI/ML Solutions",
-      description: "Machine learning models and AI integration for intelligent applications",
-      features: ["Python AI", "TensorFlow", "Model Training", "API Integration", "Data Analysis"],
-      price: "$70-100/hr",
-      popular: true,
+      icon: FaDatabase,
+      title: "Database Solutions",
+      description: "MongoDB and PostgreSQL database design, optimization, and management",
+      features: ["MongoDB Design", "PostgreSQL", "Database Optimization", "Data Modeling", "Backup Solutions", "Performance Tuning"],
+      price: "$45-75/hr",
+      popular: false,
       color: darkMode ? 'syntax-orange' : 'orange-500',
       bgColor: darkMode ? '#FD971F20' : '#F9731620',
       iconColor: '#FD971F',
-      tech: [SiPython, FaRobot, FaBrain],
-      command: "python train_model.py"
+      tech: [SiMongodb, SiPostgresql, FaDatabase],
+      command: "mongod --dbpath ./data"
     },
     {
-      icon: FaMobileAlt,
-      title: "Mobile Apps",
-      description: "Cross-platform mobile applications with React Native and Flutter",
-      features: ["React Native", "iOS & Android", "Push Notifications", "App Store", "CI/CD"],
+      icon: SiNextdotjs,
+      title: "Next.js Development",
+      description: "Server-side rendered React applications with Next.js framework",
+      features: ["Next.js 14+", "SSR/SSG", "API Routes", "Optimization", "App Router", "Deployment"],
       price: "$65-95/hr",
-      popular: false,
+      popular: true,
       color: darkMode ? 'syntax-yellow' : 'yellow-500',
       bgColor: darkMode ? '#F7DF1E20' : '#FBBF2420',
       iconColor: '#F7DF1E',
-      tech: [SiReact, FaMobileAlt, FaCode],
-      command: "react-native run-ios"
+      tech: [SiNextdotjs, SiReact, FaCode],
+      command: "next build && next start"
     },
     {
       icon: FaCloud,
-      title: "DevOps & Cloud",
-      description: "Cloud infrastructure, CI/CD pipelines, and deployment automation",
-      features: ["AWS/Azure", "Docker", "Kubernetes", "CI/CD", "Monitoring", "Security"],
-      price: "$60-90/hr",
+      title: "MERN DevOps & Deployment",
+      description: "Cloud deployment, CI/CD pipelines, and infrastructure for MERN applications",
+      features: ["AWS/Azure", "Docker", "CI/CD", "PM2/Nginx", "SSL Setup", "Monitoring"],
+      price: "$55-85/hr",
       popular: false,
       color: darkMode ? 'syntax-cyan' : 'cyan-500',
       bgColor: darkMode ? '#2496ED20' : '#06B6D420',
       iconColor: '#2496ED',
       tech: [SiAwsamplify, SiDocker, FaCloud],
-      command: "docker-compose up"
+      command: "docker-compose up -d"
     },
     {
       icon: FaShieldAlt,
-      title: "Security",
-      description: "Comprehensive security solutions and best practices implementation",
-      features: ["JWT/OAuth", "Encryption", "Security Audits", "GDPR Compliance", "Pen Testing"],
-      price: "$75-110/hr",
+      title: "API Security",
+      description: "Security implementation and best practices for MERN applications",
+      features: ["JWT/OAuth 2.0", "Rate Limiting", "Input Validation", "CORS Setup", "Security Headers", "Audit Logs"],
+      price: "$50-80/hr",
       popular: false,
       color: darkMode ? 'syntax-red' : 'red-500',
       bgColor: darkMode ? '#F9267220' : '#EF444420',
       iconColor: '#F92672',
       tech: [FaShieldAlt, FaLock, FaKey],
-      command: "security-audit --full"
+      command: "security-audit --api"
     },
     {
-      icon: FaChartLine,
-      title: "Analytics & BI",
-      description: "Data visualization and business intelligence dashboards",
-      features: ["Dashboard Design", "Real-time Analytics", "Chart.js/D3.js", "Reporting"],
-      price: "$65-95/hr",
+      icon: FaSync,
+      title: "Code Maintenance & Support",
+      description: "Ongoing maintenance, updates, and support for existing MERN applications",
+      features: ["Bug Fixes", "Updates", "Performance Opt", "Code Review", "Documentation", "Technical Support"],
+      price: "$40-70/hr",
       popular: false,
       color: darkMode ? 'syntax-pink' : 'pink-500',
       bgColor: darkMode ? '#AE81FF20' : '#EC489920',
       iconColor: '#AE81FF',
-      tech: [FaChartLine, FaDatabase, FaNetworkWired],
-      command: "analytics --start"
+      tech: [FaCode, FaSync, FaBug],
+      command: "npm run maintenance"
     }
   ];
 
@@ -345,31 +345,32 @@ const Services = ({ setActiveSection, darkMode = true }) => {
     }
   };
 
+  // Updated process steps for MERN
   const processSteps = [
     {
       step: "01",
-      title: "Discovery & Planning",
-      description: "Understanding requirements, project scope, and creating detailed specifications.",
+      title: "Requirement Analysis",
+      description: "Understanding project requirements, technology stack selection, and architecture planning for MERN applications.",
       icon: FaRocket,
       color: darkMode ? "syntax-blue" : "blue-500",
       bgColor: darkMode ? "#61DAFB20" : "#3B82F620",
       iconColor: "#61DAFB",
-      command: "npm init project"
+      command: "npm init mern-project"
     },
     {
       step: "02",
-      title: "Design & Prototyping",
-      description: "Creating wireframes, mockups, and interactive prototypes.",
-      icon: FaPaintBrush,
+      title: "Database & API Design",
+      description: "Designing MongoDB schemas, creating API endpoints, and planning the data flow for the application.",
+      icon: FaDatabase,
       color: darkMode ? "syntax-green" : "green-500",
       bgColor: darkMode ? "#3C873A20" : "#10B98120",
       iconColor: "#3C873A",
-      command: "design-system build"
+      command: "mongod --dbpath ./data && node server.js"
     },
     {
       step: "03",
-      title: "Development",
-      description: "Building the application with clean, maintainable code and best practices.",
+      title: "Full Stack Development",
+      description: "Building React frontend, Node.js backend, and integrating all components into a cohesive MERN application.",
       icon: FaCode,
       color: darkMode ? "syntax-purple" : "purple-500",
       bgColor: darkMode ? "#764ABC20" : "#8B5CF620",
@@ -379,12 +380,12 @@ const Services = ({ setActiveSection, darkMode = true }) => {
     {
       step: "04",
       title: "Testing & Deployment",
-      description: "Rigorous testing, optimization, and deployment to production.",
+      description: "Testing API endpoints, frontend components, and deploying the complete MERN stack application to production.",
       icon: FaCogs,
       color: darkMode ? "syntax-orange" : "orange-500",
       bgColor: darkMode ? "#FD971F20" : "#F9731620",
       iconColor: "#FD971F",
-      command: "npm run deploy"
+      command: "npm test && npm run deploy"
     }
   ];
 
@@ -410,9 +411,9 @@ const Services = ({ setActiveSection, darkMode = true }) => {
         backgroundColor: darkMode ? '#0a0a0a' : '#000000',
         backgroundImage: darkMode 
           ? `radial-gradient(circle at 20% 30%, rgba(102, 217, 239, 0.05) 0%, transparent 50%),
-             radial-gradient(circle at 80% 70%, rgba(16, 185, 129, 0.05) 0%, transparent 50%)`
+             radial-gradient(circle at 80% 70%, rgba(71, 162, 72, 0.05) 0%, transparent 50%)`
           : `radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
-             radial-gradient(circle at 80% 70%, rgba(34, 197, 94, 0.05) 0%, transparent 50%)`
+             radial-gradient(circle at 80% 70%, rgba(71, 162, 72, 0.05) 0%, transparent 50%)`
       }}
     >
       {/* Binary Matrix Background */}
@@ -456,7 +457,7 @@ const Services = ({ setActiveSection, darkMode = true }) => {
       ></div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Terminal Header */}
+        {/* Terminal Header - Updated for MERN */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={controls}
@@ -475,7 +476,7 @@ const Services = ({ setActiveSection, darkMode = true }) => {
           >
             <FaTerminal className={darkMode ? 'text-syntax-blue' : 'text-blue-500'} />
             <span className={`font-mono-developer text-sm ${darkMode ? 'text-terminal' : 'text-white'}`}>
-              $ services --list --interactive
+              $ mern-services --list --full-stack
             </span>
             <motion.div 
               className="w-2 h-4 bg-syntax-green ml-2"
@@ -486,14 +487,14 @@ const Services = ({ setActiveSection, darkMode = true }) => {
           
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
             <span className={darkMode ? 'text-syntax-blue' : 'text-blue-500'}>export</span>{' '}
-            <span className={darkMode ? 'text-syntax-green' : 'text-green-500'}>default</span>{' '}
-            <span className={darkMode ? 'text-terminal' : 'text-white'}>class</span>{' '}
-            <span className={darkMode ? 'text-syntax-purple' : 'text-purple-500'}>Services</span>{' '}
-            <span className={darkMode ? 'text-terminal' : 'text-white'}>{'{'}</span>
+            <span className={darkMode ? 'text-syntax-green' : 'text-green-500'}>const</span>{' '}
+            <span className={darkMode ? 'text-terminal' : 'text-white'}>mernServices</span>{' '}
+            <span className={darkMode ? 'text-syntax-blue' : 'text-blue-500'}>=</span>{' '}
+            <span className={darkMode ? 'text-syntax-yellow' : 'text-yellow-500'}>{'{'}</span>
           </h2>
           
           <p className={`text-lg max-w-2xl mx-auto font-mono-developer ${darkMode ? 'text-developer-secondary' : 'text-gray-400'}`}>
-            // Comprehensive development services tailored to bring your digital vision to life
+            // Complete MERN stack development services for building modern, scalable web applications
           </p>
         </motion.div>
 
@@ -682,7 +683,7 @@ const Services = ({ setActiveSection, darkMode = true }) => {
             </motion.div>
           )}
 
-          {/* Process Tab */}
+          {/* Process Tab - Updated for MERN */}
           {activeTab === 'process' && (
             <motion.div
               key="process"
@@ -692,7 +693,7 @@ const Services = ({ setActiveSection, darkMode = true }) => {
               className="mt-20"
             >
               <h3 className={`text-2xl font-bold text-center mb-12 font-mono-developer ${darkMode ? 'text-terminal' : 'text-white'}`}>
-                // Development Process
+                // MERN Development Process
               </h3>
               
               <div className="relative max-w-6xl mx-auto">
@@ -776,7 +777,7 @@ const Services = ({ setActiveSection, darkMode = true }) => {
             </motion.div>
           )}
 
-          {/* Pricing Tab */}
+          {/* Pricing Tab - Updated for MERN */}
           {activeTab === 'pricing' && (
             <motion.div
               key="pricing"
@@ -792,14 +793,14 @@ const Services = ({ setActiveSection, darkMode = true }) => {
                     whileHover={{ y: -5, scale: 1.02 }}
                   >
                     <h3 className={`text-xl font-bold mb-4 font-mono-developer ${darkMode ? 'text-terminal' : 'text-white'}`}>
-                      <span className={darkMode ? 'text-syntax-blue' : 'text-blue-500'}>const</span> basicPlan
+                      <span className={darkMode ? 'text-syntax-blue' : 'text-blue-500'}>const</span> frontendDev
                     </h3>
                     <div className="mb-6">
                       <span className={`text-3xl font-bold ${darkMode ? 'text-terminal' : 'text-white'}`}>$50-70</span>
                       <span className={`ml-2 ${darkMode ? 'text-developer-secondary' : 'text-gray-400'}`}>/ hour</span>
                     </div>
                     <ul className="space-y-3 mb-8">
-                      {['Web Development', 'API Integration', 'Basic DevOps', 'Code Review'].map((item, idx) => (
+                      {['React Development', 'UI Components', 'Responsive Design', 'API Integration'].map((item, idx) => (
                         <li key={idx} className="flex items-center">
                           <FaChevronRight className={`mr-2 ${darkMode ? 'text-syntax-green' : 'text-green-500'}`} />
                           <span className={darkMode ? 'text-developer-secondary' : 'text-gray-400'}>{item}</span>
@@ -821,18 +822,18 @@ const Services = ({ setActiveSection, darkMode = true }) => {
                   >
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                       <span className="bg-syntax-blue text-black px-4 py-1 rounded-lg text-sm font-mono-developer">
-                        $ recommended
+                        $ MERN_STACK
                       </span>
                     </div>
                     <h3 className={`text-xl font-bold mb-4 font-mono-developer ${darkMode ? 'text-terminal' : 'text-white'}`}>
-                      <span className={darkMode ? 'text-syntax-blue' : 'text-blue-500'}>const</span> proPlan
+                      <span className={darkMode ? 'text-syntax-blue' : 'text-blue-500'}>const</span> fullStackDev
                     </h3>
                     <div className="mb-6">
                       <span className={`text-3xl font-bold ${darkMode ? 'text-terminal' : 'text-white'}`}>$70-100</span>
                       <span className={`ml-2 ${darkMode ? 'text-developer-secondary' : 'text-gray-400'}`}>/ hour</span>
                     </div>
                     <ul className="space-y-3 mb-8">
-                      {['Full Stack Dev', 'Cloud Architecture', 'AI Integration', 'Team Collaboration', 'Priority Support'].map((item, idx) => (
+                      {['Complete MERN Stack', 'Database Design', 'API Development', 'Authentication', 'Deployment'].map((item, idx) => (
                         <li key={idx} className="flex items-center">
                           <FaChevronRight className={`mr-2 ${darkMode ? 'text-syntax-green' : 'text-green-500'}`} />
                           <span className={darkMode ? 'text-developer-secondary' : 'text-gray-400'}>{item}</span>
@@ -853,14 +854,14 @@ const Services = ({ setActiveSection, darkMode = true }) => {
                     whileHover={{ y: -5, scale: 1.02 }}
                   >
                     <h3 className={`text-xl font-bold mb-4 font-mono-developer ${darkMode ? 'text-terminal' : 'text-white'}`}>
-                      <span className={darkMode ? 'text-syntax-blue' : 'text-blue-500'}>const</span> enterprisePlan
+                      <span className={darkMode ? 'text-syntax-blue' : 'text-blue-500'}>const</span> maintenance
                     </h3>
                     <div className="mb-6">
-                      <span className={`text-3xl font-bold ${darkMode ? 'text-terminal' : 'text-white'}`}>$100+</span>
+                      <span className={`text-3xl font-bold ${darkMode ? 'text-terminal' : 'text-white'}`}>$40-60</span>
                       <span className={`ml-2 ${darkMode ? 'text-developer-secondary' : 'text-gray-400'}`}>/ hour</span>
                     </div>
                     <ul className="space-y-3 mb-8">
-                      {['Custom Solutions', '24/7 Support', 'Dedicated Team', 'Security Audits', 'Scalability Planning'].map((item, idx) => (
+                      {['Bug Fixes', 'Updates', 'Performance Opt', 'Security Patches', 'Support'].map((item, idx) => (
                         <li key={idx} className="flex items-center">
                           <FaChevronRight className={`mr-2 ${darkMode ? 'text-syntax-green' : 'text-green-500'}`} />
                           <span className={darkMode ? 'text-developer-secondary' : 'text-gray-400'}>{item}</span>
@@ -872,7 +873,7 @@ const Services = ({ setActiveSection, darkMode = true }) => {
                       whileTap={{ scale: 0.95 }}
                       className="w-full py-3 rounded-lg font-mono-developer border border-gray-800 hover:border-syntax-green transition-colors"
                     >
-                      contact_sales()
+                      contact_support()
                     </motion.button>
                   </motion.div>
                 </div>
@@ -881,7 +882,7 @@ const Services = ({ setActiveSection, darkMode = true }) => {
           )}
         </AnimatePresence>
 
-        {/* Live Terminal */}
+        {/* Live Terminal - Updated for MERN */}
         <motion.div 
           className="mt-16 bg-black/50 backdrop-blur-sm rounded-xl border border-gray-800 overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
@@ -896,7 +897,7 @@ const Services = ({ setActiveSection, darkMode = true }) => {
                 <div className="w-3 h-3 rounded-full bg-green-500"></div>
               </div>
               <div className={`ml-3 text-sm font-mono-developer ${darkMode ? 'text-terminal' : 'text-white'}`}>
-                <span className={darkMode ? 'text-syntax-green' : 'text-green-500'}>services-terminal</span>
+                <span className={darkMode ? 'text-syntax-green' : 'text-green-500'}>mern-services</span>
                 <span className="mx-2">—</span>
                 <span>bash</span>
               </div>
@@ -905,12 +906,12 @@ const Services = ({ setActiveSection, darkMode = true }) => {
               {isRunningCommand ? (
                 <span className="flex items-center gap-2">
                   <span className={darkMode ? 'text-syntax-yellow' : 'text-yellow-500'}>●</span>
-                  <span>Running...</span>
+                  <span>Building MERN app...</span>
                 </span>
               ) : (
                 <span className="flex items-center gap-2">
                   <span className={darkMode ? 'text-syntax-green' : 'text-green-500'}>●</span>
-                  <span>Ready</span>
+                  <span>MERN Stack Ready</span>
                 </span>
               )}
             </div>
@@ -954,7 +955,7 @@ const Services = ({ setActiveSection, darkMode = true }) => {
                 </AnimatePresence>
               </div>
 
-              {/* Code execution progress */}
+              {/* Code execution progress - Updated title */}
               <motion.div 
                 className="mt-6 pt-4 border-t border-gray-800"
                 initial={{ opacity: 0 }}
@@ -964,7 +965,7 @@ const Services = ({ setActiveSection, darkMode = true }) => {
                 <div className="flex items-center justify-between mb-3">
                   <div className={`font-mono-developer text-sm ${darkMode ? 'text-terminal' : 'text-white'}`}>
                     <FaCode className="inline mr-2" />
-                    Service Compilation Progress
+                    MERN Stack Service Compilation
                   </div>
                   <div className={`text-sm font-mono-developer ${darkMode ? 'text-syntax-green' : 'text-green-500'}`}>
                     {codeExecution}%
@@ -983,7 +984,7 @@ const Services = ({ setActiveSection, darkMode = true }) => {
           </div>
         </motion.div>
 
-        {/* CTA Section */}
+        {/* CTA Section - Updated for MERN */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
@@ -998,23 +999,23 @@ const Services = ({ setActiveSection, darkMode = true }) => {
 
           <div className="relative z-10">
             <h3 className={`text-2xl md:text-3xl font-bold mb-4 font-mono-developer ${darkMode ? 'text-terminal' : 'text-white'}`}>
-              $ ready_to_start()
+              $ start_mern_project()
             </h3>
             <p className={`${darkMode ? 'text-developer-secondary' : 'text-gray-400'} mb-8 max-w-2xl mx-auto font-mono-developer text-sm md:text-base`}>
-              // Let's discuss your project requirements and create a tailored solution
+              // Let's build your next MERN stack application together
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => {
-                  runCommand('contact --start');
+                  runCommand('contact --start-project');
                   document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
                 }}
                 className="px-8 py-3 bg-black/50 border border-gray-800 rounded-lg font-mono-developer hover:border-syntax-blue transition-colors relative overflow-hidden group backdrop-blur-sm"
               >
                 <span className={`relative z-10 flex items-center gap-2 ${darkMode ? 'text-terminal' : 'text-white'}`}>
-                  get_consultation() <FaArrowRight />
+                  start_project() <FaArrowRight />
                 </span>
                 <div className={`absolute inset-0 bg-gradient-to-r from-transparent via-syntax-blue/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ${
                   darkMode ? '' : 'via-blue-500/20'
@@ -1024,13 +1025,13 @@ const Services = ({ setActiveSection, darkMode = true }) => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => {
-                  runCommand('mail --send');
+                  runCommand('mail --send --subject=MERN_Project');
                   window.location.href = 'mailto:kamalasad57@gmail.com';
                 }}
                 className="px-8 py-3 border border-syntax-green rounded-lg font-mono-developer hover:bg-syntax-green/10 transition-colors relative overflow-hidden group backdrop-blur-sm"
               >
                 <span className={`relative z-10 flex items-center gap-2 ${darkMode ? 'text-syntax-green' : 'text-green-500'}`}>
-                  send_email() <FaArrowRight />
+                  discuss_project() <FaArrowRight />
                 </span>
                 <div className={`absolute inset-0 bg-gradient-to-r from-transparent via-syntax-green/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ${
                   darkMode ? '' : 'via-green-500/20'

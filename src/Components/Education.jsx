@@ -193,10 +193,10 @@ const Education = ({ setActiveSection, darkMode = true }) => {
     {
       position: "MERN Stack Developer",
       company: "MRA Developer Company",
-      period: "2024 – Present",
+      period: "2025 – Present",
       duration: "7 months",
       description: "Developing full-stack web applications using MongoDB, Express.js, React, and Node.js. Collaborating with cross-functional teams to deliver high-quality software solutions.",
-      location: "Remote",
+      location: "Onsite",
       icon: FaBriefcase,
       color: darkMode ? 'syntax-orange' : 'orange-500',
       bgColor: darkMode ? '#FD971F20' : '#F9731620',
@@ -207,10 +207,10 @@ const Education = ({ setActiveSection, darkMode = true }) => {
     {
       position: "Full Stack Developer Intern",
       company: "Tech Solutions Inc.",
-      period: "2023 – 2024",
-      duration: "6 months",
+      period: "2025-2025", duration: "3months",
+     
       description: "Assisted in developing web applications and learned industry best practices in software development.",
-      location: "Remote",
+      location: "Onsite",
       icon: FaLaptopCode,
       color: darkMode ? 'syntax-cyan' : 'cyan-500',
       bgColor: darkMode ? '#2496ED20' : '#06B6D420',

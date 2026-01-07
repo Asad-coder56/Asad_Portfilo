@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { 
   FaGithub, FaLinkedin, FaTwitter, FaArrowDown, 
-  FaTerminal, FaCode, FaReact, FaNode, FaPython, 
-  FaCloud, FaDatabase, FaChevronRight, FaBolt,
-  FaKeyboard, FaBug, FaServer, FaCube, FaMagic
+  FaTerminal, FaCode, FaReact, FaNode, FaDatabase, 
+  FaCloud, FaServer, FaChevronRight, FaBolt,
+  FaKeyboard, FaBug, FaCube, FaMagic
 } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
-import { SiTypescript, SiNextdotjs, SiTailwindcss, SiDocker } from 'react-icons/si';
+import { SiTypescript, SiExpress, SiMongodb, SiRedux } from 'react-icons/si';
 
 const Hero = ({ setActiveSection, scrollToSection, darkMode = true }) => {
   const [text, setText] = useState('');
@@ -28,40 +28,40 @@ const Hero = ({ setActiveSection, scrollToSection, darkMode = true }) => {
   // Memoize static data to prevent re-renders
   const roles = useMemo(() => [
     'MERN Stack Developer',
-    'AI Solutions Engineer', 
-    'Full Stack Developer',
-    'Cloud Architect',
-    'DevOps Engineer',
-    'System Designer'
+    'Full Stack Engineer', 
+    'Backend Developer',
+    'Frontend Developer',
+    'API Architect',
+    'Database Specialist'
   ], []);
 
   const techStack = useMemo(() => [
-    { icon: FaReact, name: 'React', color: '#61DAFB', command: 'npm run dev' },
-    { icon: SiNextdotjs, name: 'Next.js', color: '#000000', command: 'next build' },
+    { icon: FaReact, name: 'React', color: '#61DAFB', command: 'npm start' },
+    { icon: SiExpress, name: 'Express.js', color: '#000000', command: 'node server.js' },
+    { icon: SiMongodb, name: 'MongoDB', color: '#47A248', command: 'mongod' },
+    { icon: FaNode, name: 'Node.js', color: '#339933', command: 'node index.js' },
     { icon: SiTypescript, name: 'TypeScript', color: '#3178C6', command: 'tsc --watch' },
-    { icon: FaNode, name: 'Node.js', color: '#339933', command: 'node server.js' },
-    { icon: FaPython, name: 'Python', color: '#3776AB', command: 'python app.py' },
-    { icon: SiDocker, name: 'Docker', color: '#2496ED', command: 'docker-compose up' },
+    { icon: SiRedux, name: 'Redux', color: '#764ABC', command: 'npm run build' },
   ], []);
 
   const terminalCommands = useMemo(() => [
     { 
       prefix: '➜', 
-      command: 'git init portfolio', 
+      command: 'git clone https://github.com/asad-mern/portfolio.git', 
       color: 'text-syntax-purple',
-      output: 'Initialized empty Git repository in ./portfolio/'
+      output: 'Cloning MERN portfolio repository...'
     },
     { 
       prefix: '➜', 
-      command: 'npm create next-app@latest', 
+      command: 'npm install && cd client && npm install', 
       color: 'text-syntax-orange',
-      output: 'Creating a new Next.js app... ✓'
+      output: 'Installing backend & frontend dependencies... ✓'
     },
     { 
       prefix: '$', 
-      command: 'echo "Building with TypeScript & React..."', 
+      command: 'npm run dev', 
       color: 'text-syntax-green',
-      output: 'Building with TypeScript & React...'
+      output: 'MERN stack running on http://localhost:3000'
     },
   ], []);
 
@@ -73,9 +73,9 @@ const Hero = ({ setActiveSection, scrollToSection, darkMode = true }) => {
 
   // Simplified floating elements
   const floatingElements = useMemo(() => [
-    { text: '< />', icon: FaCode, color: 'text-syntax-blue', top: '10%', left: '5%' },
-    { text: '{}', icon: FaCube, color: 'text-syntax-green', top: '30%', right: '10%' },
-    { text: '[]', icon: FaServer, color: 'text-syntax-purple', bottom: '20%', left: '15%' },
+    { icon: FaReact, color: 'text-syntax-cyan', top: '10%', left: '5%' },
+    { icon: FaNode, color: 'text-syntax-green', top: '30%', right: '10%' },
+    { icon: FaDatabase, color: 'text-syntax-yellow', bottom: '20%', left: '15%' },
   ], []);
 
   // Optimized typing effect
@@ -185,7 +185,7 @@ const Hero = ({ setActiveSection, scrollToSection, darkMode = true }) => {
     setCompileProgress(0);
     
     const startTime = Date.now();
-    const duration = 1200;
+    const duration = 1500;
     
     const updateProgress = () => {
       const elapsed = Date.now() - startTime;
@@ -199,7 +199,7 @@ const Hero = ({ setActiveSection, scrollToSection, darkMode = true }) => {
           setIsCompiling(false);
           setTerminalOutput(prev => [
             ...prev.slice(-2),
-            { text: '✓ Build successful!', type: 'success' }
+            { text: '✓ MERN Stack Build Complete!', type: 'success' }
           ]);
         }, 300);
       }
@@ -232,7 +232,8 @@ const Hero = ({ setActiveSection, scrollToSection, darkMode = true }) => {
         scrollMarginTop: '4rem',
         backgroundColor: darkMode ? '#0a0a0a' : '#000000',
         backgroundImage: darkMode 
-          ? `radial-gradient(circle at 20% 30%, rgba(102, 217, 239, 0.05) 0%, transparent 50%)`
+          ? `radial-gradient(circle at 20% 30%, rgba(102, 217, 239, 0.05) 0%, transparent 50%),
+             radial-gradient(circle at 80% 70%, rgba(71, 162, 72, 0.05) 0%, transparent 50%)`
           : `radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.05) 0%, transparent 50%)`
       }}
     >
@@ -283,9 +284,9 @@ const Hero = ({ setActiveSection, scrollToSection, darkMode = true }) => {
           >
             {/* Intro line */}
             <div className="mb-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/30 backdrop-blur-sm border border-gray-800">
-              <FaKeyboard className="text-syntax-green" />
+              <FaServer className="text-syntax-green" />
               <span className="font-mono text-xs text-gray-300">
-                Press <kbd className="px-1.5 py-0.5 bg-gray-900 rounded text-white">⌘</kbd> + <kbd className="px-1.5 py-0.5 bg-gray-900 rounded text-white">K</kbd>
+                MERN_STACK_DEV
               </span>
             </div>
 
@@ -305,7 +306,7 @@ const Hero = ({ setActiveSection, scrollToSection, darkMode = true }) => {
             {/* Role Typing Animation */}
             <div className="h-14 mb-4 flex items-center justify-center lg:justify-start">
               <div className="flex items-center gap-2 bg-black/30 backdrop-blur-sm rounded-lg px-3 py-2 border border-gray-800">
-                <FaTerminal className="text-syntax-green text-lg" />
+                <FaServer className="text-syntax-green text-lg" />
                 <span className="text-lg sm:text-xl font-mono">
                   <span className="text-syntax-blue">$</span>
                   <span className="text-white ml-2">{text}</span>
@@ -318,18 +319,19 @@ const Hero = ({ setActiveSection, scrollToSection, darkMode = true }) => {
             <div className="mb-6 inline-block">
               <div className="flex items-center gap-2 bg-black/30 backdrop-blur-sm rounded-lg px-3 py-2 border border-gray-800">
                 <CurrentTechIcon 
-                  className="text-xl text-syntax-blue" 
+                  className="text-xl" 
                   style={{ color: techStack[activeTech]?.color }} 
                 />
                 <span className="text-white">{techStack[activeTech]?.name}</span>
                 <FaChevronRight className="text-syntax-green text-sm" />
+                <span className="text-xs text-gray-400 font-mono ml-1">{techStack[activeTech]?.command}</span>
               </div>
             </div>
 
             <p className="text-base text-gray-300 mb-6 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-              I architect and build scalable full-stack applications with modern technologies. 
-              Specializing in React, Node.js, and cloud solutions with over 3 years of 
-              experience delivering high-performance digital products.
+              I build robust, scalable full-stack applications using the MERN stack. 
+              With expertise in both frontend (React, Redux) and backend (Node.js, Express, MongoDB), 
+              I create complete digital solutions from database design to responsive UI.
             </p>
 
             {/* Compilation Status */}
@@ -345,7 +347,7 @@ const Hero = ({ setActiveSection, scrollToSection, darkMode = true }) => {
                     <div className="flex items-center justify-between mb-1.5">
                       <span className="font-mono text-xs text-green-500">
                         <FaServer className="inline mr-1.5" />
-                        Compiling...
+                        Building MERN Stack...
                       </span>
                       <span className="font-mono text-xs text-white">{compileProgress}%</span>
                     </div>
@@ -423,12 +425,12 @@ const Hero = ({ setActiveSection, scrollToSection, darkMode = true }) => {
                   <div className="ml-2 text-xs font-mono text-gray-400">
                     <span>terminal</span>
                     <span className="mx-1">—</span>
-                    <span className="text-green-500">bash</span>
+                    <span className="text-green-500">mern-dev</span>
                   </div>
                 </div>
                 <div className="text-xs font-mono text-blue-500">
                   <FaBug className="inline mr-1" />
-                  v1.0.0
+                  MERN v1.0
                 </div>
               </div>
             </div>
@@ -472,20 +474,26 @@ const Hero = ({ setActiveSection, scrollToSection, darkMode = true }) => {
                   <div className="flex items-center gap-1.5 mb-2">
                     <div className="w-2 h-2 rounded-full bg-green-500"></div>
                     <div className="font-mono text-xs text-green-500">
-                      $ npm run build --production
+                      $ npm run dev
                     </div>
                   </div>
                   <div className="ml-3 space-y-1">
                     <div className="flex items-center gap-1.5">
                       <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
                       <span className="font-mono text-xs text-gray-300">
-                        Bundling JavaScript files...
+                        Backend: <span className="text-green-500">Running</span> on port 5000
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <div className="w-1.5 h-1.5 rounded-full bg-yellow-500"></div>
                       <span className="font-mono text-xs text-gray-300">
-                        Minifying CSS...
+                        Frontend: <span className="text-green-500">Running</span> on port 3000
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                      <span className="font-mono text-xs text-gray-300">
+                        MongoDB: <span className="text-green-500">Connected</span>
                       </span>
                     </div>
                   </div>
@@ -497,28 +505,34 @@ const Hero = ({ setActiveSection, scrollToSection, darkMode = true }) => {
                     <FaCode className="text-syntax-blue text-xs" />
                     <span className="font-mono text-xs text-white">
                       <span className="text-syntax-blue">const</span>{' '}
-                      <span className="text-syntax-green">portfolio</span>{' '}
+                      <span className="text-syntax-green">mernStack</span>{' '}
                       <span className="text-syntax-blue">=</span>{' '}
                       <span className="text-syntax-yellow">{'{'}</span>
                     </span>
                   </div>
                   <div className="ml-3 font-mono text-xs space-y-0.5">
                     <div>
-                      <span className="text-syntax-green">name</span>
+                      <span className="text-syntax-green">frontend</span>
                       <span className="text-white">: </span>
-                      <span className="text-orange-400">"Muhammad Asad"</span>
+                      <span className="text-orange-400">"React + Redux + TypeScript"</span>
                       <span className="text-white">,</span>
                     </div>
                     <div>
-                      <span className="text-syntax-green">role</span>
+                      <span className="text-syntax-green">backend</span>
                       <span className="text-white">: </span>
-                      <span className="text-orange-400">"{roles[loopNum % roles.length]}"</span>
+                      <span className="text-orange-400">"Node.js + Express.js + REST APIs"</span>
+                      <span className="text-white">,</span>
+                    </div>
+                    <div>
+                      <span className="text-syntax-green">database</span>
+                      <span className="text-white">: </span>
+                      <span className="text-orange-400">"MongoDB + Mongoose ODM"</span>
                       <span className="text-white">,</span>
                     </div>
                     <div>
                       <span className="text-syntax-green">status</span>
                       <span className="text-white">: </span>
-                      <span className="text-syntax-blue">true</span>
+                      <span className="text-syntax-blue">"active"</span>
                     </div>
                   </div>
                   <div className="font-mono text-xs text-syntax-yellow">
@@ -536,7 +550,7 @@ const Hero = ({ setActiveSection, scrollToSection, darkMode = true }) => {
             onClick={scrollToNext}
             className="flex flex-col items-center font-mono text-gray-400 hover:text-blue-500 transition-colors"
           >
-            <span className="text-xs mb-1">scroll_down()</span>
+            <span className="text-xs mb-1">explore_stack()</span>
             <div className="text-green-500 animate-bounce">
               <FaArrowDown className="text-lg" />
             </div>

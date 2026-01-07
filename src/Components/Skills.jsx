@@ -2,10 +2,8 @@ import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import { 
   FaReact, 
   FaNodeJs, 
-  FaPython, 
   FaDatabase, 
   FaCloud,
-  FaMobile,
   FaCode,
   FaServer,
   FaGitAlt,
@@ -15,7 +13,14 @@ import {
   FaCog,
   FaRocket,
   FaChartLine,
-  FaBrain
+  FaBrain,
+  FaShieldAlt,
+  FaSync,
+  FaBolt as FaLightning,
+  FaLayerGroup,
+  FaLock,
+  FaRocket as FaDeploy,
+  FaTasks
 } from 'react-icons/fa';
 import { 
   SiTypescript, 
@@ -25,13 +30,18 @@ import {
   SiTailwindcss,
   SiRedux,
   SiDocker,
-  SiKubernetes,
   SiPostgresql,
   SiGraphql,
-  SiFirebase,
   SiJavascript,
   SiCss3,
-  SiHtml5
+  SiHtml5,
+  SiMongoose,
+  SiJest,
+  SiWebpack,
+  SiNodedotjs,
+  SiJsonwebtokens,
+  SiSocketdotio,
+  SiRedis
 } from 'react-icons/si';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -41,7 +51,7 @@ const Skills = ({ setActiveSection, darkMode = true }) => {
   const [hoveredSkill, setHoveredSkill] = useState(null);
   const observerRef = useRef(null);
 
-  // Memoize skill categories to prevent re-renders
+  // Memoize skill categories for MERN stack developer
   const skillCategories = useMemo(() => [
     {
       title: 'Frontend Development',
@@ -52,12 +62,12 @@ const Skills = ({ setActiveSection, darkMode = true }) => {
       skills: [
         { name: 'React', icon: FaReact, level: 95, color: '#61DAFB', description: 'Component-based UI library' },
         { name: 'Next.js', icon: SiNextdotjs, level: 90, color: '#000000', description: 'React framework for production' },
-        { name: 'TypeScript', icon: SiTypescript, level: 85, color: '#3178C6', description: 'Typed JavaScript superset' },
-        { name: 'JavaScript', icon: SiJavascript, level: 95, color: '#F7DF1E', description: 'Core web technology' },
-        { name: 'HTML5', icon: SiHtml5, level: 98, color: '#E34F26', description: 'Web markup language' },
-        { name: 'CSS3', icon: SiCss3, level: 90, color: '#1572B6', description: 'Styling web pages' },
-        { name: 'Tailwind CSS', icon: SiTailwindcss, level: 95, color: '#06B6D4', description: 'Utility-first CSS framework' },
+        { name: 'TypeScript', icon: SiTypescript, level: 88, color: '#3178C6', description: 'Typed JavaScript superset' },
         { name: 'Redux', icon: SiRedux, level: 85, color: '#764ABC', description: 'State management library' },
+        { name: 'JavaScript', icon: SiJavascript, level: 95, color: '#F7DF1E', description: 'Core web technology' },
+        { name: 'Tailwind CSS', icon: SiTailwindcss, level: 92, color: '#06B6D4', description: 'Utility-first CSS framework' },
+        { name: 'HTML5/CSS3', icon: SiHtml5, level: 96, color: '#E34F26', description: 'Web markup & styling' },
+        { name: 'Responsive Design', icon: FaSync, level: 94, color: '#2196F3', description: 'Cross-device compatibility' },
       ]
     },
     {
@@ -67,57 +77,63 @@ const Skills = ({ setActiveSection, darkMode = true }) => {
       color: 'border-syntax-green',
       bgColor: 'bg-syntax-green/5',
       skills: [
-        { name: 'Node.js', icon: FaNodeJs, level: 90, color: '#339933', description: 'JavaScript runtime' },
-        { name: 'Express.js', icon: SiExpress, level: 88, color: '#000000', description: 'Web framework for Node.js' },
-        { name: 'Python', icon: FaPython, level: 85, color: '#3776AB', description: 'General-purpose programming' },
-        { name: 'REST APIs', icon: FaCode, level: 92, color: '#FF6B35', description: 'API architecture style' },
+        { name: 'Node.js', icon: SiNodedotjs, level: 92, color: '#339933', description: 'JavaScript runtime' },
+        { name: 'Express.js', icon: SiExpress, level: 90, color: '#000000', description: 'Web framework for Node.js' },
+        { name: 'REST APIs', icon: FaCode, level: 94, color: '#FF6B35', description: 'API architecture style' },
+        { name: 'JWT Auth', icon: SiJsonwebtokens, level: 88, color: '#000000', description: 'Authentication & security' },
+        { name: 'WebSockets', icon: SiSocketdotio, level: 85, color: '#010101', description: 'Real-time communication' },
         { name: 'GraphQL', icon: SiGraphql, level: 80, color: '#E10098', description: 'Query language for APIs' },
-        { name: 'Authentication', icon: FaBrain, level: 90, color: '#FF9800', description: 'Security & user management' },
+        { name: 'Middleware', icon: FaLayerGroup, level: 90, color: '#9C27B0', description: 'Request processing' },
+        { name: 'Server Security', icon: FaShieldAlt, level: 87, color: '#FF9800', description: 'Security implementation' },
       ]
     },
     {
-      title: 'Database & Cloud',
+      title: 'Database & DevOps',
       icon: FaDatabase,
-      description: 'Data storage & cloud infrastructure',
+      description: 'Data storage & deployment',
       color: 'border-syntax-purple',
       bgColor: 'bg-syntax-purple/5',
       skills: [
-        { name: 'MongoDB', icon: SiMongodb, level: 88, color: '#47A248', description: 'NoSQL document database' },
+        { name: 'MongoDB', icon: SiMongodb, level: 90, color: '#47A248', description: 'NoSQL document database' },
+        { name: 'Mongoose ODM', icon: SiMongoose, level: 88, color: '#880000', description: 'MongoDB object modeling' },
         { name: 'PostgreSQL', icon: SiPostgresql, level: 85, color: '#336791', description: 'Relational database' },
-        { name: 'Firebase', icon: SiFirebase, level: 82, color: '#FFCA28', description: 'Backend as a service' },
-        { name: 'AWS', icon: FaAws, level: 75, color: '#FF9900', description: 'Cloud computing platform' },
-        { name: 'Docker', icon: SiDocker, level: 80, color: '#2496ED', description: 'Containerization platform' },
-        { name: 'Kubernetes', icon: SiKubernetes, level: 70, color: '#326CE5', description: 'Container orchestration' },
+        { name: 'Redis', icon: SiRedis, level: 82, color: '#DC382D', description: 'In-memory data store' },
+        { name: 'Docker', icon: SiDocker, level: 83, color: '#2496ED', description: 'Containerization platform' },
+        { name: 'AWS', icon: FaAws, level: 80, color: '#FF9900', description: 'Cloud computing platform' },
+        { name: 'CI/CD', icon: FaRocket, level: 85, color: '#4285F4', description: 'Continuous integration/deployment' },
+        { name: 'Git', icon: FaGitAlt, level: 95, color: '#F05032', description: 'Version control system' },
       ]
     },
     {
-      title: 'Tools & Others',
-      icon: FaGitAlt,
-      description: 'Development workflow & methodologies',
+      title: 'Testing & Tools',
+      icon: FaTasks,
+      description: 'Quality assurance & development tools',
       color: 'border-syntax-orange',
       bgColor: 'bg-syntax-orange/5',
       skills: [
-        { name: 'Git', icon: FaGitAlt, level: 90, color: '#F05032', description: 'Version control system' },
-        { name: 'CI/CD', icon: FaRocket, level: 85, color: '#4285F4', description: 'Continuous integration & deployment' },
-        { name: 'Agile/Scrum', icon: FaChartLine, level: 88, color: '#00C853', description: 'Project management framework' },
-        { name: 'Testing', icon: FaCog, level: 80, color: '#FF5252', description: 'Quality assurance & testing' },
-        { name: 'Mobile Dev', icon: FaMobile, level: 75, color: '#2196F3', description: 'Cross-platform mobile development' },
-        { name: 'UI/UX Design', icon: FaBolt, level: 70, color: '#9C27B0', description: 'User interface & experience design' },
+        { name: 'Jest', icon: SiJest, level: 85, color: '#C21325', description: 'Testing framework' },
+        { name: 'Testing Library', icon: FaBrain, level: 82, color: '#E33332', description: 'React testing utilities' },
+        { name: 'Webpack', icon: SiWebpack, level: 80, color: '#8DD6F9', description: 'Module bundler' },
+        { name: 'GitHub Actions', icon: FaSync, level: 78, color: '#2088FF', description: 'Automation workflows' },
+        { name: 'Agile/Scrum', icon: FaChartLine, level: 88, color: '#00C853', description: 'Project management' },
+        { name: 'Performance Opt', icon: FaBolt, level: 85, color: '#FF5252', description: 'Performance optimization' },
+        { name: 'Code Review', icon: FaCode, level: 90, color: '#2196F3', description: 'Code quality assessment' },
+        { name: 'Documentation', icon: FaCog, level: 92, color: '#607D8B', description: 'Technical documentation' },
       ]
     }
   ], []);
 
-  // Memoize code lines
+  // Memoize code lines for MERN stack
   const codeLines = useMemo(() => [
-    "const skills: Skill[] = [",
-    "  { name: 'React', level: 95, color: '#61DAFB' },",
-    "  { name: 'TypeScript', level: 85, color: '#3178C6' },",
-    "  { name: 'Node.js', level: 90, color: '#339933' },",
-    "  { name: 'Python', level: 85, color: '#3776AB' },",
-    "  { name: 'MongoDB', level: 88, color: '#47A248' },",
-    "  { name: 'AWS', level: 75, color: '#FF9900' },",
-    "  { name: 'Docker', level: 80, color: '#2496ED' },",
-    "  { name: 'Git', level: 90, color: '#F05032' },",
+    "const mernSkills: SkillSet[] = [",
+    "  { name: 'React', level: 95, category: 'Frontend' },",
+    "  { name: 'Node.js', level: 92, category: 'Backend' },",
+    "  { name: 'Express.js', level: 90, category: 'Backend' },",
+    "  { name: 'MongoDB', level: 90, category: 'Database' },",
+    "  { name: 'TypeScript', level: 88, category: 'Frontend' },",
+    "  { name: 'Redux', level: 85, category: 'State Management' },",
+    "  { name: 'Docker', level: 83, category: 'DevOps' },",
+    "  { name: 'AWS', level: 80, category: 'Cloud' },",
     "];"
   ], []);
 
@@ -130,7 +146,7 @@ const Skills = ({ setActiveSection, darkMode = true }) => {
     return {
       totalSkills,
       averageLevel,
-      projectsCount: 50,
+      projectsCount: 40,
       experienceYears: 3
     };
   }, [skillCategories]);
@@ -192,7 +208,9 @@ const Skills = ({ setActiveSection, darkMode = true }) => {
       className="min-h-screen py-16 relative"
       style={{ 
         backgroundColor: '#0a0a0a',
-        scrollMarginTop: '4rem'
+        scrollMarginTop: '4rem',
+        backgroundImage: `radial-gradient(circle at 20% 80%, rgba(71, 162, 72, 0.05) 0%, transparent 50%),
+                          radial-gradient(circle at 80% 20%, rgba(102, 217, 239, 0.05) 0%, transparent 50%)`
       }}
     >
       {/* Simplified Grid Pattern */}
@@ -210,18 +228,19 @@ const Skills = ({ setActiveSection, darkMode = true }) => {
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/30 backdrop-blur-sm border border-gray-800 text-sm font-mono mb-4">
             <FaTerminal className="text-syntax-blue" />
-            <span className="text-white">$ skills --list --level=expert</span>
+            <span className="text-white">$ mern-skills --expertise --full-stack</span>
           </div>
           
           <h2 className="text-3xl sm:text-4xl font-bold mb-3">
-            <span className="text-syntax-blue">const</span>{' '}
-            <span className="text-syntax-green">skills</span>{' '}
+            <span className="text-syntax-blue">export</span>{' '}
+            <span className="text-syntax-green">const</span>{' '}
+            <span className="text-white">skills</span>{' '}
             <span className="text-syntax-blue">=</span>{' '}
             <span className="text-syntax-yellow">[</span>
           </h2>
           
           <p className="text-gray-400 max-w-2xl mx-auto font-mono text-sm">
-            // Mastery across the full stack development spectrum
+            // MERN Stack expertise with modern web technologies
           </p>
         </div>
 
@@ -300,16 +319,22 @@ const Skills = ({ setActiveSection, darkMode = true }) => {
         >
           <div className="terminal-window">
             <div className="terminal-header">
-              <div className="flex items-center">
-                <div className="flex gap-1 mr-3">
-                  <div className="w-2.5 h-2.5 rounded-full bg-red-500"></div>
-                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
-                  <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="flex gap-1 mr-3">
+                    <div className="w-2.5 h-2.5 rounded-full bg-red-500"></div>
+                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
+                    <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+                  </div>
+                  <div className="text-sm font-mono">
+                    <span className="text-syntax-green">mern-skills.ts</span>
+                    <span className="mx-1.5">—</span>
+                    <span className="text-syntax-blue">TypeScript</span>
+                  </div>
                 </div>
-                <div className="text-sm font-mono">
-                  <span className="text-syntax-green">skills.ts</span>
-                  <span className="mx-1.5">—</span>
-                  <span className="text-syntax-blue">TypeScript</span>
+                <div className="text-xs font-mono text-syntax-purple">
+                  <span className="animate-pulse">●</span>
+                  <span className="ml-1.5">MERN Stack</span>
                 </div>
               </div>
             </div>
@@ -319,10 +344,10 @@ const Skills = ({ setActiveSection, darkMode = true }) => {
                 {codeLines.map((line, index) => (
                   <div key={index} className="mb-0.5">
                     <span className="text-syntax-purple">
-                      {index === 0 ? 'const' : index === 6 ? '  },' : '  '}
+                      {index === 0 ? 'const' : index === 8 ? '];' : '  '}
                     </span>
                     <span className="text-white">
-                      {line.replace(/^const |  |};$/g, '')}
+                      {line.replace(/^const |export const |];$/g, '')}
                     </span>
                     {index === codeLines.length - 1 && (
                       <span className="ml-1 inline-block w-1.5 h-3.5 bg-green-500 animate-pulse"></span>
@@ -338,28 +363,32 @@ const Skills = ({ setActiveSection, darkMode = true }) => {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
           {[
             { 
-              label: 'Total Skills', 
-              value: skillStats.totalSkills, 
-              icon: FaBrain,
+              label: 'Tech Stack', 
+              value: 'MERN', 
+              icon: FaLayerGroup,
               color: 'text-syntax-blue',
+              description: 'Primary Stack'
             },
             { 
               label: 'Average Mastery', 
               value: `${skillStats.averageLevel}%`, 
               icon: FaChartLine,
               color: 'text-syntax-green',
+              description: 'Skill Level'
             },
             { 
               label: 'Projects', 
-              value: '50+', 
+              value: '40+', 
               icon: FaRocket,
               color: 'text-syntax-purple',
+              description: 'Completed'
             },
             { 
-              label: 'Years Experience', 
-              value: '3+', 
+              label: 'Experience', 
+              value: '3+ Years', 
               icon: FaCog,
               color: 'text-syntax-orange',
+              description: 'Full Stack Dev'
             },
           ].map((stat, index) => (
             <motion.div
@@ -375,14 +404,17 @@ const Skills = ({ setActiveSection, darkMode = true }) => {
                   {stat.value}
                 </div>
               </div>
-              <div className="text-sm font-mono text-white">
+              <div className="text-sm font-mono text-white mb-1">
                 {stat.label}
+              </div>
+              <div className="text-xs text-gray-400">
+                {stat.description}
               </div>
             </motion.div>
           ))}
         </div>
 
-        {/* Skill Comparison Chart */}
+        {/* MERN Stack Progress Chart */}
         <motion.div 
           className="bg-black/30 backdrop-blur-sm rounded-lg p-5 border border-gray-800"
           initial={{ opacity: 0 }}
@@ -390,48 +422,85 @@ const Skills = ({ setActiveSection, darkMode = true }) => {
           transition={{ delay: 0.4 }}
         >
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold font-mono text-white">
-              // Skill Comparison
-            </h3>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-syntax-green animate-pulse"></div>
+              <h3 className="text-lg font-bold font-mono text-white">
+                // MERN Stack Proficiency
+              </h3>
+            </div>
             <div className="text-xs font-mono text-syntax-green">
-              <span className="animate-pulse">●</span>
-              <span className="ml-1.5">Live Data</span>
+              <span>Full Stack</span>
             </div>
           </div>
           
-          <div className="space-y-3">
+          <div className="space-y-4">
             {[
-              { skill: 'React', level: 95, color: '#61DAFB' },
-              { skill: 'TypeScript', level: 85, color: '#3178C6' },
-              { skill: 'Node.js', level: 90, color: '#339933' },
-              { skill: 'Python', level: 85, color: '#3776AB' },
-              { skill: 'MongoDB', level: 88, color: '#47A248' },
+              { skill: 'React', level: 95, color: '#61DAFB', category: 'Frontend' },
+              { skill: 'Node.js', level: 92, color: '#339933', category: 'Backend' },
+              { skill: 'Express.js', level: 90, color: '#000000', category: 'Backend' },
+              { skill: 'MongoDB', level: 90, color: '#47A248', category: 'Database' },
+              { skill: 'TypeScript', level: 88, color: '#3178C6', category: 'Frontend' },
+              { skill: 'Redux', level: 85, color: '#764ABC', category: 'State Mgmt' },
             ].map((item, index) => (
               <div 
                 key={item.skill}
-                className="flex items-center gap-3"
+                className="flex items-center gap-4"
               >
-                <div className="w-28">
+                <div className="w-32 flex items-center gap-2">
+                  <div 
+                    className="w-3 h-3 rounded"
+                    style={{ backgroundColor: item.color }}
+                  ></div>
                   <span className="text-sm font-mono text-white">
                     {item.skill}
                   </span>
-                </div>
-                <div className="flex-1">
-                  <div className="relative h-5 bg-gray-900 rounded-full overflow-hidden">
-                    <div 
-                      className="h-5 rounded-full transition-all duration-1000"
-                      style={{ 
-                        width: isVisible ? `${item.level}%` : '0%',
-                        background: item.color,
-                      }}
-                    ></div>
-                  </div>
-                </div>
-                <div className="w-12 text-right">
-                  <span className="text-sm font-mono text-syntax-green">
-                    {item.level}%
+                  <span className="text-xs text-gray-400">
+                    ({item.category})
                   </span>
                 </div>
+                <div className="flex-1">
+                  <div className="relative h-6 bg-gray-900 rounded-full overflow-hidden">
+                    <div 
+                      className="h-6 rounded-full transition-all duration-1000 flex items-center justify-end pr-2"
+                      style={{ 
+                        width: isVisible ? `${item.level}%` : '0%',
+                        background: `linear-gradient(90deg, ${item.color}80, ${item.color})`,
+                      }}
+                    >
+                      <span className="text-xs font-mono text-black font-bold">
+                        {item.level}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Specialization Badges */}
+        <motion.div 
+          className="mt-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isVisible ? 1 : 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          <div className="flex flex-wrap gap-2 justify-center">
+            {[
+              { label: 'REST APIs', color: 'border-blue-500 text-blue-400' },
+              { label: 'JWT Auth', color: 'border-green-500 text-green-400' },
+              { label: 'Mongoose ODM', color: 'border-red-500 text-red-400' },
+              { label: 'Real-time Apps', color: 'border-purple-500 text-purple-400' },
+              { label: 'State Management', color: 'border-yellow-500 text-yellow-400' },
+              { label: 'Performance Opt', color: 'border-cyan-500 text-cyan-400' },
+              { label: 'API Security', color: 'border-orange-500 text-orange-400' },
+              { label: 'Database Design', color: 'border-pink-500 text-pink-400' },
+            ].map((badge, index) => (
+              <div 
+                key={index}
+                className={`px-3 py-1.5 rounded-full border bg-black/30 backdrop-blur-sm text-xs font-mono ${badge.color}`}
+              >
+                {badge.label}
               </div>
             ))}
           </div>
@@ -451,9 +520,6 @@ const Skills = ({ setActiveSection, darkMode = true }) => {
           background: rgba(20, 20, 20, 0.8);
           padding: 0.75rem 1rem;
           border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
         }
 
         .terminal-body {
@@ -473,6 +539,12 @@ const Skills = ({ setActiveSection, darkMode = true }) => {
 
         .animate-pulse {
           animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* Skill item hover effect */
+        .skill-item:hover {
+          transform: translateX(2px);
+          transition: transform 0.2s ease;
         }
 
         /* Reduced motion support */
