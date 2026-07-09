@@ -1,1125 +1,389 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  FaEnvelope, 
-  FaPhone, 
-  FaMapMarkerAlt, 
-  FaGithub, 
-  FaLinkedin, 
-  FaTwitter, 
-  FaInstagram,
-  FaCheckCircle,
-  FaExclamationCircle,
-  FaPaperPlane,
-  FaUser,
-  FaGlobe,
-  FaTerminal,
-  FaCode,
-  FaChevronRight,
-  FaArrowRight,
-  FaServer,
-  FaDatabase,
-  FaBolt,
-  FaBug,
-  FaKeyboard,
-  FaCog
+import {
+  FaEnvelope, FaPhone, FaMapMarkerAlt,
+  FaGithub, FaLinkedin,
+  FaCheckCircle, FaPaperPlane,
+  FaUser, FaCode,
 } from 'react-icons/fa';
-import { SiTypescript, SiNextdotjs, SiTailwindcss, SiDocker } from 'react-icons/si';
 
-const Contact = ({ setActiveSection, darkMode = true, isStandalone = false, scrollToSection }) => {
+const inputBase = {
+  dark: 'dark:bg-white/[0.04] dark:border-white/[0.08] dark:text-white dark:placeholder-white/20 dark:focus:border-cyan-400/50 dark:focus:ring-cyan-400/10',
+  light: 'bg-white border-slate-200 text-slate-900 placeholder-slate-300 focus:border-indigo-400 focus:ring-indigo-400/10',
+};
+
+const INPUT_CLS = `w-full px-4 py-3.5 rounded-xl border text-sm font-medium outline-none focus:ring-2 transition-all duration-200
+  ${inputBase.dark} ${inputBase.light}`;
+
+const LABEL_CLS = 'block text-[11px] font-mono tracking-[0.12em] uppercase dark:text-white/30 text-slate-400 mb-2';
+
+/* ── Motion Variants ──────────────────────────────── */
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.15, delayChildren: 0.1 }
+  }
+};
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100, damping: 15 } }
+};
+
+const slideRight = {
+  hidden: { opacity: 0, x: -30 },
+  show: { opacity: 1, x: 0, transition: { type: 'spring', stiffness: 100, damping: 20 } }
+};
+
+const slideLeft = {
+  hidden: { opacity: 0, x: 30 },
+  show: { opacity: 1, x: 0, transition: { type: 'spring', stiffness: 100, damping: 20 } }
+};
+
+/* ── Component ───────────────────────────────────── */
+const Contact = ({ setActiveSection, isStandalone = false }) => {
   const sectionRef = useRef(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  });
-  const [status, setStatus] = useState({
-    sending: false,
-    success: false,
-    error: false,
-    message: ''
-  });
-  const [terminalOutput, setTerminalOutput] = useState([]);
-  const [activeCommand, setActiveCommand] = useState(0);
-  const [binaryMatrix, setBinaryMatrix] = useState([]);
-  const [isMounted, setIsMounted] = useState(false);
-  const [cursorVisible, setCursorVisible] = useState(true);
-  const [showTerminal, setShowTerminal] = useState(false);
+  const observerRef = useRef(null);
+  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
+  const [status, setStatus] = useState({ sending: false, success: false, message: '' });
+  const [visible, setVisible] = useState(false);
+  const [isDark, setIsDark] = useState(false);
 
-  const terminalCommands = [
-    { 
-      prefix: '➜', 
-      command: 'cd ./contact', 
-      color: 'text-syntax-blue',
-      output: 'Changed directory to contact/'
-    },
-    { 
-      prefix: '$', 
-      command: 'npm run contact-server', 
-      color: 'text-syntax-green',
-      output: 'Starting contact server on port 3000... ✓'
-    },
-    { 
-      prefix: '➜', 
-      command: 'echo "Initializing contact form..."', 
-      color: 'text-syntax-purple',
-      output: 'Contact form initialized with validation'
-    },
-    { 
-      prefix: '#', 
-      command: '// Contact endpoint ready', 
-      color: 'text-syntax-yellow',
-      output: ''
-    },
-  ];
-
-  // Initialize binary matrix for Matrix-like effect
+  /* Detect dark mode */
   useEffect(() => {
-    const generateBinaryMatrix = () => {
-      const matrix = [];
-      for (let i = 0; i < 30; i++) {
-        matrix.push({
-          id: i,
-          char: Math.random() > 0.5 ? '0' : '1',
-          color: darkMode ? 'text-syntax-green' : 'text-syntax-blue',
-          opacity: 0.05 + Math.random() * 0.2,
-          speed: 1 + Math.random() * 3,
-          left: `${Math.random() * 100}%`,
-          delay: Math.random() * 10,
-        });
-      }
-      return matrix;
-    };
-    
-    setBinaryMatrix(generateBinaryMatrix());
-    
-    const interval = setInterval(() => {
-      setBinaryMatrix(prev => prev.map(item => ({
-        ...item,
-        char: Math.random() > 0.5 ? '0' : '1',
-      })));
-    }, 100);
-    
-    return () => clearInterval(interval);
-  }, [darkMode]);
-
-  // Cursor blink effect
-  useEffect(() => {
-    const cursorInterval = setInterval(() => {
-      setCursorVisible(prev => !prev);
-    }, 500);
-    
-    return () => clearInterval(cursorInterval);
+    const check = () => setIsDark(document.documentElement.classList.contains('dark'));
+    check();
+    const obs = new MutationObserver(check);
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => obs.disconnect();
   }, []);
 
-  // Terminal animation and command execution
+  /* Intersection observer */
   useEffect(() => {
-    const timer = setTimeout(() => setShowTerminal(true), 300);
-    
-    const commandInterval = setInterval(() => {
-      setActiveCommand(prev => {
-        const next = (prev + 1) % terminalCommands.length;
-        if (terminalCommands[next].output) {
-          setTimeout(() => {
-            setTerminalOutput(prev => [
-              ...prev.slice(-3),
-              { text: terminalCommands[next].output, type: 'output' }
-            ]);
-          }, 300);
-        }
-        return next;
-      });
-    }, 2500);
-    
-    return () => {
-      clearTimeout(timer);
-      clearInterval(commandInterval);
-    };
-  }, []);
-
-  useEffect(() => {
-    setIsMounted(true);
-    
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setActiveSection('contact');
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
+    if (!observerRef.current) {
+      observerRef.current = new IntersectionObserver(
+        ([e]) => { setVisible(e.isIntersecting); if (e.isIntersecting && setActiveSection) setActiveSection('contact'); },
+        { threshold: 0.08 }
+      );
     }
-
-    return () => observer.disconnect();
+    const el = sectionRef.current;
+    if (el) observerRef.current.observe(el);
+    return () => { if (el) observerRef.current?.unobserve(el); };
   }, [setActiveSection]);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const simulateTerminal = (message, type = 'output') => {
-    setTerminalOutput(prev => [
-      ...prev.slice(-3),
-      { text: message, type }
-    ]);
-    setTimeout(() => {
-      setTerminalOutput(prev => prev.slice(1));
-    }, 5000);
-  };
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setStatus({ sending: true, success: false, error: false, message: 'Compiling form data...' });
-    
-    simulateTerminal('$ contact_form.submit()\n> Validating form data...', 'system');
-
+    setStatus({ sending: true, success: false, message: '' });
     setTimeout(() => {
-      setStatus({
-        sending: false,
-        success: true,
-        error: false,
-        message: '✓ Message sent successfully! I\'ll get back to you soon.'
-      });
-      
-      simulateTerminal('✓ Form validation passed\n> Sending message via API...', 'success');
-      
-      setTimeout(() => {
-        simulateTerminal('✓ Message delivered successfully!\n> Response: 200 OK', 'success');
-        
-        setFormData({
-          name: '',
-          email: '',
-          subject: '',
-          message: ''
-        });
-
-        setTimeout(() => {
-          setStatus({ sending: false, success: false, error: false, message: '' });
-        }, 4000);
-      }, 1500);
-    }, 2000);
+      setStatus({ sending: false, success: true, message: "Message sent! I'll get back to you shortly." });
+      setFormData({ name: '', email: '', subject: '', message: '' });
+      setTimeout(() => setStatus({ sending: false, success: false, message: '' }), 5000);
+    }, 1500);
   };
 
-  const languages = ['English', 'Urdu', 'Saraiki', 'Pashto'];
-  
-  const socialLinks = [
-    { 
-      icon: FaGithub, 
-      label: 'GitHub', 
-      url: 'https://github.com', 
-      color: 'hover:text-[#f0f6fc]',
-      bgColor: '#24292e'
-    },
-    { 
-      icon: FaLinkedin, 
-      label: 'LinkedIn', 
-      url: 'https://linkedin.com', 
-      color: 'hover:text-[#0a66c2]',
-      bgColor: '#0A66C2'
-    },
-    { 
-      icon: FaTwitter, 
-      label: 'Twitter', 
-      url: 'https://twitter.com', 
-      color: 'hover:text-[#1da1f2]',
-      bgColor: '#1DA1F2'
-    },
-    { 
-      icon: FaInstagram, 
-      label: 'Instagram', 
-      url: 'https://instagram.com', 
-      color: 'hover:text-[#E4405F]',
-      bgColor: '#E4405F'
-    }
+  const accent = isDark ? '#67e8f9' : '#4f46e5';
+
+  const contactItems = [
+    { icon: FaEnvelope, label: 'Email', value: 'kamalasad57@gmail.com', href: 'mailto:kamalasad57@gmail.com' },
+    { icon: FaPhone, label: 'Phone', value: '+92 305 1958933', href: 'tel:+923051958933' },
+    { icon: FaMapMarkerAlt, label: 'Location', value: 'Islamabad, Pakistan', href: null },
   ];
 
-  const contactInfo = [
-    {
-      icon: FaEnvelope,
-      title: "Email",
-      value: "kamalasad57@gmail.com",
-      color: darkMode ? "text-syntax-blue" : "text-blue-500",
-      bgColor: darkMode ? 'rgba(96, 123, 150, 0.1)' : 'rgba(59, 130, 246, 0.1)',
-      iconColor: darkMode ? '#61DAFB' : '#3B82F6'
-    },
-    {
-      icon: FaPhone,
-      title: "Phone",
-      value: "+92 305 1958933",
-      color: darkMode ? "text-syntax-green" : "text-green-500",
-      bgColor: darkMode ? 'rgba(16, 185, 129, 0.1)' : 'rgba(34, 197, 94, 0.1)',
-      iconColor: darkMode ? '#10B981' : '#22C55E'
-    },
-    {
-      icon: FaMapMarkerAlt,
-      title: "Location",
-      value: "Mianawala, Isa Khel, Mianwali, Punjab, Pakistan",
-      color: darkMode ? "text-syntax-purple" : "text-purple-500",
-      bgColor: darkMode ? 'rgba(139, 92, 246, 0.1)' : 'rgba(168, 85, 247, 0.1)',
-      iconColor: darkMode ? '#8B5CF6' : '#A855F7'
-    },
-    {
-      icon: FaGlobe,
-      title: "Languages",
-      value: languages.join(', '),
-      color: darkMode ? "text-syntax-yellow" : "text-yellow-500",
-      bgColor: darkMode ? 'rgba(245, 158, 11, 0.1)' : 'rgba(245, 158, 11, 0.1)',
-      iconColor: darkMode ? '#F59E0B' : '#F59E0B'
-    }
-  ];
-
-  // Floating elements positions
-  const floatingElements = [
-    { text: '<form>', icon: FaCode, color: darkMode ? 'text-syntax-blue' : 'text-blue-600', delay: '0s', top: '10%', left: '5%' },
-    { text: '{}', icon: FaDatabase, color: darkMode ? 'text-syntax-green' : 'text-green-600', delay: '0.3s', top: '20%', right: '10%' },
-    { text: '=>', icon: FaBolt, color: darkMode ? 'text-syntax-yellow' : 'text-yellow-600', delay: '0.6s', bottom: '30%', left: '10%' },
-    { text: 'API', icon: FaServer, color: darkMode ? 'text-syntax-purple' : 'text-purple-600', delay: '0.9s', bottom: '20%', right: '15%' },
+  const socials = [
+    { icon: FaGithub, href: 'https://github.com/Asad-coder56', label: 'GitHub' },
+    { icon: FaLinkedin, href: 'https://www.linkedin.com/in/muhammad-asad-kamal-shah-076053318', label: 'LinkedIn' },
+    { icon: FaEnvelope, href: 'mailto:kamalasad57@gmail.com', label: 'Email' },
   ];
 
   return (
-    <section 
-      id="contact" 
-      ref={sectionRef} 
-      className={`min-h-screen py-20 relative overflow-hidden ${isStandalone ? 'pt-24' : ''}`}
-      style={{ 
-        scrollMarginTop: '5rem',
-        backgroundColor: darkMode ? '#0a0a0a' : '#000000',
-        backgroundImage: darkMode 
-          ? `radial-gradient(circle at 20% 30%, rgba(102, 217, 239, 0.05) 0%, transparent 50%),
-             radial-gradient(circle at 80% 70%, rgba(16, 185, 129, 0.05) 0%, transparent 50%)`
-          : `radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
-             radial-gradient(circle at 80% 70%, rgba(34, 197, 94, 0.05) 0%, transparent 50%)`
-      }}
+    <section
+      id="contact"
+      ref={sectionRef}
+      className={`relative py-28 overflow-hidden bg-transparent dark:bg-transparent transition-colors duration-500 border-t dark:border-white/[0.06] border-slate-200 ${isStandalone ? 'pt-36' : ''}`}
+      style={{ scrollMarginTop: '4rem' }}
     >
-      {/* Matrix Binary Rain Background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {binaryMatrix.map((binary) => (
-          <motion.div
-            key={binary.id}
-            className={`absolute ${binary.color} text-xs font-mono-developer font-bold`}
-            style={{ 
-              left: binary.left,
-              opacity: binary.opacity 
-            }}
-            initial={{ y: -100, opacity: 0 }}
-            animate={{ 
-              y: ['-100%', '100vh'],
-              opacity: [0, binary.opacity, 0]
-            }}
-            transition={{
-              y: {
-                duration: binary.speed * 10,
-                repeat: Infinity,
-                delay: binary.delay,
-                ease: "linear"
-              },
-              opacity: {
-                duration: binary.speed * 5,
-                repeat: Infinity,
-                delay: binary.delay,
-                ease: "linear"
-              }
-            }}
-          >
-            {binary.char}
-          </motion.div>
-        ))}
+      {/* Background */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div
+          className="absolute inset-0 dark:opacity-[0.03] opacity-[0.03]"
+          style={{
+            backgroundImage: `linear-gradient(rgba(99,179,237,0.6) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(99,179,237,0.6) 1px, transparent 1px)`,
+            backgroundSize: '60px 60px',
+          }}
+        />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full dark:bg-cyan-500/6 bg-indigo-200/20 blur-[120px]" />
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full dark:bg-violet-600/6 bg-violet-200/15 blur-[100px]" />
       </div>
 
-      {/* Grid Pattern */}
-      <div 
-        className="absolute inset-0"
-        style={{
-          backgroundImage: darkMode
-            ? `linear-gradient(to right, rgba(102, 217, 239, 0.05) 1px, transparent 1px),
-               linear-gradient(to bottom, rgba(102, 217, 239, 0.05) 1px, transparent 1px)`
-            : `linear-gradient(to right, rgba(59, 130, 246, 0.05) 1px, transparent 1px),
-               linear-gradient(to bottom, rgba(59, 130, 246, 0.05) 1px, transparent 1px)`,
-          backgroundSize: '50px 50px',
-          maskImage: 'radial-gradient(circle at center, black 20%, transparent 70%)',
-          WebkitMaskImage: 'radial-gradient(circle at center, black 20%, transparent 70%)',
-        }}
-      ></div>
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10">
 
-      {/* Animated Code Lines */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(10)].map((_, i) => (
-          <motion.div
-            key={i}
-            className={`absolute w-32 h-px ${
-              darkMode 
-                ? 'bg-gradient-to-r from-transparent via-syntax-blue to-transparent' 
-                : 'bg-gradient-to-r from-transparent via-blue-500 to-transparent'
-            }`}
-            initial={{ x: '-100%', opacity: 0 }}
-            animate={{ 
-              x: '100vw',
-              opacity: [0, 0.2, 0]
-            }}
-            transition={{
-              x: {
-                duration: 15 + Math.random() * 10,
-                repeat: Infinity,
-                delay: Math.random() * 5,
-                ease: "linear"
-              },
-              opacity: {
-                duration: 5,
-                repeat: Infinity,
-                delay: Math.random() * 5,
-              }
-            }}
-            style={{
-              top: `${Math.random() * 100}%`,
-            }}
-          ></motion.div>
-        ))}
-      </div>
-
-      {/* Floating Elements */}
-      {floatingElements.map((element, index) => {
-        const Icon = element.icon;
-        return (
-          <motion.div
-            key={index}
-            className={`absolute ${element.color} opacity-10`}
-            style={{
-              top: element.top,
-              left: element.left,
-              right: element.right,
-            }}
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{
-              opacity: [0, 0.2, 0],
-              scale: [0.5, 1.2, 0.5],
-              rotate: [0, 180, 360],
-              y: [0, -30, 0]
-            }}
-            transition={{
-              duration: 10,
-              repeat: Infinity,
-              delay: parseFloat(element.delay),
-              ease: "linear"
-            }}
-          >
-            <Icon className="text-2xl sm:text-3xl" />
-          </motion.div>
-        );
-      })}
-
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Header */}
-        <motion.div 
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+        {/* ── Header ── */}
+        <motion.div
+          initial="hidden"
+          animate={visible ? 'show' : 'hidden'}
+          variants={fadeUp}
+          className="mb-14"
         >
-          <motion.div 
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/50 backdrop-blur-sm border border-gray-800 mb-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <FaKeyboard className={darkMode ? 'text-syntax-green' : 'text-green-500'} />
-            <span className={`font-mono-developer text-sm ${darkMode ? 'text-developer-secondary' : 'text-gray-400'}`}>
-              Press <span className="px-1 py-0.5 bg-gray-900 rounded text-white">⌘</span> + <span className="px-1 py-0.5 bg-gray-900 rounded text-white">C</span> to contact
-            </span>
-          </motion.div>
-
-          <h2 className="text-4xl sm:text-5xl font-bold mb-6">
-            <span className="block">
-              <span className={darkMode ? 'text-terminal' : 'text-white'}>Contact</span>
-              <motion.span 
-                className="inline-block ml-2"
-                animate={{ rotate: [0, 10, -10, 0] }}
-                transition={{ duration: 0.5, delay: 1 }}
-              >
-                <FaTerminal className={`inline text-3xl ${darkMode ? 'text-syntax-blue' : 'text-blue-500'}`} />
-              </motion.span>
-            </span>
-            <span className={`block ${darkMode ? 'text-syntax-purple' : 'text-purple-400'} mt-2`}>
-              Let's Connect
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-5 rounded-full
+            dark:border dark:border-cyan-400/20 border border-indigo-200
+            dark:bg-cyan-400/5 bg-indigo-50
+            dark:text-cyan-400 text-indigo-600
+            text-[11px] font-mono tracking-[0.15em] uppercase font-medium">
+            <FaEnvelope className="text-xs" />
+            Contact
+          </div>
+          <h2 className="text-[clamp(2rem,5vw,3.2rem)] font-black leading-tight tracking-tight dark:text-white text-slate-900">
+            Let's Build Something{' '}
+            <span className="dark:text-transparent text-transparent bg-clip-text
+              dark:[background-image:linear-gradient(135deg,#67e8f9,#818cf8)]
+              [background-image:linear-gradient(135deg,#4f46e5,#7c3aed)]">
+              Together.
             </span>
           </h2>
-
-          <div className="h-12 flex items-center justify-center">
-            <div className="flex items-center gap-2 bg-black/50 backdrop-blur-sm rounded-lg px-4 py-3 border border-gray-800">
-              <FaTerminal className={`text-xl ${darkMode ? 'text-syntax-green animate-pulse' : 'text-green-500 animate-pulse'}`} />
-              <span className="text-lg font-mono-developer">
-                <span className={darkMode ? 'text-syntax-blue' : 'text-blue-500'}>$</span>
-                <span className={darkMode ? 'text-terminal' : 'text-white'}> connect --start --protocol=tcp --port=3000</span>
-                <span className={`inline-block w-2 h-6 ml-1 ${darkMode ? 'bg-syntax-green' : 'bg-green-500'} ${cursorVisible ? 'opacity-100' : 'opacity-0'} transition-opacity`}></span>
-              </span>
-            </div>
-          </div>
+          <p className="mt-2 max-w-lg text-[15px] dark:text-white/45 text-slate-500 leading-relaxed font-light">
+            Have a project in mind, a job opportunity, or just want to say hi? Drop me a message.
+          </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
-          {/* Left Column - Contact Info & Terminal */}
-          <div className="space-y-8">
-            {/* Contact Info Cards */}
-            <motion.div
-              className="space-y-6"
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <FaServer className={darkMode ? 'text-syntax-blue' : 'text-blue-500'} />
-                <span className={`font-mono-developer text-lg ${darkMode ? 'text-terminal' : 'text-white'}`}>
-                  $ contact_info
-                </span>
-              </div>
-              
-              <div className="grid sm:grid-cols-2 gap-4">
-                {contactInfo.map((info, index) => (
-                  <motion.div
-                    key={info.title}
-                    initial={{ opacity: 0, y: 30, scale: 0.9 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ delay: 0.4 + index * 0.1 }}
-                    whileHover={{ 
-                      y: -4,
-                      boxShadow: `0 10px 30px ${info.bgColor}`
-                    }}
-                    className="group bg-black/50 backdrop-blur-sm border border-gray-800 rounded-lg p-4 relative overflow-hidden hover:border-opacity-50 transition-all duration-300"
-                    style={{ borderColor: info.iconColor + '20' }}
-                  >
-                    <div 
-                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                      style={{ backgroundColor: info.bgColor }}
-                    ></div>
-                    
-                    <div className="relative z-10">
-                      <div className="flex items-center gap-3 mb-3">
-                        <div 
-                          className="w-10 h-10 rounded-lg flex items-center justify-center border"
-                          style={{ 
-                            backgroundColor: info.bgColor,
-                            borderColor: info.iconColor + '30'
-                          }}
-                        >
-                          <info.icon className="text-lg" style={{ color: info.iconColor }} />
-                        </div>
-                        <span className={`font-mono-developer text-sm ${info.color}`}>
-                          // {info.title}
-                        </span>
-                      </div>
-                      <p className={`text-sm ${darkMode ? 'text-developer-secondary' : 'text-gray-300'}`}>
-                        {info.value}
-                      </p>
-                    </div>
-                    
-                    <div className={`absolute inset-0 bg-gradient-to-r from-transparent via-current/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ${
-                      darkMode ? '' : 'via-blue-500/20'
-                    }`}></div>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
+        {/* ── Split Grid ── */}
+        <div className="grid lg:grid-cols-5 gap-6 items-start">
 
-            {/* Social Links */}
+          {/* ── LEFT: Info Panel ── */}
+          <motion.div
+            initial="hidden"
+            animate={visible ? 'show' : 'hidden'}
+            variants={staggerContainer}
+            className="lg:col-span-2 flex flex-col gap-4"
+          >
+            {/* Contact cards */}
+            {contactItems.map(({ icon: Icon, label, value, href }, i) => (
+              <motion.div
+                key={label}
+                variants={slideRight}
+                className="group flex items-center gap-4 p-4 rounded-2xl border transition-all duration-300 dark:bg-white/[0.025] bg-white"
+                style={{ borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = `${accent}30`;
+                  e.currentTarget.style.boxShadow = `0 8px 30px ${accent}10`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)';
+                  e.currentTarget.style.boxShadow = '';
+                }}
+              >
+                {/* Icon */}
+                <div
+                  className="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center transition-all duration-300"
+                  style={{ background: `${accent}12`, border: `1px solid ${accent}25` }}
+                >
+                  <Icon className="text-sm" style={{ color: accent }} />
+                </div>
+                <div>
+                  <p className="text-[10px] font-mono tracking-widest uppercase dark:text-white/25 text-slate-400 mb-0.5">{label}</p>
+                  {href ? (
+                    <a href={href} className="text-[13px] font-medium dark:text-white/70 text-slate-700 dark:hover:text-cyan-400 hover:text-indigo-600 transition-colors duration-200">
+                      {value}
+                    </a>
+                  ) : (
+                    <span className="text-[13px] font-medium dark:text-white/70 text-slate-700">{value}</span>
+                  )}
+                </div>
+              </motion.div>
+            ))}
+
+            {/* Social links */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8 }}
+              variants={slideRight}
+              className="p-5 rounded-2xl border dark:bg-white/[0.025] bg-white mt-2"
+              style={{ borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)' }}
             >
-              <div className="flex items-center gap-2 mb-4">
-                <FaCog className={`${darkMode ? 'text-syntax-yellow' : 'text-yellow-500'} animate-spin-slow`} />
-                <span className={`font-mono-developer text-lg ${darkMode ? 'text-terminal' : 'text-white'}`}>
-                  $ social_links
-                </span>
-              </div>
-              
-              <div className="flex flex-wrap gap-3">
-                {socialLinks.map((social, index) => (
-                  <motion.a
-                    key={social.label}
-                    href={social.url}
+              <p className="text-[10px] font-mono tracking-[0.15em] uppercase dark:text-white/25 text-slate-400 mb-4">Find me online</p>
+              <div className="flex gap-2.5">
+                {socials.map(({ icon: Icon, href, label }) => (
+                  <a
+                    key={label}
+                    href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.9 + index * 0.1 }}
-                    whileHover={{ 
-                      scale: 1.1, 
-                      rotate: 5,
-                      boxShadow: `0 0 20px ${social.bgColor}`
+                    aria-label={label}
+                    className="w-10 h-10 flex items-center justify-center rounded-xl border transition-all duration-200 hover:-translate-y-0.5"
+                    style={{
+                      borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)',
+                      color: isDark ? 'rgba(255,255,255,0.35)' : 'rgba(0,0,0,0.4)',
                     }}
-                    whileTap={{ scale: 0.95 }}
-                    className="w-12 h-12 rounded-lg bg-black/50 backdrop-blur-sm border border-gray-800 flex items-center justify-center relative group"
-                    aria-label={social.label}
-                    style={{ borderColor: social.bgColor + '30' }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = `${accent}40`;
+                      e.currentTarget.style.color = accent;
+                      e.currentTarget.style.background = `${accent}08`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+                      e.currentTarget.style.color = isDark ? 'rgba(255,255,255,0.35)' : 'rgba(0,0,0,0.4)';
+                      e.currentTarget.style.background = '';
+                    }}
                   >
-                    <div 
-                      className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity"
-                      style={{ backgroundColor: social.bgColor }}
-                    ></div>
-                    <social.icon className={`text-lg relative z-10 ${darkMode ? 'text-terminal' : 'text-gray-300'} ${social.color}`} />
-                    <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-gray-700">
-                      {social.label}
-                      <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45 border-t border-l border-gray-700"></div>
-                    </div>
-                  </motion.a>
+                    <Icon className="text-sm" />
+                  </a>
                 ))}
               </div>
             </motion.div>
-          </div>
 
-          {/* Right Column - Contact Form */}
-          <motion.div 
-            className={`terminal-window mt-8 lg:mt-0 ${showTerminal ? 'opacity-100 scale-100' : 'opacity-0 scale-95'} transition-all duration-700`}
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5, duration: 1, ease: "easeOut" }}
-            style={{
-              background: darkMode 
-                ? 'linear-gradient(135deg, rgba(17, 24, 39, 0.9), rgba(0, 0, 0, 0.9))'
-                : 'linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(30, 41, 59, 0.9))'
-            }}
-          >
-            <div className="terminal-header">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <motion.div 
-                    className="terminal-dot red"
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  ></motion.div>
-                  <motion.div 
-                    className="terminal-dot yellow"
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: 0.2 }}
-                  ></motion.div>
-                  <motion.div 
-                    className="terminal-dot green"
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: 0.4 }}
-                  ></motion.div>
-                  <div className={`ml-3 text-xs sm:text-sm font-mono-developer ${darkMode ? 'text-developer-tertiary' : 'text-gray-400'}`}>
-                    <motion.span
-                      animate={{ opacity: [1, 0.5, 1] }}
-                      transition={{ duration: 1, repeat: Infinity }}
-                    >
-                      contact_form
-                    </motion.span>
-                    <span className="mx-2">—</span>
-                    <span className={darkMode ? 'text-syntax-green' : 'text-green-500'}>api</span>
-                    <span className="mx-2">—</span>
-                    <span>80×24</span>
-                  </div>
-                </div>
-                <div className={`text-xs font-mono-developer ${darkMode ? 'text-syntax-blue' : 'text-blue-500'}`}>
-                  <FaBug className="inline mr-1" />
-                  v1.0.0
-                </div>
-              </div>
-            </div>
-            
-            <div className="terminal-body p-4 sm:p-6">
-              {/* Terminal Commands */}
-              <div className="space-y-2 mb-6">
-                {terminalCommands.map((cmd, index) => (
-                  <motion.div 
-                    key={index}
-                    className={`font-mono-developer ${cmd.color} text-sm transition-all duration-300 ${
-                      activeCommand === index ? 'opacity-100 scale-105' : 'opacity-70'
-                    }`}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.1 + index * 0.1 }}
-                  >
-                    <span className={`mr-2 ${darkMode ? 'text-syntax-green' : 'text-green-500'}`}>{cmd.prefix}</span>
-                    <span>{cmd.command}</span>
-                    {activeCommand === index && (
-                      <motion.span 
-                        className="ml-1 inline-block w-2 h-4 bg-current"
-                        animate={{ opacity: [1, 0, 1] }}
-                        transition={{ duration: 0.8, repeat: Infinity }}
-                      ></motion.span>
-                    )}
-                    {cmd.output && (
-                      <motion.div 
-                        className="mt-1 ml-6 text-sm opacity-80"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.5 }}
-                      >
-                        {cmd.output}
-                      </motion.div>
-                    )}
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Terminal Output */}
-              <AnimatePresence>
-                {terminalOutput.map((output, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className={`font-mono-developer text-sm mb-2 ${
-                      output.type === 'success' 
-                        ? (darkMode ? 'text-syntax-green' : 'text-green-500')
-                        : output.type === 'error'
-                        ? (darkMode ? 'text-syntax-red' : 'text-red-500')
-                        : (darkMode ? 'text-developer-secondary' : 'text-gray-400')
-                    }`}
-                  >
-                    <span className="mr-2">{output.type === 'success' ? '✓' : output.type === 'error' ? '✗' : '>'}</span>
-                    {output.text}
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-
-              {/* Contact Form */}
-              <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6 }}
-                  >
-                    <label className={`block text-xs font-mono-developer mb-2 ${darkMode ? 'text-syntax-blue' : 'text-blue-500'}`}>
-                      // name *
-                    </label>
-                    <div className="relative">
-                      <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm" />
-                      <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-black/50 backdrop-blur-sm border border-gray-800 text-white focus:outline-none focus:border-syntax-blue transition-all font-mono-developer text-sm"
-                        placeholder="Enter your name"
-                        required
-                        disabled={status.sending}
-                        style={{ 
-                          borderColor: darkMode ? 'rgba(102, 217, 239, 0.2)' : 'rgba(59, 130, 246, 0.2)'
-                        }}
-                      />
-                    </div>
-                  </motion.div>
-
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.7 }}
-                  >
-                    <label className={`block text-xs font-mono-developer mb-2 ${darkMode ? 'text-syntax-green' : 'text-green-500'}`}>
-                      // email *
-                    </label>
-                    <div className="relative">
-                      <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm" />
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-black/50 backdrop-blur-sm border border-gray-800 text-white focus:outline-none focus:border-syntax-green transition-all font-mono-developer text-sm"
-                        placeholder="Enter your email"
-                        required
-                        disabled={status.sending}
-                        style={{ 
-                          borderColor: darkMode ? 'rgba(16, 185, 129, 0.2)' : 'rgba(34, 197, 94, 0.2)'
-                        }}
-                      />
-                    </div>
-                  </motion.div>
-                </div>
-
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.8 }}
-                >
-                  <label className={`block text-xs font-mono-developer mb-2 ${darkMode ? 'text-syntax-purple' : 'text-purple-500'}`}>
-                    // subject *
-                  </label>
-                  <input
-                    type="text"
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2.5 rounded-lg bg-black/50 backdrop-blur-sm border border-gray-800 text-white focus:outline-none focus:border-syntax-purple transition-all font-mono-developer text-sm"
-                    placeholder="Project type or inquiry"
-                    required
-                    disabled={status.sending}
-                    style={{ 
-                      borderColor: darkMode ? 'rgba(139, 92, 246, 0.2)' : 'rgba(168, 85, 247, 0.2)'
-                    }}
-                  />
-                </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.9 }}
-                >
-                  <label className={`block text-xs font-mono-developer mb-2 ${darkMode ? 'text-syntax-yellow' : 'text-yellow-500'}`}>
-                    // message *
-                  </label>
-                  <textarea
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    rows="4"
-                    className="w-full px-4 py-2.5 rounded-lg bg-black/50 backdrop-blur-sm border border-gray-800 text-white focus:outline-none focus:border-syntax-yellow transition-all font-mono-developer text-sm resize-none"
-                    placeholder="Tell me about your project..."
-                    required
-                    disabled={status.sending}
-                    style={{ 
-                      borderColor: darkMode ? 'rgba(245, 158, 11, 0.2)' : 'rgba(245, 158, 11, 0.2)'
-                    }}
-                  ></textarea>
-                </motion.div>
-
-                {/* Status Message */}
-                <AnimatePresence>
-                  {status.message && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className={`p-3 rounded-lg border ${
-                        status.success 
-                          ? 'border-syntax-green text-syntax-green' 
-                          : status.error 
-                          ? 'border-syntax-red text-syntax-red'
-                          : 'border-syntax-blue text-syntax-blue'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 font-mono-developer text-sm">
-                        {status.success ? (
-                          <FaCheckCircle />
-                        ) : status.error ? (
-                          <FaExclamationCircle />
-                        ) : (
-                          <FaCog className="animate-spin-slow" />
-                        )}
-                        <span>{status.message}</span>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                <motion.button
-                  type="submit"
-                  disabled={status.sending}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full group px-6 py-3 bg-black/50 backdrop-blur-sm border border-gray-800 rounded-lg font-mono-developer hover:border-syntax-blue transition-all duration-300 relative overflow-hidden disabled:opacity-70 disabled:cursor-not-allowed"
-                  style={{ 
-                    borderColor: darkMode ? 'rgba(102, 217, 239, 0.3)' : 'rgba(59, 130, 246, 0.3)'
-                  }}
-                >
-                  <span className={`relative z-10 flex items-center justify-center gap-2 ${darkMode ? 'text-terminal' : 'text-white'}`}>
-                    {status.sending ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-                        <span className={darkMode ? 'text-syntax-blue' : 'text-blue-500'}>$</span> 
-                        sending_message()
-                      </>
-                    ) : (
-                      <>
-                        <span className={darkMode ? 'text-syntax-blue' : 'text-blue-500'}>$</span> 
-                        submit_form()
-                        <FaPaperPlane className={darkMode ? 'text-syntax-green' : 'text-green-500'} />
-                      </>
-                    )}
-                  </span>
-                  <div className={`absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ${
-                    darkMode ? '' : 'via-blue-500/20'
-                  }`}></div>
-                </motion.button>
-              </form>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Code Snippet */}
-        <motion.div 
-          className="mt-12 bg-black/50 backdrop-blur-sm border border-gray-800 rounded-lg p-6"
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1 }}
-        >
-          <div className="flex items-center gap-2 mb-4">
-            <FaCode className={darkMode ? 'text-syntax-purple' : 'text-purple-500'} />
-            <span className={`font-mono-developer ${darkMode ? 'text-terminal' : 'text-white'}`}>
-              // contact_api.js
-            </span>
-          </div>
-          
-          <div className="font-mono-developer text-sm">
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 1.1 }}
-              className={darkMode ? 'text-syntax-blue' : 'text-blue-500'}
-            >
-              const contactAPI = async (formData) => {'{'}
-            </motion.div>
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 1.2 }}
-              className="ml-4 mt-2"
-            >
-              <span className={darkMode ? 'text-syntax-green' : 'text-green-500'}>try</span> {'{'}
-            </motion.div>
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 1.3 }}
-              className="ml-8 mt-1"
-            >
-              <span className={darkMode ? 'text-syntax-purple' : 'text-purple-500'}>const</span>{' '}
-              <span className={darkMode ? 'text-terminal' : 'text-white'}>response</span> ={' '}
-              <span className={darkMode ? 'text-syntax-blue' : 'text-blue-500'}>await</span>{' '}
-              <span className={darkMode ? 'text-terminal' : 'text-white'}>fetch</span>(
-            </motion.div>
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 1.4 }}
-              className="ml-12 mt-1"
-            >
-              <span className={darkMode ? 'text-syntax-orange' : 'text-orange-500'}>'/api/contact'</span>,
-            </motion.div>
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 1.5 }}
-              className="ml-12 mt-1"
-            >
-              {'{'} <span className={darkMode ? 'text-syntax-green' : 'text-green-500'}>method</span>:{' '}
-              <span className={darkMode ? 'text-syntax-orange' : 'text-orange-500'}>'POST'</span>,
-            </motion.div>
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 1.6 }}
-              className="ml-12 mt-1"
-            >
-              <span className={darkMode ? 'text-syntax-green' : 'text-green-500'}>headers</span>:{' '}
-              {'{'} <span className={darkMode ? 'text-syntax-orange' : 'text-orange-500'}>'Content-Type'</span>:{' '}
-              <span className={darkMode ? 'text-syntax-orange' : 'text-orange-500'}>'application/json'</span> {'}'},
-            </motion.div>
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 1.7 }}
-              className="ml-12 mt-1"
-            >
-              <span className={darkMode ? 'text-syntax-green' : 'text-green-500'}>body</span>:{' '}
-              <span className={darkMode ? 'text-terminal' : 'text-white'}>JSON</span>.
-              <span className={darkMode ? 'text-syntax-blue' : 'text-blue-500'}>stringify</span>(
-              <span className={darkMode ? 'text-terminal' : 'text-white'}>formData</span>)
-            </motion.div>
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 1.8 }}
-              className="ml-12 mt-1"
-            >
-              {'});'}
-            </motion.div>
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 1.9 }}
-              className="ml-8 mt-1"
-            >
-              {'}'}{' '}
-              <span className={darkMode ? 'text-syntax-green' : 'text-green-500'}>catch</span>{' '}
-              (<span className={darkMode ? 'text-terminal' : 'text-white'}>error</span>) {'{'}
-            </motion.div>
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 2.0 }}
-              className="ml-12 mt-1"
-            >
-              <span className={darkMode ? 'text-terminal' : 'text-white'}>console</span>.
-              <span className={darkMode ? 'text-syntax-blue' : 'text-blue-500'}>error</span>(
-              <span className={darkMode ? 'text-syntax-orange' : 'text-orange-500'}>'Contact error:'</span>,{' '}
-              <span className={darkMode ? 'text-terminal' : 'text-white'}>error</span>);
-            </motion.div>
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 2.1 }}
-              className="ml-8 mt-1"
-            >
-              {'}'}
-            </motion.div>
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 2.2 }}
-              className="mt-2"
-            >
-              {'}'};
-            </motion.div>
-          </div>
-        </motion.div>
-
-        {/* CTA Section */}
-        <motion.div 
-          className="mt-12 text-center"
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 2.3 }}
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/50 backdrop-blur-sm border border-gray-800 mb-6">
-            <span className={`font-mono-developer text-sm ${darkMode ? 'text-developer-secondary' : 'text-gray-400'}`}>
-              <span className={darkMode ? 'text-syntax-green' : 'text-green-500'}>✓</span> Ready to collaborate?
-            </span>
-          </div>
-          
-          <motion.div 
-            className="flex flex-col sm:flex-row gap-4 justify-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2.4 }}
-          >
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => scrollToSection('projects')}
-              className="group px-6 sm:px-8 py-3.5 bg-black/50 backdrop-blur-sm border border-gray-800 rounded-lg font-mono-developer hover:border-syntax-blue transition-all duration-300 relative overflow-hidden"
-            >
-              <span className={`relative z-10 flex items-center gap-2 ${darkMode ? 'text-terminal' : 'text-white'}`}>
-                <span className={darkMode ? 'text-syntax-blue' : 'text-blue-500'}>$</span> 
-                <span>view_projects</span>
-                <FaArrowRight className={darkMode ? 'text-syntax-yellow' : 'text-yellow-500'} />
-              </span>
-              <div className={`absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ${
-                darkMode ? '' : 'via-blue-500/20'
-              }`}></div>
-            </motion.button>
-            
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => window.open('mailto:kamalasad57@gmail.com', '_blank')}
-              className="group px-6 sm:px-8 py-3.5 border border-gray-800 rounded-lg font-mono-developer hover:border-syntax-green transition-all duration-300 relative overflow-hidden"
-              style={{ 
-                borderColor: darkMode ? 'rgba(16, 185, 129, 0.3)' : 'rgba(34, 197, 94, 0.3)'
+            {/* Availability card */}
+            <motion.div
+              variants={slideRight}
+              className="p-5 rounded-2xl border mt-2"
+              style={{
+                borderColor: isDark ? 'rgba(52,211,153,0.2)' : 'rgba(16,185,129,0.2)',
+                background: isDark ? 'rgba(52,211,153,0.04)' : 'rgba(16,185,129,0.04)',
               }}
             >
-              <span className={`relative z-10 flex items-center gap-2 ${darkMode ? 'text-terminal' : 'text-white'}`}>
-                <span className={darkMode ? 'text-syntax-green' : 'text-green-500'}>&gt;</span> 
-                <span>send_direct_email</span>
-                <FaPaperPlane className={darkMode ? 'text-syntax-purple' : 'text-purple-500'} />
-              </span>
-              <div className={`absolute inset-0 bg-gradient-to-r from-transparent via-green-500/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ${
-                darkMode ? '' : 'via-green-500/20'
-              }`}></div>
-            </motion.button>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[11px] font-mono tracking-widest uppercase dark:text-emerald-400 text-emerald-600 font-semibold">
+                  Available for work
+                </span>
+              </div>
+              <p className="text-[13px] dark:text-white/40 text-slate-500 font-light leading-relaxed">
+                Currently open to full-time roles and freelance projects.
+              </p>
+            </motion.div>
           </motion.div>
-        </motion.div>
+
+          {/* ── RIGHT: Form ── */}
+          <motion.div
+            initial="hidden"
+            animate={visible ? 'show' : 'hidden'}
+            variants={slideLeft}
+            className="lg:col-span-3"
+          >
+            <form
+              onSubmit={handleSubmit}
+              className="p-7 sm:p-8 rounded-2xl border dark:bg-white/[0.025] bg-white shadow-sm h-full"
+              style={{ borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)' }}
+            >
+              {/* Form title row */}
+              <div className="flex items-center gap-3 mb-7 pb-5 border-b"
+                style={{ borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' }}>
+                <div
+                  className="w-9 h-9 rounded-xl flex items-center justify-center"
+                  style={{ background: `${accent}12`, border: `1px solid ${accent}25` }}
+                >
+                  <FaCode className="text-sm" style={{ color: accent }} />
+                </div>
+                <div>
+                  <p className="text-sm font-bold dark:text-white text-slate-900">Send a message</p>
+                  <p className="text-[11px] font-mono dark:text-white/25 text-slate-400 mt-0.5">I usually respond within 24 hours</p>
+                </div>
+              </div>
+
+              {/* Name + Email row */}
+              <div className="grid sm:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className={LABEL_CLS}>
+                    <FaUser className="inline text-[9px] mr-1 opacity-60" />Your Name
+                  </label>
+                  <input
+                    type="text" name="name" required
+                    value={formData.name} onChange={handleChange}
+                    placeholder="John Doe"
+                    className={INPUT_CLS}
+                  />
+                </div>
+                <div>
+                  <label className={LABEL_CLS}>
+                    <FaEnvelope className="inline text-[9px] mr-1 opacity-60" />Email Address
+                  </label>
+                  <input
+                    type="email" name="email" required
+                    value={formData.email} onChange={handleChange}
+                    placeholder="john@example.com"
+                    className={INPUT_CLS}
+                  />
+                </div>
+              </div>
+
+              {/* Subject */}
+              <div className="mb-4">
+                <label className={LABEL_CLS}>Subject</label>
+                <input
+                  type="text" name="subject" required
+                  value={formData.subject} onChange={handleChange}
+                  placeholder="What's this about?"
+                  className={INPUT_CLS}
+                />
+              </div>
+
+              {/* Message */}
+              <div className="mb-6">
+                <label className={LABEL_CLS}>Message</label>
+                <textarea
+                  name="message" required rows={5}
+                  value={formData.message} onChange={handleChange}
+                  placeholder="Tell me about your project or inquiry..."
+                  className={`${INPUT_CLS} resize-none`}
+                />
+              </div>
+
+              {/* Status banner */}
+              <AnimatePresence>
+                {status.message && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, height: 'auto', scale: 1 }}
+                    exit={{ opacity: 0, height: 0, scale: 0.95 }}
+                    transition={{ duration: 0.3 }}
+                    className="overflow-hidden"
+                  >
+                    <div
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl mb-5 text-[13px] font-medium border ${status.success
+                        ? 'dark:bg-emerald-500/10 bg-emerald-50 dark:text-emerald-400 text-emerald-700 dark:border-emerald-500/20 border-emerald-200'
+                        : 'dark:bg-cyan-400/10 bg-indigo-50 dark:text-cyan-400 text-indigo-700 dark:border-cyan-400/20 border-indigo-200'
+                        }`}
+                    >
+                      {status.success
+                        ? <FaCheckCircle className="text-base flex-shrink-0" />
+                        : <div className="w-4 h-4 border-2 dark:border-cyan-400 border-indigo-500 border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                      }
+                      {status.message}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={status.sending}
+                className="w-full group flex items-center justify-center gap-2.5 py-3.5 rounded-xl text-sm font-semibold transition-all duration-200 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed shadow-lg"
+                style={{
+                  background: isDark ? '#67e8f9' : '#4f46e5',
+                  color: isDark ? '#050810' : '#ffffff',
+                  boxShadow: isDark ? '0 8px 24px rgba(103,232,249,0.2)' : '0 8px 24px rgba(79,70,229,0.25)',
+                }}
+                onMouseEnter={(e) => { if (!status.sending) e.currentTarget.style.opacity = '0.9'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
+              >
+                {status.sending ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    Send Message
+                    <FaPaperPlane className="text-xs transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  </>
+                )}
+              </button>
+            </form>
+          </motion.div>
+
+        </div>
       </div>
-
-      <style jsx>{`
-        @keyframes spin {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
-        }
-
-        .animate-spin-slow {
-          animation: spin 3s linear infinite;
-        }
-
-        .terminal-window {
-          border-radius: 0.75rem;
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          overflow: hidden;
-          box-shadow: 
-            0 20px 60px rgba(0, 0, 0, 0.5),
-            inset 0 1px 0 rgba(255, 255, 255, 0.1);
-          backdrop-filter: blur(10px);
-        }
-
-        .terminal-header {
-          background: rgba(0, 0, 0, 0.5);
-          padding: 0.75rem 1rem;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-          backdrop-filter: blur(10px);
-        }
-
-        .terminal-dot {
-          width: 0.75rem;
-          height: 0.75rem;
-          border-radius: 50%;
-          margin-right: 0.5rem;
-          display: inline-block;
-        }
-
-        .terminal-dot.red {
-          background: linear-gradient(135deg, #ff5f56, #ff2b2b);
-          box-shadow: 0 0 10px rgba(255, 95, 86, 0.5);
-        }
-
-        .terminal-dot.yellow {
-          background: linear-gradient(135deg, #ffbd2e, #ff9500);
-          box-shadow: 0 0 10px rgba(255, 189, 46, 0.5);
-        }
-
-        .terminal-dot.green {
-          background: linear-gradient(135deg, #27c93f, #00c700);
-          box-shadow: 0 0 10px rgba(39, 201, 63, 0.5);
-        }
-
-        .terminal-body {
-          font-family: 'Fira Code', 'Consolas', monospace;
-          min-height: 400px;
-          max-height: 600px;
-          overflow-y: auto;
-          background: transparent;
-        }
-
-        .terminal-body::-webkit-scrollbar {
-          width: 6px;
-        }
-
-        .terminal-body::-webkit-scrollbar-track {
-          background: rgba(0, 0, 0, 0.3);
-        }
-
-        .terminal-body::-webkit-scrollbar-thumb {
-          background: rgba(102, 217, 239, 0.5);
-          border-radius: 3px;
-        }
-
-        @keyframes float {
-          0%, 100% {
-            transform: translateY(0) rotate(0deg);
-          }
-          50% {
-            transform: translateY(-20px) rotate(5deg);
-          }
-        }
-
-        .animate-float {
-          animation: float 3s ease-in-out infinite;
-        }
-      `}</style>
     </section>
   );
 };

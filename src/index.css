@@ -1,176 +1,222 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap');
 
-
-/* src/index.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@custom-variant dark (&:is(.dark *));
 
 @layer base {
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
   }
-  
+
   body {
     @apply antialiased;
+    font-feature-settings: 'rlig' 1, 'calt' 1;
+    overflow-x: hidden;
+    width: 100%;
+    /* Stunning unique light mode animated mesh background */
+    background: linear-gradient(135deg, #f0f4ff 0%, #ffffff 25%, #f6f0ff 50%, #f0fdfa 75%, #ffffff 100%);
+    background-size: 300% 300%;
+    animation: luxuriousGradient 25s ease infinite;
+    color: #1e293b;
+    /* Deeper slate text for high contrast on gradient */
+    font-family: 'Inter', sans-serif;
+  }
+
+  @keyframes luxuriousGradient {
+    0% {
+      background-position: 0% 50%;
+    }
+
+    50% {
+      background-position: 100% 50%;
+    }
+
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  /* Dark mode body */
+  .dark body {
+    background: linear-gradient(135deg, #050810 0%, #091228 25%, #070414 50%, #030d22 75%, #050810 100%);
+    background-size: 300% 300%;
+    animation: luxuriousGradient 30s ease infinite;
+    color: #f1f5f9;
+  }
+
+  /* Mono font utility */
+  .font-mono {
+    font-family: 'Fira Code', 'Courier New', monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-feature-settings: 'salt' 1;
   }
 }
 
 @layer utilities {
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
+
+  /* Accent Text */
+  .accent-text-primary {
+    @apply text-cyan-500;
   }
-  
-  .animate-pulse-ring {
-    animation: pulse-ring 3s ease-in-out infinite;
+
+  .accent-text-secondary {
+    @apply text-cyan-500;
   }
-  
-  .animate-blink {
-    animation: blink 1s infinite;
+
+  /* Accent Backgrounds */
+  .accent-bg-primary {
+    @apply bg-cyan-50;
+  }
+
+  .accent-bg-secondary {
+    @apply bg-cyan-50;
+  }
+
+  /* Glass Morphism */
+  .glass {
+    @apply backdrop-blur-lg bg-white/10 dark:bg-black/10 border border-white/20 dark:border-white/10;
+  }
+
+  /* Card Style and Smooth Shadows */
+  .card-hover,
+  .shadow-smooth {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark .card-hover,
+  .dark .shadow-smooth {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Grid Pattern */
+  .grid-pattern {
+    background-color: rgba(14, 165, 233, 0.05);
+  }
+
+  /* Dot Pattern */
+  .dot-pattern {
+    background-color: rgba(14, 165, 233, 0.05);
+  }
+
+  /* Wave Pattern */
+  .wave-pattern {
+    background-color: rgba(14, 165, 233, 0.04);
+  }
+
+  /* Text Shadow */
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Focus Styles */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900;
+  }
+
+  /* Selection */
+  .selection-primary ::selection {
+    @apply bg-blue-500/30 text-gray-900 dark:text-white;
+  }
+
+  /* Scroll Snap */
+  .snap-y {
+    scroll-snap-type: y mandatory;
+  }
+
+  .snap-start {
+    scroll-snap-align: start;
+  }
+
+  /* Aspect Ratio */
+  .aspect-video {
+    aspect-ratio: 16 / 9;
+  }
+
+  .aspect-square {
+    aspect-ratio: 1 / 1;
+  }
+
+  /* Line Clamp */
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+
+  /* Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
-/* Smooth scroll behavior */
-.scroll-container {
-  scroll-behavior: smooth;
+/* Custom Scrollbar */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(59, 130, 246, 0.5) transparent;
 }
 
-
-
-
-/* Add to your global CSS/Tailwind */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer utilities {
-  .animate-spin-slow {
-    animation: spin 3s linear infinite;
-  }
-  
-  .animate-pulse-slow {
-    animation: pulse 3s ease-in-out infinite;
-  }
-  
-  .animate-bounce-slow {
-    animation: bounce 2s infinite;
-  }
-  
-  .text-shadow-glow {
-    text-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
-  }
-  
-  .bg-gradient-terminal {
-    background: linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #000000 100%);
-  }
-  
-  .bg-grid-developer {
-    background-image: 
-      linear-gradient(to right, rgba(102, 217, 239, 0.1) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(102, 217, 239, 0.1) 1px, transparent 1px);
-    background-size: 50px 50px;
-  }
-  
-  .glass-developer {
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(102, 217, 239, 0.2);
-  }
-  
-  .terminal-border {
-    position: relative;
-  }
-  
-  .terminal-border::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: inherit;
-    padding: 1px;
-    background: linear-gradient(45deg, #66d9ef, #10b981, #8b5cf6, #f59e0b);
-    -webkit-mask: 
-      linear-gradient(#fff 0 0) content-box, 
-      linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-  }
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-/* Custom animations */
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.5);
+  border-radius: 3px;
 }
 
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.8);
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: -200% center;
-  }
-  100% {
-    background-position: 200% center;
-  }
+/* Smooth Transitions */
+.smooth-transition {
+  @apply transition-all duration-300 ease-in-out;
 }
 
-.animate-shimmer {
-  background: linear-gradient(90deg, 
-    transparent, 
-    rgba(102, 217, 239, 0.2), 
-    rgba(16, 185, 129, 0.2), 
-    transparent);
-  background-size: 200% auto;
-  animation: shimmer 2s infinite linear;
-}
-
-/* Typing cursor animation */
-@keyframes blink {
-  0%, 50% {
-    opacity: 1;
+/* Container Queries Support */
+@container (min-width: 640px) {
+  .container\:flex {
+    display: flex;
   }
-  51%, 100% {
-    opacity: 0;
-  }
-}
-
-.typing-cursor {
-  display: inline-block;
-  width: 3px;
-  background-color: currentColor;
-  margin-left: 2px;
-  animation: blink 1s infinite;
-}
-
-/* Matrix rain effect */
-.matrix-char {
-  position: absolute;
-  color: #10b981;
-  font-family: 'Fira Code', monospace;
-  font-weight: bold;
-  text-shadow: 0 0 5px currentColor;
-  opacity: 0.8;
 }

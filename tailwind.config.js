@@ -29,6 +29,24 @@ module.exports = {
           700: '#334155',
           800: '#1e293b',
           900: '#0f172a',
+        },
+        // Developer Theme Overrides
+        slate: {
+          800: '#2d2d30',
+          900: '#1e1e1e', // VS Code Dark Background
+          950: '#121212', // Pure deep dark
+        },
+        blue: {
+          300: '#86efac',
+          400: '#4ade80', // Terminal Green / Cyber theme
+          500: '#22c55e',
+          600: '#16a34a',
+          700: '#15803d',
+        },
+        cyan: {
+          400: '#00ffff', // Cyberpunk cyan
+          500: '#06b6d4',
+          600: '#0891b2',
         }
       },
       animation: {

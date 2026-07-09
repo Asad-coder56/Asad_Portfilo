@@ -1,474 +1,146 @@
-// Updated LoadingScreen.jsx with breaking effect animation
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const LoadingScreen = ({ onComplete }) => {
   const [progress, setProgress] = useState(0);
-  const [isBreaking, setIsBreaking] = useState(false);
-  const [showGlitch, setShowGlitch] = useState(false);
-  const [glitchText, setGlitchText] = useState('');
-  const [cracks, setCracks] = useState([]);
-  const [shards, setShards] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  // Glitch phrases
-  const glitchPhrases = [
-    'SYSTEM ERROR',
-    'MEMORY CORRUPTED',
-    '404_LOADING_FAILED',
-    'GLITCH_00A1',
-    'BUFFER_OVERFLOW',
-    'NULL_POINTER_EXCEPTION',
-    'SECTOR_FAULT',
-    'REBOOTING...',
-  ];
-
-  // Simulate loading progress
   useEffect(() => {
-    const interval = setInterval(() => {
+    const duration = 2200;
+    const intervalTime = 20;
+    const step = 100 / (duration / intervalTime);
+
+    const timer = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
-          clearInterval(interval);
+          clearInterval(timer);
+          setIsLoaded(true);
+          setTimeout(() => {
+            if (onComplete) onComplete();
+          }, 800);
           return 100;
         }
-        return prev + Math.random() * 15;
+        return prev + step * (1 - prev / 120);
       });
-    }, 200);
+    }, intervalTime);
 
-    return () => clearInterval(interval);
-  }, []);
-
-  // Trigger glitch effects at random intervals
-  useEffect(() => {
-    if (progress > 30 && progress < 80) {
-      const glitchInterval = setInterval(() => {
-        if (Math.random() > 0.7) {
-          setShowGlitch(true);
-          setGlitchText(glitchPhrases[Math.floor(Math.random() * glitchPhrases.length)]);
-          
-          // Add crack effect
-          const newCrack = {
-            id: Date.now(),
-            x: Math.random() * 100,
-            y: Math.random() * 100,
-            rotation: Math.random() * 360,
-            length: 20 + Math.random() * 60,
-          };
-          setCracks((prev) => [...prev.slice(-5), newCrack]);
-          
-          setTimeout(() => setShowGlitch(false), 100);
-        }
-      }, 300);
-      
-      return () => clearInterval(glitchInterval);
-    }
-  }, [progress]);
-
-  // Trigger breaking effect when loading completes
-  useEffect(() => {
-    if (progress >= 100) {
-      setTimeout(() => {
-        setIsBreaking(true);
-        
-        // Generate shards for breaking effect
-        const newShards = [];
-        const shardCount = 50;
-        
-        for (let i = 0; i < shardCount; i++) {
-          newShards.push({
-            id: i,
-            x: Math.random() * 100,
-            y: Math.random() * 100,
-            rotation: Math.random() * 360,
-            delay: Math.random() * 0.5,
-            color: Math.random() > 0.7 ? '#66d9ef' : 
-                   Math.random() > 0.5 ? '#10b981' : 
-                   Math.random() > 0.3 ? '#8b5cf6' : '#ffffff',
-          });
-        }
-        setShards(newShards);
-        
-        // Call onComplete after animation
-        setTimeout(() => {
-          if (onComplete) onComplete();
-        }, 1200);
-      }, 500);
-    }
-  }, [progress, onComplete]);
+    return () => clearInterval(timer);
+  }, [onComplete]);
 
   return (
     <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 1 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 flex items-center justify-center bg-terminal z-50 overflow-hidden"
-        style={{
-          background: isBreaking 
-            ? 'linear-gradient(135deg, #000 0%, #0a0a0a 50%, #000 100%)'
-            : 'radial-gradient(circle at center, #0a0a0a 0%, #000 100%)'
-        }}
-      >
-        {/* Background Grid Pattern */}
-        <div className="absolute inset-0 opacity-20">
-          <div 
-            className="absolute inset-0"
-            style={{
-              backgroundImage: `
-                linear-gradient(90deg, rgba(102, 217, 239, 0.1) 1px, transparent 1px),
-                linear-gradient(0deg, rgba(102, 217, 239, 0.1) 1px, transparent 1px)
-              `,
-              backgroundSize: '20px 20px',
-            }}
-          ></div>
-        </div>
-
-        {/* Cracks */}
-        {cracks.map((crack) => (
-          <motion.div
-            key={crack.id}
-            className="absolute pointer-events-none"
-            style={{
-              left: `${crack.x}%`,
-              top: `${crack.y}%`,
-              transform: `rotate(${crack.rotation}deg)`,
-            }}
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div 
-              className="h-0.5 bg-gradient-to-r from-red-500/50 to-transparent"
-              style={{ width: `${crack.length}px` }}
-            />
-          </motion.div>
-        ))}
-
-        {/* Breaking Shards */}
-        {shards.map((shard) => (
-          <motion.div
-            key={shard.id}
-            className="absolute pointer-events-none"
-            style={{
-              left: `${shard.x}%`,
-              top: `${shard.y}%`,
-              backgroundColor: shard.color,
-              opacity: 0.3,
-            }}
-            initial={{
-              rotate: shard.rotation,
-              scale: 1,
-              x: 0,
-              y: 0,
-            }}
-            animate={{
-              rotate: shard.rotation + 360,
-              scale: 0,
-              x: (Math.random() - 0.5) * 2000,
-              y: (Math.random() - 0.5) * 2000,
-            }}
-            transition={{
-              duration: 1,
-              delay: shard.delay,
-              ease: "backInOut",
-            }}
-          >
-            <div className="w-4 h-4 rotate-45 bg-current"></div>
-          </motion.div>
-        ))}
-
-        {/* Scan Lines Effect */}
+      {!isLoaded && (
         <motion.div
-          className="absolute inset-0 pointer-events-none"
-          initial={{ opacity: 0.3 }}
-          animate={{ 
-            opacity: isBreaking ? 0.5 : 0.3,
-            y: [0, 100, 0] 
-          }}
-          transition={{ 
-            y: {
-              duration: 2,
-              repeat: Infinity,
-              ease: "linear"
-            }
-          }}
-          style={{
-            background: `
-              repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 2px,
-                rgba(102, 217, 239, 0.05) 2px,
-                rgba(102, 217, 239, 0.05) 4px
-              )
-            `,
-          }}
-        ></motion.div>
-
-        {/* Main Content Container */}
-        <motion.div 
-          className="text-center relative z-10"
-          animate={isBreaking ? {
-            scale: [1, 1.1, 0.9, 0],
-            rotate: [0, 5, -5, 0, 360],
-            opacity: [1, 1, 1, 0],
-          } : {}}
-          transition={{ 
-            duration: 1,
-            ease: "easeInOut",
-            times: [0, 0.3, 0.6, 1]
-          }}
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0, scale: 0.95, filter: "blur(20px)" }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#050810] overflow-hidden"
+          style={{ perspective: '1000px' }}
         >
-          {/* Glitch Text Overlay */}
-          <AnimatePresence>
-            {showGlitch && (
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="absolute -top-20 left-1/2 transform -translate-x-1/2 text-red-500 font-mono-developer font-bold text-sm"
-              >
-                <div className="relative">
-                  <div className="text-red-500">{glitchText}</div>
-                  <div className="absolute -top-1 -left-1 text-blue-500 opacity-50">{glitchText}</div>
-                  <div className="absolute -top-2 -left-2 text-green-500 opacity-30">{glitchText}</div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Loading Spinner */}
-          <div className="relative w-20 h-20 mx-auto mb-6">
-            {/* Outer Rings */}
-            <motion.div 
-              className="absolute inset-0 rounded-full border-4 border-developer"
-              animate={isBreaking ? {
-                borderColor: ['#374151', '#ef4444', '#374151'],
-                scale: [1, 1.2, 1],
-              } : {}}
-              transition={{ 
-                borderColor: {
-                  duration: 0.5,
-                  repeat: Infinity
-                },
-                scale: {
-                  duration: 0.5,
-                  repeat: Infinity
-                }
-              }}
-            />
-            
-            {/* Animated Rings */}
-            <motion.div 
-              className="absolute inset-2 rounded-full border-4 border-transparent border-t-syntax-blue"
-              animate={isBreaking ? {
-                rotate: 360,
-                borderTopColor: ['#66d9ef', '#ef4444', '#66d9ef'],
-              } : {
-                rotate: 360,
-              }}
-              transition={{
-                rotate: {
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "linear"
-                },
-                borderTopColor: {
-                  duration: 0.5,
-                  repeat: Infinity
-                }
-              }}
-            />
-            
-            <motion.div 
-              className="absolute inset-4 rounded-full border-4 border-transparent border-b-syntax-green"
-              animate={isBreaking ? {
-                rotate: -360,
-                borderBottomColor: ['#10b981', '#ef4444', '#10b981'],
-              } : {
-                rotate: -360,
-              }}
-              transition={{
-                rotate: {
-                  duration: 1.5,
-                  repeat: Infinity,
-                  ease: "linear"
-                },
-                borderBottomColor: {
-                  duration: 0.5,
-                  repeat: Infinity
-                }
-              }}
-            />
-            
-            {/* Center Dot */}
-            <motion.div 
-              className="absolute inset-6 rounded-full bg-gradient-to-r from-syntax-blue to-syntax-green"
-              animate={isBreaking ? {
-                scale: [1, 1.5, 1],
-                opacity: [1, 0.5, 1],
-              } : {
-                scale: [1, 1.2, 1],
-              }}
-              transition={{
-                scale: {
-                  duration: 0.8,
-                  repeat: Infinity,
-                },
-                opacity: {
-                  duration: 0.8,
-                  repeat: Infinity,
-                }
-              }}
-            />
-          </div>
-          
-          {/* Text Content with Glitch Effect */}
-          <div className="relative">
+          {/* Deep Ambient Glow */}
+          <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
             <motion.div
-              animate={showGlitch ? {
-                x: [0, 5, -5, 0],
-                color: ['#ffffff', '#66d9ef', '#ef4444', '#ffffff']
-              } : {}}
-              transition={{ duration: 0.1 }}
-              className="animate-pulse"
-            >
-              <h2 className="text-2xl font-bold text-terminal mb-2 font-mono-developer relative">
-                <span className="relative z-10">Muhammad Asad Kamal Shah</span>
-                {showGlitch && (
-                  <>
-                    <span className="absolute top-0 left-0 text-red-500 opacity-50 blur-[1px]">
-                      Muhammad Asad Kamal Shah
-                    </span>
-                    <span className="absolute top-0 left-0 text-blue-500 opacity-30 blur-[2px]">
-                      Muhammad Asad Kamal Shah
-                    </span>
-                  </>
-                )}
-              </h2>
-              <p className="text-developer-secondary font-mono-developer relative">
-                <span className="relative z-10">// Initializing portfolio...</span>
-                {showGlitch && (
-                  <>
-                    <span className="absolute top-0 left-0 text-red-500 opacity-50 blur-[1px]">
-                      // {glitchText.toLowerCase()}...
-                    </span>
-                  </>
-                )}
-              </p>
-            </motion.div>
+              initial={{ opacity: 0, rotateZ: 0 }}
+              animate={{ opacity: 0.2, rotateZ: 360 }}
+              transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+              className="w-[600px] h-[600px] bg-gradient-to-tr from-cyan-500/30 to-indigo-600/30 rounded-full blur-[100px]"
+            />
           </div>
 
-          {/* Progress Bar */}
-          <div className="mt-8 w-64 h-1 bg-developer rounded-full overflow-hidden mx-auto relative">
-            {/* Progress Bar Background Glow */}
-            <motion.div 
-              className="absolute inset-0 bg-gradient-to-r from-syntax-blue/20 to-syntax-green/20 rounded-full"
-              animate={{
-                opacity: [0.5, 1, 0.5],
-              }}
-              transition={{
-                duration: 1,
-                repeat: Infinity
-              }}
-            />
-            
-            {/* Progress Bar Fill */}
-            <motion.div 
-              className="h-full bg-gradient-to-r from-syntax-blue to-syntax-green relative overflow-hidden"
-              initial={{ width: 0 }}
-              animate={{ width: `${progress}%` }}
-              transition={{ duration: 0.3 }}
-            >
-              {/* Shimmer Effect */}
-              <motion.div 
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                animate={{
-                  x: ['-100%', '100%'],
-                }}
-                transition={{
-                  x: {
-                    duration: 1.5,
-                    repeat: Infinity,
-                    ease: "linear"
-                  }
-                }}
+          <div className="relative z-10 flex flex-col items-center w-full max-w-sm px-6">
+
+            {/* 3D Gyroscope Setup */}
+            <div className="mb-14 relative flex items-center justify-center" style={{ transformStyle: 'preserve-3d' }}>
+
+              {/* Outer 3D Ring 1 */}
+              <motion.div
+                animate={{ rotateX: 360, rotateY: 180, rotateZ: 90 }}
+                transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+                className="absolute w-36 h-36 rounded-full border border-cyan-400/20"
+                style={{ transformStyle: 'preserve-3d', borderTopColor: 'rgba(103, 232, 249, 0.8)', boxShadow: '0 0 20px rgba(103,232,249,0.1) inset' }}
               />
-            </motion.div>
-            
-            {/* Progress Percentage */}
-            <motion.div 
-              className="absolute -right-12 top-1/2 transform -translate-y-1/2 text-xs text-developer-tertiary font-mono-developer"
-              animate={isBreaking ? {
-                color: ['#9ca3af', '#ef4444', '#9ca3af'],
-                scale: [1, 1.2, 1],
-              } : {}}
-              transition={{
-                color: {
-                  duration: 0.5,
-                  repeat: Infinity
-                }
-              }}
-            >
-              {Math.round(progress)}%
-            </motion.div>
-          </div>
 
-          {/* Terminal Command */}
-          <div className="mt-8 text-xs text-developer-tertiary font-mono-developer relative">
-            <motion.div
-              animate={showGlitch ? {
-                x: [0, 2, -2, 0],
-                opacity: [1, 0.7, 1],
-              } : {}}
-            >
-              <span className="text-syntax-green">$</span>{' '}
-              <span className="text-terminal">npm run dev</span>{' '}
-              <span className="text-syntax-orange">--loading</span>
-            </motion.div>
-            
-            {/* Compilation Status */}
-            {progress > 50 && (
+              {/* Outer 3D Ring 2 */}
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-2 text-green-500 text-[10px]"
+                animate={{ rotateX: -180, rotateY: 360, rotateZ: -90 }}
+                transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
+                className="absolute w-28 h-28 rounded-full border border-indigo-400/20"
+                style={{ transformStyle: 'preserve-3d', borderRightColor: 'rgba(99, 102, 241, 0.8)', boxShadow: '0 0 20px rgba(99,102,241,0.1) inset' }}
+              />
+
+              {/* Core 3D Floating Block */}
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1, y: [-4, 4, -4] }}
+                transition={{
+                  scale: { duration: 0.8, ease: "easeOut" },
+                  y: { duration: 3, repeat: Infinity, ease: "easeInOut" }
+                }}
+                className="w-16 h-16 flex items-center justify-center rounded-2xl bg-black border border-white/20 shadow-[0_0_50px_rgba(103,232,249,0.3)] relative overflow-hidden"
               >
-                <span className="text-syntax-green">✓</span>{' '}
-                {progress < 80 ? 'Bundling modules...' : 'Finalizing build...'}
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/20 to-indigo-500/20 mix-blend-overlay" />
+                <span className="text-xl font-black tracking-tighter text-white z-10 drop-shadow-[0_0_10px_rgba(103,232,249,0.8)]">
+                  A<span className="text-cyan-400">K</span>
+                </span>
               </motion.div>
-            )}
+            </div>
+
+            {/* Typography */}
+            <div className="flex flex-col items-center mb-10 overflow-hidden text-center z-10">
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.3, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                className="tracking-[0.5em] text-[12px] text-cyan-400 uppercase font-mono font-bold mb-2 drop-shadow-[0_0_8px_rgba(103,232,249,0.5)]"
+              >
+                Asad Kamal
+              </motion.div>
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.4, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                className="tracking-[0.2em] text-[10px] text-white/50 font-mono uppercase"
+              >
+                Initializing Workspace
+              </motion.div>
+            </div>
+
+            {/* Progress Container */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.8 }}
+              className="w-full z-10"
+            >
+              <div className="flex justify-between items-end mb-4 font-mono">
+                <span className="text-[9px] text-white/40 uppercase tracking-widest flex items-center gap-2">
+                  <motion.span
+                    animate={{ opacity: [1, 0.2, 1] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                    className="w-1.5 h-1.5 rounded-full bg-cyan-400"
+                  />
+                  System Status
+                </span>
+                <span className="text-[12px] text-white font-bold tabular-nums drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]">
+                  {Math.round(progress)}%
+                </span>
+              </div>
+
+              {/* 3D Glassy Progress Bar */}
+              <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden relative shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)]">
+                <motion.div
+                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 rounded-full"
+                  style={{ boxShadow: '0 0 20px rgba(103,232,249,0.8)' }}
+                  initial={{ width: '0%' }}
+                  animate={{ width: `${progress}%` }}
+                  transition={{ ease: "easeOut", duration: 0.1 }}
+                />
+              </div>
+            </motion.div>
+
           </div>
         </motion.div>
-
-        {/* Full Screen Breaking Overlay */}
-        {isBreaking && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="absolute inset-0 pointer-events-none"
-          >
-            {/* Flash Effect */}
-            <motion.div
-              className="absolute inset-0 bg-white"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: [0, 0.8, 0] }}
-              transition={{ duration: 0.3 }}
-            />
-            
-            {/* Radial Gradient Effect */}
-            <motion.div
-              className="absolute inset-0"
-              initial={{ scale: 0.5 }}
-              animate={{ scale: 3 }}
-              transition={{ duration: 0.5 }}
-              style={{
-                background: 'radial-gradient(circle, transparent 30%, rgba(0,0,0,0.8) 70%)',
-              }}
-            />
-          </motion.div>
-        )}
-      </motion.div>
+      )}
     </AnimatePresence>
   );
 };

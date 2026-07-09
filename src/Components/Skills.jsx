@@ -1,576 +1,395 @@
-import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
-import { 
-  FaReact, 
-  FaNodeJs, 
-  FaDatabase, 
-  FaCloud,
-  FaCode,
-  FaServer,
-  FaGitAlt,
-  FaAws,
-  FaTerminal,
-  FaBolt,
-  FaCog,
-  FaRocket,
-  FaChartLine,
-  FaBrain,
-  FaShieldAlt,
-  FaSync,
-  FaBolt as FaLightning,
-  FaLayerGroup,
-  FaLock,
-  FaRocket as FaDeploy,
-  FaTasks
-} from 'react-icons/fa';
-import { 
-  SiTypescript, 
-  SiMongodb, 
-  SiExpress, 
-  SiNextdotjs, 
-  SiTailwindcss,
-  SiRedux,
-  SiDocker,
-  SiPostgresql,
-  SiGraphql,
-  SiJavascript,
-  SiCss3,
-  SiHtml5,
-  SiMongoose,
-  SiJest,
-  SiWebpack,
-  SiNodedotjs,
-  SiJsonwebtokens,
-  SiSocketdotio,
-  SiRedis
+import React, { useEffect, useRef, useState } from 'react';
+import { FaCode, FaServer, FaTools, FaCheckCircle } from 'react-icons/fa';
+import {
+  SiReact, SiJavascript, SiTailwindcss, SiHtml5, SiCss3,
+  SiNodedotjs, SiExpress, SiMongodb, SiMysql,
+  SiGit, SiGithub, SiPostman, SiJsonwebtokens,
 } from 'react-icons/si';
-import { motion, AnimatePresence } from 'framer-motion';
 
-const Skills = ({ setActiveSection, darkMode = true }) => {
+/* ─── Data ─────────────────────────────────────────── */
+const itemVariant = {
+  hidden: { opacity: 0, y: 30, rotateX: 45, scale: 0.9 },
+  show: { opacity: 1, y: 0, rotateX: 0, scale: 1, transition: { type: 'spring', stiffness: 100, damping: 15 } }
+};
+
+const categories = [
+  {
+    id: 'frontend',
+    label: 'Frontend',
+    icon: FaCode,
+    accent: { dark: '#67e8f9', light: '#4f46e5' },           // cyan / indigo
+    bg: { dark: 'rgba(103,232,249,0.06)', light: 'rgba(79,70,229,0.04)' },
+    border: { dark: 'rgba(103,232,249,0.18)', light: 'rgba(79,70,229,0.2)' },
+    skills: [
+      { name: 'React.js', icon: SiReact, color: '#61dafb', level: 3 },
+      { name: 'JavaScript', icon: SiJavascript, color: '#f7df1e', level: 3 },
+      { name: 'HTML5', icon: SiHtml5, color: '#e34f26', level: 3 },
+      { name: 'CSS3', icon: SiCss3, color: '#1572b6', level: 3 },
+      { name: 'Tailwind CSS', icon: SiTailwindcss, color: '#38bdf8', level: 3 },
+    ],
+  },
+  {
+    id: 'backend',
+    label: 'Backend',
+    icon: FaServer,
+    accent: { dark: '#a78bfa', light: '#7c3aed' },           // violet
+    bg: { dark: 'rgba(167,139,250,0.06)', light: 'rgba(124,58,237,0.04)' },
+    border: { dark: 'rgba(167,139,250,0.18)', light: 'rgba(124,58,237,0.2)' },
+    skills: [
+      { name: 'Node.js', icon: SiNodedotjs, color: '#68a063', level: 3 },
+      { name: 'Express.js', icon: SiExpress, color: '#888', level: 3 },
+      { name: 'MongoDB', icon: SiMongodb, color: '#4db33d', level: 2 },
+      { name: 'MySQL', icon: SiMysql, color: '#00758f', level: 2 },
+      { name: 'JWT Auth', icon: SiJsonwebtokens, color: '#d63aff', level: 3 },
+    ],
+  },
+  {
+    id: 'tools',
+    label: 'Tools',
+    icon: FaTools,
+    accent: { dark: '#34d399', light: '#059669' },           // emerald
+    bg: { dark: 'rgba(52,211,153,0.06)', light: 'rgba(5,150,105,0.04)' },
+    border: { dark: 'rgba(52,211,153,0.18)', light: 'rgba(5,150,105,0.2)' },
+    skills: [
+      { name: 'Git', icon: SiGit, color: '#f05032', level: 3 },
+      { name: 'GitHub', icon: SiGithub, color: '#888', level: 3 },
+      { name: 'Postman', icon: SiPostman, color: '#ff6c37', level: 3 },
+      { name: 'REST APIs', icon: FaCode, color: '#60a5fa', level: 3 },
+      { name: 'VS Code', icon: FaTools, color: '#007acc', level: 3 },
+    ],
+  },
+];
+
+const highlights = [
+  'RESTful API Design',
+  'JWT Authentication',
+  'WebSocket / Real-time',
+  'Payment Integration',
+  'Database Architecture',
+  'Responsive UI/UX',
+  'Clean Code Practices',
+  'Performance Tuning',
+];
+
+/* Level dots component */
+const LevelDots = ({ level, accent }) => (
+  <div className="flex gap-1">
+    {[1, 2, 3].map((d) => (
+      <span
+        key={d}
+        className="w-1.5 h-1.5 rounded-full transition-all duration-300"
+        style={{
+          backgroundColor: d <= level ? accent : 'transparent',
+          border: `1.5px solid ${accent}`,
+          opacity: d <= level ? 1 : 0.3,
+        }}
+      />
+    ))}
+  </div>
+);
+
+/* ─── Component ─────────────────────────────────────── */
+const Skills = ({ setActiveSection }) => {
   const sectionRef = useRef(null);
-  const [isVisible, setIsVisible] = useState(false);
-  const [hoveredSkill, setHoveredSkill] = useState(null);
   const observerRef = useRef(null);
+  const [activeIdx, setActiveIdx] = useState(0);
+  const [visible, setVisible] = useState(false);
+  const [isDark, setIsDark] = useState(false);
 
-  // Memoize skill categories for MERN stack developer
-  const skillCategories = useMemo(() => [
-    {
-      title: 'Frontend Development',
-      icon: FaCode,
-      description: 'Modern web interfaces & user experiences',
-      color: 'border-syntax-blue',
-      bgColor: 'bg-syntax-blue/5',
-      skills: [
-        { name: 'React', icon: FaReact, level: 95, color: '#61DAFB', description: 'Component-based UI library' },
-        { name: 'Next.js', icon: SiNextdotjs, level: 90, color: '#000000', description: 'React framework for production' },
-        { name: 'TypeScript', icon: SiTypescript, level: 88, color: '#3178C6', description: 'Typed JavaScript superset' },
-        { name: 'Redux', icon: SiRedux, level: 85, color: '#764ABC', description: 'State management library' },
-        { name: 'JavaScript', icon: SiJavascript, level: 95, color: '#F7DF1E', description: 'Core web technology' },
-        { name: 'Tailwind CSS', icon: SiTailwindcss, level: 92, color: '#06B6D4', description: 'Utility-first CSS framework' },
-        { name: 'HTML5/CSS3', icon: SiHtml5, level: 96, color: '#E34F26', description: 'Web markup & styling' },
-        { name: 'Responsive Design', icon: FaSync, level: 94, color: '#2196F3', description: 'Cross-device compatibility' },
-      ]
-    },
-    {
-      title: 'Backend Development',
-      icon: FaServer,
-      description: 'Server-side logic & APIs',
-      color: 'border-syntax-green',
-      bgColor: 'bg-syntax-green/5',
-      skills: [
-        { name: 'Node.js', icon: SiNodedotjs, level: 92, color: '#339933', description: 'JavaScript runtime' },
-        { name: 'Express.js', icon: SiExpress, level: 90, color: '#000000', description: 'Web framework for Node.js' },
-        { name: 'REST APIs', icon: FaCode, level: 94, color: '#FF6B35', description: 'API architecture style' },
-        { name: 'JWT Auth', icon: SiJsonwebtokens, level: 88, color: '#000000', description: 'Authentication & security' },
-        { name: 'WebSockets', icon: SiSocketdotio, level: 85, color: '#010101', description: 'Real-time communication' },
-        { name: 'GraphQL', icon: SiGraphql, level: 80, color: '#E10098', description: 'Query language for APIs' },
-        { name: 'Middleware', icon: FaLayerGroup, level: 90, color: '#9C27B0', description: 'Request processing' },
-        { name: 'Server Security', icon: FaShieldAlt, level: 87, color: '#FF9800', description: 'Security implementation' },
-      ]
-    },
-    {
-      title: 'Database & DevOps',
-      icon: FaDatabase,
-      description: 'Data storage & deployment',
-      color: 'border-syntax-purple',
-      bgColor: 'bg-syntax-purple/5',
-      skills: [
-        { name: 'MongoDB', icon: SiMongodb, level: 90, color: '#47A248', description: 'NoSQL document database' },
-        { name: 'Mongoose ODM', icon: SiMongoose, level: 88, color: '#880000', description: 'MongoDB object modeling' },
-        { name: 'PostgreSQL', icon: SiPostgresql, level: 85, color: '#336791', description: 'Relational database' },
-        { name: 'Redis', icon: SiRedis, level: 82, color: '#DC382D', description: 'In-memory data store' },
-        { name: 'Docker', icon: SiDocker, level: 83, color: '#2496ED', description: 'Containerization platform' },
-        { name: 'AWS', icon: FaAws, level: 80, color: '#FF9900', description: 'Cloud computing platform' },
-        { name: 'CI/CD', icon: FaRocket, level: 85, color: '#4285F4', description: 'Continuous integration/deployment' },
-        { name: 'Git', icon: FaGitAlt, level: 95, color: '#F05032', description: 'Version control system' },
-      ]
-    },
-    {
-      title: 'Testing & Tools',
-      icon: FaTasks,
-      description: 'Quality assurance & development tools',
-      color: 'border-syntax-orange',
-      bgColor: 'bg-syntax-orange/5',
-      skills: [
-        { name: 'Jest', icon: SiJest, level: 85, color: '#C21325', description: 'Testing framework' },
-        { name: 'Testing Library', icon: FaBrain, level: 82, color: '#E33332', description: 'React testing utilities' },
-        { name: 'Webpack', icon: SiWebpack, level: 80, color: '#8DD6F9', description: 'Module bundler' },
-        { name: 'GitHub Actions', icon: FaSync, level: 78, color: '#2088FF', description: 'Automation workflows' },
-        { name: 'Agile/Scrum', icon: FaChartLine, level: 88, color: '#00C853', description: 'Project management' },
-        { name: 'Performance Opt', icon: FaBolt, level: 85, color: '#FF5252', description: 'Performance optimization' },
-        { name: 'Code Review', icon: FaCode, level: 90, color: '#2196F3', description: 'Code quality assessment' },
-        { name: 'Documentation', icon: FaCog, level: 92, color: '#607D8B', description: 'Technical documentation' },
-      ]
-    }
-  ], []);
+  /* Detect dark mode */
+  useEffect(() => {
+    const check = () => setIsDark(document.documentElement.classList.contains('dark'));
+    check();
+    const obs = new MutationObserver(check);
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => obs.disconnect();
+  }, []);
 
-  // Memoize code lines for MERN stack
-  const codeLines = useMemo(() => [
-    "const mernSkills: SkillSet[] = [",
-    "  { name: 'React', level: 95, category: 'Frontend' },",
-    "  { name: 'Node.js', level: 92, category: 'Backend' },",
-    "  { name: 'Express.js', level: 90, category: 'Backend' },",
-    "  { name: 'MongoDB', level: 90, category: 'Database' },",
-    "  { name: 'TypeScript', level: 88, category: 'Frontend' },",
-    "  { name: 'Redux', level: 85, category: 'State Management' },",
-    "  { name: 'Docker', level: 83, category: 'DevOps' },",
-    "  { name: 'AWS', level: 80, category: 'Cloud' },",
-    "];"
-  ], []);
-
-  // Memoize skill stats
-  const skillStats = useMemo(() => {
-    const allSkills = skillCategories.flatMap(cat => cat.skills);
-    const totalSkills = allSkills.length;
-    const averageLevel = Math.round(allSkills.reduce((sum, skill) => sum + skill.level, 0) / totalSkills);
-    
-    return {
-      totalSkills,
-      averageLevel,
-      projectsCount: 40,
-      experienceYears: 3
-    };
-  }, [skillCategories]);
-
-  // Intersection Observer
+  /* Intersection observer */
   useEffect(() => {
     if (!observerRef.current) {
       observerRef.current = new IntersectionObserver(
-        ([entry]) => {
-          setIsVisible(entry.isIntersecting);
-          if (entry.isIntersecting) {
-            setActiveSection('skills');
-          }
-        },
+        ([e]) => { setVisible(e.isIntersecting); if (e.isIntersecting) setActiveSection('skills'); },
         { threshold: 0.1 }
       );
     }
-
-    const currentRef = sectionRef.current;
-    if (currentRef) {
-      observerRef.current.observe(currentRef);
-    }
-
-    return () => {
-      if (currentRef) {
-        observerRef.current?.unobserve(currentRef);
-      }
-    };
+    const el = sectionRef.current;
+    if (el) observerRef.current.observe(el);
+    return () => { if (el) observerRef.current?.unobserve(el); };
   }, [setActiveSection]);
 
-  // Simple animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.05,
-        delayChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 10, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.3,
-        ease: "easeOut"
-      }
-    }
-  };
+  const cat = categories[activeIdx];
+  const theme = isDark ? 'dark' : 'light';
 
   return (
-    <section 
-      id="skills" 
-      ref={sectionRef} 
-      className="min-h-screen py-16 relative"
-      style={{ 
-        backgroundColor: '#0a0a0a',
-        scrollMarginTop: '4rem',
-        backgroundImage: `radial-gradient(circle at 20% 80%, rgba(71, 162, 72, 0.05) 0%, transparent 50%),
-                          radial-gradient(circle at 80% 20%, rgba(102, 217, 239, 0.05) 0%, transparent 50%)`
-      }}
+    <section
+      id="skills"
+      ref={sectionRef}
+      className="relative py-28 overflow-hidden bg-transparent dark:bg-transparent transition-colors duration-500 border-t dark:border-white/[0.06] border-slate-200"
+      style={{ scrollMarginTop: '4rem' }}
     >
-      {/* Simplified Grid Pattern */}
-      <div 
-        className="absolute inset-0 opacity-5"
-        style={{
-          backgroundImage: `linear-gradient(to right, rgba(102, 217, 239, 0.1) 1px, transparent 1px),
-                           linear-gradient(to bottom, rgba(102, 217, 239, 0.1) 1px, transparent 1px)`,
-          backgroundSize: '50px 50px',
-        }}
-      ></div>
-
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/30 backdrop-blur-sm border border-gray-800 text-sm font-mono mb-4">
-            <FaTerminal className="text-syntax-blue" />
-            <span className="text-white">$ mern-skills --expertise --full-stack</span>
-          </div>
-          
-          <h2 className="text-3xl sm:text-4xl font-bold mb-3">
-            <span className="text-syntax-blue">export</span>{' '}
-            <span className="text-syntax-green">const</span>{' '}
-            <span className="text-white">skills</span>{' '}
-            <span className="text-syntax-blue">=</span>{' '}
-            <span className="text-syntax-yellow">[</span>
-          </h2>
-          
-          <p className="text-gray-400 max-w-2xl mx-auto font-mono text-sm">
-            // MERN Stack expertise with modern web technologies
-          </p>
-        </div>
-
-        {/* Skill Categories */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-          {skillCategories.map((category, categoryIndex) => (
-            <motion.div 
-              key={category.title}
-              initial="hidden"
-              animate={isVisible ? "visible" : "hidden"}
-              variants={itemVariants}
-              transition={{ delay: categoryIndex * 0.1 }}
-              className="group relative rounded-lg p-4 border bg-black/30 backdrop-blur-sm hover:shadow-lg transition-all duration-300"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-lg flex items-center justify-center border border-gray-700 bg-black/50">
-                  <category.icon className="text-lg text-syntax-blue" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold font-mono text-white">
-                    {category.title}
-                  </h3>
-                  <p className="text-xs text-gray-400">
-                    {category.description}
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                {category.skills.map((skill, skillIndex) => (
-                  <div 
-                    key={skill.name}
-                    className="skill-item"
-                    onMouseEnter={() => setHoveredSkill(skill.name)}
-                    onMouseLeave={() => setHoveredSkill(null)}
-                  >
-                    <div className="flex items-center justify-between mb-1.5">
-                      <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded flex items-center justify-center bg-black/30 border border-gray-700">
-                          <skill.icon className="text-sm" style={{ color: skill.color }} />
-                        </div>
-                        <span className="text-sm font-mono text-white">
-                          {skill.name}
-                        </span>
-                      </div>
-                      <span className="text-xs font-mono text-syntax-green">
-                        {skill.level}%
-                      </span>
-                    </div>
-                    
-                    {/* Progress Bar */}
-                    <div className="relative">
-                      <div className="w-full h-1.5 rounded-full overflow-hidden bg-gray-800">
-                        <div 
-                          className="h-1.5 rounded-full transition-all duration-1000"
-                          style={{ 
-                            width: isVisible ? `${skill.level}%` : '0%',
-                            background: skill.color,
-                          }}
-                        ></div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Live Code Editor */}
-        <motion.div 
-          className="mb-12"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isVisible ? 1 : 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <div className="terminal-window">
-            <div className="terminal-header">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="flex gap-1 mr-3">
-                    <div className="w-2.5 h-2.5 rounded-full bg-red-500"></div>
-                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
-                    <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
-                  </div>
-                  <div className="text-sm font-mono">
-                    <span className="text-syntax-green">mern-skills.ts</span>
-                    <span className="mx-1.5">—</span>
-                    <span className="text-syntax-blue">TypeScript</span>
-                  </div>
-                </div>
-                <div className="text-xs font-mono text-syntax-purple">
-                  <span className="animate-pulse">●</span>
-                  <span className="ml-1.5">MERN Stack</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="terminal-body">
-              <div className="font-mono text-sm">
-                {codeLines.map((line, index) => (
-                  <div key={index} className="mb-0.5">
-                    <span className="text-syntax-purple">
-                      {index === 0 ? 'const' : index === 8 ? '];' : '  '}
-                    </span>
-                    <span className="text-white">
-                      {line.replace(/^const |export const |];$/g, '')}
-                    </span>
-                    {index === codeLines.length - 1 && (
-                      <span className="ml-1 inline-block w-1.5 h-3.5 bg-green-500 animate-pulse"></span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Statistics Dashboard */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-          {[
-            { 
-              label: 'Tech Stack', 
-              value: 'MERN', 
-              icon: FaLayerGroup,
-              color: 'text-syntax-blue',
-              description: 'Primary Stack'
-            },
-            { 
-              label: 'Average Mastery', 
-              value: `${skillStats.averageLevel}%`, 
-              icon: FaChartLine,
-              color: 'text-syntax-green',
-              description: 'Skill Level'
-            },
-            { 
-              label: 'Projects', 
-              value: '40+', 
-              icon: FaRocket,
-              color: 'text-syntax-purple',
-              description: 'Completed'
-            },
-            { 
-              label: 'Experience', 
-              value: '3+ Years', 
-              icon: FaCog,
-              color: 'text-syntax-orange',
-              description: 'Full Stack Dev'
-            },
-          ].map((stat, index) => (
-            <motion.div
-              key={stat.label}
-              className="bg-black/30 backdrop-blur-sm rounded-lg p-4 border border-gray-800"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 10 }}
-              transition={{ delay: 0.3 + index * 0.1 }}
-            >
-              <div className="flex items-center justify-between mb-3">
-                <stat.icon className={`text-xl ${stat.color}`} />
-                <div className={`text-2xl font-bold font-mono ${stat.color}`}>
-                  {stat.value}
-                </div>
-              </div>
-              <div className="text-sm font-mono text-white mb-1">
-                {stat.label}
-              </div>
-              <div className="text-xs text-gray-400">
-                {stat.description}
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* MERN Stack Progress Chart */}
-        <motion.div 
-          className="bg-black/30 backdrop-blur-sm rounded-lg p-5 border border-gray-800"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isVisible ? 1 : 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-syntax-green animate-pulse"></div>
-              <h3 className="text-lg font-bold font-mono text-white">
-                // MERN Stack Proficiency
-              </h3>
-            </div>
-            <div className="text-xs font-mono text-syntax-green">
-              <span>Full Stack</span>
-            </div>
-          </div>
-          
-          <div className="space-y-4">
-            {[
-              { skill: 'React', level: 95, color: '#61DAFB', category: 'Frontend' },
-              { skill: 'Node.js', level: 92, color: '#339933', category: 'Backend' },
-              { skill: 'Express.js', level: 90, color: '#000000', category: 'Backend' },
-              { skill: 'MongoDB', level: 90, color: '#47A248', category: 'Database' },
-              { skill: 'TypeScript', level: 88, color: '#3178C6', category: 'Frontend' },
-              { skill: 'Redux', level: 85, color: '#764ABC', category: 'State Mgmt' },
-            ].map((item, index) => (
-              <div 
-                key={item.skill}
-                className="flex items-center gap-4"
-              >
-                <div className="w-32 flex items-center gap-2">
-                  <div 
-                    className="w-3 h-3 rounded"
-                    style={{ backgroundColor: item.color }}
-                  ></div>
-                  <span className="text-sm font-mono text-white">
-                    {item.skill}
-                  </span>
-                  <span className="text-xs text-gray-400">
-                    ({item.category})
-                  </span>
-                </div>
-                <div className="flex-1">
-                  <div className="relative h-6 bg-gray-900 rounded-full overflow-hidden">
-                    <div 
-                      className="h-6 rounded-full transition-all duration-1000 flex items-center justify-end pr-2"
-                      style={{ 
-                        width: isVisible ? `${item.level}%` : '0%',
-                        background: `linear-gradient(90deg, ${item.color}80, ${item.color})`,
-                      }}
-                    >
-                      <span className="text-xs font-mono text-black font-bold">
-                        {item.level}%
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Specialization Badges */}
-        <motion.div 
-          className="mt-8"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isVisible ? 1 : 0 }}
-          transition={{ delay: 0.5 }}
-        >
-          <div className="flex flex-wrap gap-2 justify-center">
-            {[
-              { label: 'REST APIs', color: 'border-blue-500 text-blue-400' },
-              { label: 'JWT Auth', color: 'border-green-500 text-green-400' },
-              { label: 'Mongoose ODM', color: 'border-red-500 text-red-400' },
-              { label: 'Real-time Apps', color: 'border-purple-500 text-purple-400' },
-              { label: 'State Management', color: 'border-yellow-500 text-yellow-400' },
-              { label: 'Performance Opt', color: 'border-cyan-500 text-cyan-400' },
-              { label: 'API Security', color: 'border-orange-500 text-orange-400' },
-              { label: 'Database Design', color: 'border-pink-500 text-pink-400' },
-            ].map((badge, index) => (
-              <div 
-                key={index}
-                className={`px-3 py-1.5 rounded-full border bg-black/30 backdrop-blur-sm text-xs font-mono ${badge.color}`}
-              >
-                {badge.label}
-              </div>
-            ))}
-          </div>
-        </motion.div>
+      {/* Background grid */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div
+          className="absolute inset-0 dark:opacity-[0.03] opacity-[0.03]"
+          style={{
+            backgroundImage: `linear-gradient(rgba(99,179,237,0.6) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(99,179,237,0.6) 1px, transparent 1px)`,
+            backgroundSize: '60px 60px',
+          }}
+        />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full dark:bg-violet-600/8 bg-indigo-300/15 blur-[120px]" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full dark:bg-cyan-500/6 bg-violet-200/20 blur-[100px]" />
       </div>
 
-      <style jsx>{`
-        .terminal-window {
-          background: rgba(0, 0, 0, 0.5);
-          border-radius: 0.5rem;
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          overflow: hidden;
-          backdrop-filter: blur(10px);
-        }
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10">
 
-        .terminal-header {
-          background: rgba(20, 20, 20, 0.8);
-          padding: 0.75rem 1rem;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
+        {/* ── Section header ── */}
+        <div className={`mb-16 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-5 rounded-full
+            dark:border dark:border-cyan-400/20 border border-indigo-200
+            dark:bg-cyan-400/5 bg-indigo-50
+            dark:text-cyan-400 text-indigo-600
+            text-[11px] font-mono tracking-[0.15em] uppercase font-medium">
+            <FaCode className="text-xs" />
+            Technical Stack
+          </div>
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+            <div>
+              <h2 className="text-[clamp(1.75rem,4vw,2.75rem)] font-black leading-tight tracking-tight dark:text-white text-slate-900">
+                Core <span className="dark:text-transparent text-transparent bg-clip-text
+                  dark:[background-image:linear-gradient(135deg,#67e8f9,#818cf8)]
+                  [background-image:linear-gradient(135deg,#4f46e5,#7c3aed)]">Capabilities</span>
+              </h2>
+              <p className="mt-3 max-w-lg text-[15px] dark:text-white/45 text-slate-500 leading-relaxed font-light">
+                Specialized in the modern full-stack web ecosystem — from pixel-perfect UIs to production-grade APIs.
+              </p>
+            </div>
+            {/* Years badge */}
+            <div className="flex-shrink-0 flex items-center gap-3 px-5 py-3 rounded-2xl
+              dark:border dark:border-white/8 border border-slate-200
+              dark:bg-white/3 bg-white shadow-sm">
+              <div className="text-center">
+                <div className="text-2xl font-black dark:text-white text-slate-900 leading-none">1.5+</div>
+                <div className="text-[10px] font-mono dark:text-white/35 text-slate-400 tracking-widest uppercase mt-0.5">Years</div>
+              </div>
+              <div className="w-px h-8 dark:bg-white/10 bg-slate-200" />
+              <div className="text-center">
+                <div className="text-2xl font-black dark:text-white text-slate-900 leading-none">10+</div>
+                <div className="text-[10px] font-mono dark:text-white/35 text-slate-400 tracking-widest uppercase mt-0.5">Tools</div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-        .terminal-body {
-          padding: 1rem;
-          min-height: 150px;
-          font-family: 'Fira Code', 'Consolas', monospace;
-        }
+        {/* ── Main bento grid ── */}
+        <div className="grid lg:grid-cols-[1fr_1.6fr] gap-6">
 
-        @keyframes pulse {
-          0%, 100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0.5;
-          }
-        }
+          {/* LEFT – Category selector */}
+          <div className={`flex flex-col gap-3 transition-all duration-700 delay-100 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+            {categories.map((c, i) => {
+              const active = activeIdx === i;
+              const Icon = c.icon;
+              return (
+                <button
+                  key={c.id}
+                  onClick={() => setActiveIdx(i)}
+                  className="group relative text-left px-5 py-4 rounded-2xl border transition-all duration-300"
+                  style={{
+                    background: active ? c.bg[theme] : 'transparent',
+                    borderColor: active ? c.border[theme] : (isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)'),
+                  }}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      {/* Icon box */}
+                      <div
+                        className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300"
+                        style={{
+                          background: active ? c.bg[theme] : (isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'),
+                          border: `1px solid ${active ? c.border[theme] : (isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)')}`,
+                        }}
+                      >
+                        <Icon className="text-sm" style={{ color: active ? c.accent[theme] : (isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.35)') }} />
+                      </div>
+                      <div>
+                        <div
+                          className="text-sm font-semibold transition-colors duration-200"
+                          style={{ color: active ? c.accent[theme] : (isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)') }}
+                        >
+                          {c.label}
+                        </div>
+                        <div className="text-[11px] dark:text-white/25 text-slate-400 font-mono mt-0.5">
+                          {c.skills.length} technologies
+                        </div>
+                      </div>
+                    </div>
 
-        .animate-pulse {
-          animation: pulse 2s ease-in-out infinite;
-        }
+                    {/* Arrow */}
+                    <span
+                      className="text-xs font-mono transition-all duration-200"
+                      style={{ color: active ? c.accent[theme] : 'transparent' }}
+                    >
+                      ▸
+                    </span>
+                  </div>
 
-        /* Skill item hover effect */
-        .skill-item:hover {
-          transform: translateX(2px);
-          transition: transform 0.2s ease;
-        }
+                  {/* active accent bar */}
+                  {active && (
+                    <span
+                      className="absolute left-0 top-1/4 bottom-1/4 w-0.5 rounded-full"
+                      style={{ backgroundColor: c.accent[theme] }}
+                    />
+                  )}
+                </button>
+              );
+            })}
 
-        /* Reduced motion support */
-        @media (prefers-reduced-motion: reduce) {
-          * {
-            animation-duration: 0.01ms !important;
-            animation-iteration-count: 1 !important;
-            transition-duration: 0.01ms !important;
-          }
-        }
+            {/* What I can do list */}
+            <div
+              className="mt-2 p-5 rounded-2xl border dark:border-white/[0.06] border-slate-200 dark:bg-white/[0.02] bg-white"
+            >
+              <p className="text-[11px] font-mono dark:text-white/30 text-slate-400 tracking-[0.15em] uppercase mb-4">
+                What I build
+              </p>
+              <div className="flex flex-col gap-2.5">
+                {highlights.slice(0, 5).map((h, i) => (
+                  <div key={i} className="flex items-center gap-2.5">
+                    <FaCheckCircle
+                      className="text-xs flex-shrink-0"
+                      style={{ color: cat.accent[theme], opacity: 0.8 }}
+                    />
+                    <span className="text-[13px] dark:text-white/55 text-slate-500 font-medium">{h}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
 
-        /* Optimize for mobile */
-        @media (max-width: 640px) {
-          .terminal-body {
-            font-size: 11px;
-            padding: 0.75rem;
-          }
-          
-          .skill-item .text-sm {
-            font-size: 0.75rem;
-          }
-        }
-      `}</style>
+          {/* RIGHT – Skill cards grid */}
+          <div
+            className={`transition-all duration-700 delay-200 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
+            key={activeIdx}
+          >
+            {/* Category label row */}
+            <div className="flex items-center gap-3 mb-5">
+              <span
+                className="text-[11px] font-mono tracking-[0.15em] uppercase font-semibold"
+                style={{ color: cat.accent[theme] }}
+              >
+                {cat.label} Development
+              </span>
+              <div className="flex-1 h-px dark:bg-white/5 bg-slate-200" />
+              <span className="text-[11px] font-mono dark:text-white/20 text-slate-400">{cat.skills.length} skills</span>
+            </div>
+
+            {/* 5-card bento: first card wide, rest 2-col */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              {cat.skills.map((skill, i) => {
+                const Icon = skill.icon;
+                const wide = i === 0; // first card spans 2 cols as highlight
+                return (
+                  <div
+                    key={skill.name}
+                    className={`group relative p-5 rounded-2xl border transition-all duration-300 cursor-default
+                      dark:bg-white/[0.025] bg-white hover:-translate-y-1 hover:shadow-xl
+                      ${wide ? 'col-span-2 sm:col-span-1' : ''}`}
+                    style={{
+                      borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)',
+                      '--hover-border': cat.border[theme],
+                      '--hover-shadow': `${cat.accent[theme]}18`,
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = cat.border[theme];
+                      e.currentTarget.style.boxShadow = `0 20px 40px ${cat.accent[theme]}15`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)';
+                      e.currentTarget.style.boxShadow = '';
+                    }}
+                  >
+                    {/* Icon */}
+                    <div
+                      className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 transition-all duration-300"
+                      style={{
+                        background: `${skill.color}15`,
+                        border: `1px solid ${skill.color}30`,
+                      }}
+                    >
+                      <Icon
+                        className="text-xl transition-all duration-300 group-hover:scale-110"
+                        style={{ color: skill.color }}
+                      />
+                    </div>
+
+                    {/* Name */}
+                    <div className="text-sm font-semibold dark:text-white/80 text-slate-700 mb-2 leading-tight">
+                      {skill.name}
+                    </div>
+
+                    {/* Level dots */}
+                    <LevelDots level={skill.level} accent={cat.accent[theme]} />
+
+                    {/* Subtle glow on corner */}
+                    <div
+                      className="absolute top-3 right-3 w-1.5 h-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      style={{ backgroundColor: cat.accent[theme] }}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Proficiency legend */}
+            <div className="flex items-center gap-4 mt-5 px-1">
+              <span className="text-[10px] font-mono dark:text-white/20 text-slate-400 tracking-widest uppercase">
+                Proficiency
+              </span>
+              {[
+                { label: 'Learning', dots: 1 },
+                { label: 'Proficient', dots: 2 },
+                { label: 'Expert', dots: 3 },
+              ].map((l) => (
+                <div key={l.label} className="flex items-center gap-1.5">
+                  <LevelDots level={l.dots} accent={cat.accent[theme]} />
+                  <span className="text-[10px] dark:text-white/25 text-slate-400">{l.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+        </div>
+
+        {/* ── Bottom scrolling pill strip ── */}
+        <div className={`mt-16 pt-8 border-t dark:border-white/[0.06] border-slate-200 transition-all duration-700 delay-300 ${visible ? 'opacity-100' : 'opacity-0'}`}>
+          <p className="text-center text-[10px] font-mono dark:text-white/20 text-slate-400 tracking-[0.2em] uppercase mb-5">
+            Also experienced with
+          </p>
+          <div className="flex flex-wrap justify-center gap-2.5">
+            {[
+              'REST APIs', 'JWT', 'WebSockets', 'Payment Gateway',
+              'Email Services', 'Agile', 'MVC', 'CRUD', 'OOP',
+              'React Router', 'Axios', 'NPM',
+            ].map((tag) => (
+              <span
+                key={tag}
+                className="px-3.5 py-1.5 rounded-full text-[12px] font-mono
+                  dark:border dark:border-white/[0.08] border border-slate-200
+                  dark:bg-white/[0.03] bg-white
+                  dark:text-white/40 text-slate-500
+                  dark:hover:border-cyan-400/30 hover:border-indigo-300
+                  dark:hover:text-cyan-400 hover:text-indigo-600
+                  transition-all duration-200 cursor-default"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+
+      </div>
     </section>
   );
 };
 
-// Memoize the component to prevent unnecessary re-renders
-export default React.memo(Skills);
+export default Skills;

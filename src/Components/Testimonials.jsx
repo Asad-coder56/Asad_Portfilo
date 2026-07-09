@@ -98,7 +98,7 @@ const Testimonials = () => {
 
   return (
     <section className="py-20 bg-terminal">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16 animate-fadeIn">
           <span className="inline-block px-4 py-1.5 rounded-full bg-developer-secondary text-syntax-blue text-sm font-mono-developer mb-4 border border-developer">
             $ testimonials --all

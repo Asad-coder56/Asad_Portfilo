@@ -1,518 +1,247 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { 
-  FaDownload, 
-  FaMoon, 
-  FaSun, 
-  FaBars, 
-  FaTimes,
-  FaHome,
-  FaCogs,
-  FaBlog,
-  FaGraduationCap,
-  FaEnvelope,
-  FaTerminal,
-  FaUser,
-  FaKeyboard,
-  FaBug,
-  FaServer
-} from 'react-icons/fa';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { FaDownload, FaMoon, FaSun, FaBars, FaTimes } from 'react-icons/fa';
 
 const Header = ({ darkMode, toggleDarkMode, activeSection, onSectionChange, scrollToSection }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [cursorVisible, setCursorVisible] = useState(true);
-  const [typingText, setTypingText] = useState('');
-  const [binaryRain, setBinaryRain] = useState([]);
-  const [isCompiling, setIsCompiling] = useState(false);
-  const [compileProgress, setCompileProgress] = useState(0);
-  
   const menuRef = useRef(null);
-  const scrollTimeout = useRef(null);
-  const animationFrame = useRef(null);
   const location = useLocation();
-  const terminalText = "maks@portfolio:~$ ";
+  const navigate = useNavigate();
 
-  // Simplified nav items
   const navItems = [
-    { id: 'home', label: 'Home', icon: FaHome, path: '/', color: 'syntax-blue' },
-    { id: 'services', label: 'Services', icon: FaCogs, path: '#services', color: 'syntax-orange' },
-    { id: 'blog', label: 'Blog', icon: FaBlog, path: '/blog', color: 'syntax-red' },
-    { id: 'education', label: 'Education', icon: FaGraduationCap, path: '#education', color: 'syntax-yellow' },
-    { id: 'contact', label: 'Contact', icon: FaEnvelope, path: '#contact', color: 'syntax-cyan' },
+    { id: 'home', label: 'Home', path: '/' },
+    { id: 'skills', label: 'Skills', path: '#skills' },
+    { id: 'projects', label: 'Projects', path: '#projects' },
+    { id: 'education', label: 'Resume', path: '#education' },
+    { id: 'contact', label: 'Contact', path: '#contact' },
   ];
 
-  // Optimized typing animation - using requestAnimationFrame
   useEffect(() => {
-    let mounted = true;
-    let animationId = null;
-    let currentText = '';
-    let charIndex = 0;
-    
-    const typeNextChar = () => {
-      if (!mounted) return;
-      
-      if (charIndex < terminalText.length) {
-        currentText += terminalText.charAt(charIndex);
-        setTypingText(currentText);
-        charIndex++;
-        animationId = requestAnimationFrame(() => {
-          setTimeout(typeNextChar, 100);
-        });
-      }
-    };
-    
-    typeNextChar();
-    
-    const cursorInterval = setInterval(() => {
-      setCursorVisible(prev => !prev);
-    }, 530);
-    
-    return () => {
-      mounted = false;
-      clearInterval(cursorInterval);
-      if (animationId) cancelAnimationFrame(animationId);
-    };
-  }, []);
-
-  // Optimized binary rain - reduced number and complexity
-  useEffect(() => {
-    if (window.innerWidth < 768) return; // Disable on mobile
-    
-    const generateBinaryDrops = () => {
-      const drops = [];
-      const binaryChars = ['0', '1'];
-      
-      for (let i = 0; i < 8; i++) { // Reduced from 15 to 8
-        drops.push({
-          id: i,
-          char: Math.random() > 0.5 ? binaryChars[0] : binaryChars[1],
-          color: `text-syntax-${Math.random() > 0.66 ? 'green' : Math.random() > 0.5 ? 'blue' : 'purple'}`,
-          left: `${Math.random() * 100}%`,
-          speed: 1 + Math.random() * 2, // Faster speed
-          size: Math.random() > 0.7 ? 'text-xs' : 'text-[10px]'
-        });
-      }
-      return drops;
-    };
-
-    setBinaryRain(generateBinaryDrops());
-
-    const interval = setInterval(() => {
-      setBinaryRain(prev => 
-        prev.map(drop => ({
-          ...drop,
-          char: Math.random() > 0.5 ? '0' : '1'
-        }))
-      );
-    }, 3000); // Reduced frequency from 2000ms to 3000ms
-
-    return () => clearInterval(interval);
-  }, []);
-
-  // Optimized scroll handler
-  useEffect(() => {
-    const handleScroll = () => {
-      if (scrollTimeout.current) {
-        cancelAnimationFrame(scrollTimeout.current);
-      }
-      
-      scrollTimeout.current = requestAnimationFrame(() => {
-        setIsScrolled(window.scrollY > 20);
-      });
-    };
-
+    const handleScroll = () => setIsScrolled(window.scrollY > 30);
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (scrollTimeout.current) {
-        cancelAnimationFrame(scrollTimeout.current);
-      }
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close menu when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setIsMenuOpen(false);
-      }
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setIsMenuOpen(false);
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Optimized compilation simulation
-  const simulateCompilation = useCallback(() => {
-    setIsCompiling(true);
-    setCompileProgress(0);
-    
-    const startTime = Date.now();
-    const duration = 1000; // Reduced from 2500ms to 1000ms
-    
-    const updateProgress = () => {
-      const elapsed = Date.now() - startTime;
-      const progress = Math.min(100, (elapsed / duration) * 100);
-      setCompileProgress(progress);
-      
-      if (progress < 100) {
-        animationFrame.current = requestAnimationFrame(updateProgress);
-      } else {
-        setTimeout(() => setIsCompiling(false), 300);
-      }
-    };
-    
-    animationFrame.current = requestAnimationFrame(updateProgress);
-  }, []);
-
-  // Clean up animation frames
-  useEffect(() => {
-    return () => {
-      if (animationFrame.current) {
-        cancelAnimationFrame(animationFrame.current);
-      }
-    };
-  }, []);
-
-  const handleNavClick = (item, event) => {
+  const handleNavClick = (item, e) => {
     if (item.path.startsWith('#')) {
-      event.preventDefault();
+      e.preventDefault();
       setIsMenuOpen(false);
       scrollToSection(item.id);
-      simulateCompilation();
+    } else {
+      navigate(item.path);
+      onSectionChange(item.id);
+      setIsMenuOpen(false);
     }
-    onSectionChange(item.id);
   };
 
   const handleDownloadCV = () => {
-    simulateCompilation();
-    
-    setTimeout(() => {
-      const link = document.createElement('a');
-      link.href = '/cv.pdf';
-      link.download = 'Muhammad_Asad_Kamal_Shah_CV.pdf';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }, 1200);
+    const link = document.createElement('a');
+    link.href = '/cv.pdf';
+    link.download = 'Asad_Kamal_CV.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
-  const isActivePage = (path) => {
+  const isActive = (path) => {
     if (path === '/') return location.pathname === '/';
-    if (path.startsWith('/')) return location.pathname.startsWith(path);
+    if (path.startsWith('#')) return activeSection === path.substring(1);
     return false;
   };
 
-  const isActiveSection = (id) => activeSection === id;
-
-  // Simplified animations
-  const menuVariants = {
-    closed: { opacity: 0, y: -20 },
-    open: { opacity: 1, y: 0 }
-  };
-
-  const menuItemVariants = {
-    closed: { opacity: 0, x: -10 },
-    open: { opacity: 1, x: 0 }
-  };
-
   return (
-    <motion.header 
-      initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.4 }}
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        isScrolled 
-          ? 'bg-terminal/95 backdrop-blur-lg shadow-lg border-b border-developer' 
-          : 'bg-terminal/90 backdrop-blur-sm'
-      }`}
-    >
-      {/* Simplified Binary Rain - only on desktop */}
-      {binaryRain.length > 0 && (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none hidden md:block">
-          {binaryRain.map((drop) => (
-            <div
-              key={drop.id}
-              className={`absolute ${drop.color} ${drop.size} font-mono font-bold opacity-30`}
-              style={{ 
-                left: drop.left,
-                top: `${(Date.now() / drop.speed) % 100}%`,
-                animation: `fall ${drop.speed}s linear infinite`
+    <>
+      <header
+        className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${isScrolled
+          ? 'dark:bg-[#050810]/96 bg-white/96 backdrop-blur-xl dark:border-b dark:border-white/[0.06] border-b border-slate-200/80 dark:shadow-2xl dark:shadow-black/50 shadow-sm shadow-slate-200/80 py-3'
+          : 'bg-transparent py-5'
+          }`}
+      >
+        <div className="max-w-7xl mx-auto px-6 lg:px-10">
+          <div className="flex items-center justify-between">
+
+            {/* ── Logo / Monogram ── */}
+            <Link
+              to="/"
+              onClick={() => {
+                onSectionChange('home');
+                if (window.location.pathname === '/') window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
+              className="group flex items-center gap-3.5 select-none"
             >
-              {drop.char}
-            </div>
-          ))}
-        </div>
-      )}
-
-      <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <nav className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link 
-            to="/" 
-            className="flex items-center space-x-3 group"
-            onClick={() => {
-              onSectionChange('home');
-              if (window.location.pathname === '/') {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }
-            }}
-          >
-            <div className="w-10 h-10 rounded-lg bg-developer-secondary border border-developer flex items-center justify-center">
-              <FaTerminal className="text-syntax-blue text-lg" />
-            </div>
-            <div className="flex flex-col">
-              <div className="font-mono text-sm">
-                <span className="text-terminal">{typingText}</span>
-                <span className={`inline-block w-[2px] h-5 ml-0.5 bg-syntax-green ${
-                  cursorVisible ? 'opacity-100' : 'opacity-0'
-                }`}></span>
+              {/* Monogram */}
+              <div className="relative w-10 h-10 flex-shrink-0">
+                {/* Dark mode glow */}
+                <span className="absolute inset-0 rounded-lg dark:bg-cyan-400/15 bg-indigo-500/10 blur-md group-hover:dark:bg-cyan-400/30 group-hover:bg-indigo-500/20 transition-all duration-500" />
+                <span className="relative flex items-center justify-center w-10 h-10 rounded-lg dark:border dark:border-cyan-400/25 border border-indigo-200 dark:bg-[#0d1117] bg-white group-hover:dark:border-cyan-400/50 group-hover:border-indigo-400/60 shadow-sm transition-all duration-300">
+                  <span className="font-mono font-black text-[15px] tracking-tighter leading-none">
+                    <span className="dark:text-cyan-400 text-indigo-600">A</span>
+                    <span className="dark:text-white text-slate-800">K</span>
+                  </span>
+                </span>
               </div>
+
+              {/* Name + tagline */}
+              <div className="flex flex-col leading-none gap-0.5">
+                <span className="text-sm font-bold tracking-[0.06em] uppercase dark:text-white/90 text-slate-800 group-hover:dark:text-white group-hover:text-slate-900 transition-colors duration-200">
+                  Asad Kamal
+                </span>
+                <span className="text-[10px] font-mono dark:text-cyan-400/70 text-indigo-500/80 tracking-[0.16em] uppercase">
+                  Full‑Stack Dev
+                </span>
+              </div>
+            </Link>
+
+            {/* ── Desktop Nav ── */}
+            <nav className="hidden lg:flex items-center gap-1">
+              {navItems.map((item) => {
+                const active = isActive(item.path);
+                return (
+                  <a
+                    key={item.id}
+                    href={item.path}
+                    onClick={(e) => handleNavClick(item, e)}
+                    className="relative group px-4 py-2"
+                  >
+                    {/* label */}
+                    <span
+                      className={`relative z-10 font-mono text-[13px] font-medium tracking-wide transition-colors duration-200 ${active
+                        ? 'dark:text-cyan-400 text-indigo-600'
+                        : 'dark:text-white/45 text-slate-400 group-hover:dark:text-white/85 group-hover:text-slate-700'
+                        }`}
+                    >
+                      {active && (
+                        <span className="dark:text-cyan-400/70 text-indigo-400/80 mr-1 text-[11px]">▸</span>
+                      )}
+                      {item.label}
+                    </span>
+
+                    {/* Underline */}
+                    <span
+                      className={`absolute bottom-0.5 left-4 right-4 h-px dark:bg-cyan-400 bg-indigo-500 transition-all duration-300 ease-out ${active
+                        ? 'opacity-100 scale-x-100'
+                        : 'opacity-0 scale-x-0 group-hover:opacity-30 group-hover:scale-x-100'
+                        }`}
+                      style={{ transformOrigin: 'left' }}
+                    />
+                  </a>
+                );
+              })}
+            </nav>
+
+            {/* ── Right Actions ── */}
+            <div className="flex items-center gap-2.5">
+
+              {/* Available badge — desktop */}
+              <span className="hidden lg:flex items-center gap-1.5 px-3 py-1 rounded-full dark:border dark:border-emerald-500/30 border border-emerald-400 dark:bg-emerald-500/10 bg-emerald-50 dark:text-emerald-400 text-emerald-600 text-[10px] font-mono tracking-wider uppercase font-medium">
+                <span className="w-1.5 h-1.5 rounded-full dark:bg-emerald-400 bg-emerald-500 animate-pulse" />
+                Available
+              </span>
+
+              {/* Resume button */}
+              <button
+                onClick={handleDownloadCV}
+                className="hidden md:flex items-center gap-1.5 px-4 py-2 rounded-lg dark:border dark:border-white/10 border border-slate-200 dark:bg-white/5 bg-white dark:hover:bg-white/10 hover:bg-slate-50 dark:hover:border-white/20 hover:border-slate-300 dark:text-white/60 text-slate-600 dark:hover:text-white hover:text-slate-900 text-xs font-mono tracking-wide transition-all duration-200 shadow-sm"
+              >
+                <FaDownload className="text-[10px]" />
+                Resume
+              </button>
+
+              {/* Dark Mode Toggle */}
+              <button
+                onClick={toggleDarkMode}
+                className="w-9 h-9 flex items-center justify-center rounded-lg dark:border dark:border-white/10 border border-slate-200 dark:bg-white/5 bg-white dark:hover:bg-white/10 hover:bg-slate-50 dark:text-white/60 text-slate-500 dark:hover:text-white hover:text-slate-900 transition-all duration-200 shadow-sm"
+                aria-label="Toggle theme"
+              >
+                {darkMode ? <FaSun className="text-xs" /> : <FaMoon className="text-xs" />}
+              </button>
+
+              {/* Mobile Hamburger */}
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="lg:hidden w-9 h-9 flex items-center justify-center rounded-lg dark:border dark:border-white/10 border border-slate-200 dark:bg-white/5 bg-white dark:hover:bg-white/10 hover:bg-slate-50 dark:text-white/60 text-slate-500 dark:hover:text-white hover:text-slate-800 transition-all duration-200 shadow-sm"
+                aria-label="Toggle menu"
+              >
+                {isMenuOpen ? <FaTimes className="text-sm" /> : <FaBars className="text-sm" />}
+              </button>
             </div>
-          </Link>
-          
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex flex-1 justify-center mx-8">
-            <ul className="flex items-center space-x-1">
-              {navItems.map((item) => (
-                <li key={item.id}>
-                  {item.path.startsWith('/') ? (
-                    <Link
-                      to={item.path}
-                      onClick={() => onSectionChange(item.id)}
-                      className={`relative flex items-center gap-2 px-4 py-2 rounded-lg font-mono text-sm transition-all ${
-                        isActivePage(item.path)
-                          ? 'bg-developer-secondary text-terminal border border-developer' 
-                          : 'text-developer-secondary hover:text-terminal hover:bg-developer-secondary'
-                      }`}
-                    >
-                      <item.icon className={`text-${item.color}`} />
-                      <span>{item.label}</span>
-                    </Link>
-                  ) : (
-                    <a
-                      href={item.path}
-                      onClick={(e) => handleNavClick(item, e)}
-                      className={`relative flex items-center gap-2 px-4 py-2 rounded-lg font-mono text-sm transition-all ${
-                        isActiveSection(item.id) 
-                          ? 'bg-developer-secondary text-terminal border border-developer' 
-                          : 'text-developer-secondary hover:text-terminal hover:bg-developer-secondary'
-                      }`}
-                    >
-                      <item.icon className={`text-${item.color}`} />
-                      <span>{item.label}</span>
-                    </a>
-                  )}
-                </li>
-              ))}
-            </ul>
           </div>
+        </div>
+      </header>
 
-          {/* Right side buttons */}
-          <div className="flex items-center space-x-3">
-            {/* Compilation Progress */}
-            <AnimatePresence>
-              {isCompiling && (
-                <motion.div
-                  initial={{ width: 0, opacity: 0 }}
-                  animate={{ width: 100, opacity: 1 }}
-                  exit={{ width: 0, opacity: 0 }}
-                  className="hidden md:block"
-                >
-                  <div className="w-24 h-8 bg-developer-secondary border border-developer rounded-lg overflow-hidden">
-                    <div 
-                      className="h-full bg-gradient-to-r from-syntax-blue to-syntax-green transition-all duration-300"
-                      style={{ width: `${compileProgress}%` }}
-                    ></div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+      {/* ── Mobile Drawer ── */}
+      <div
+        ref={menuRef}
+        className={`fixed inset-y-0 right-0 z-50 w-[80vw] max-w-[288px] dark:bg-[#080c14] bg-white dark:border-l dark:border-white/[0.07] border-l border-slate-100 shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
+      >
+        {/* Drawer header */}
+        <div className="flex items-center justify-between px-6 py-5 dark:border-b dark:border-white/[0.06] border-b border-slate-100">
+          <span className="font-mono text-xs dark:text-white/40 text-slate-400 tracking-widest uppercase">Navigation</span>
+          <button
+            onClick={() => setIsMenuOpen(false)}
+            className="w-8 h-8 flex items-center justify-center rounded-lg dark:border dark:border-white/10 border border-slate-200 dark:text-white/50 text-slate-500 dark:hover:text-white hover:text-slate-800 dark:hover:border-white/20 hover:border-slate-300 transition-all duration-200"
+          >
+            <FaTimes className="text-xs" />
+          </button>
+        </div>
 
-            <motion.button
-              whileTap={{ scale: 0.95 }}
-              onClick={handleDownloadCV}
-              className="hidden md:flex items-center gap-2 bg-developer-secondary border border-developer text-terminal px-4 py-2 rounded-lg font-mono hover:border-syntax-blue transition-all text-sm"
-            >
-              <FaDownload className="text-sm" />
-              <span>resume.pdf</span>
-            </motion.button>
-            
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              onClick={toggleDarkMode}
-              className={`p-2 rounded-lg transition-all ${
-                darkMode 
-                  ? 'bg-developer-secondary text-syntax-yellow border border-developer' 
-                  : 'bg-developer-secondary text-terminal border border-developer'
-              }`}
-            >
-              {darkMode ? <FaSun /> : <FaMoon />}
-            </motion.button>
-
-            {/* Mobile menu button */}
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className={`p-2 rounded-lg lg:hidden ${
-                darkMode 
-                  ? 'bg-developer-secondary text-terminal border border-developer' 
-                  : 'bg-developer-secondary text-terminal border border-developer'
-              }`}
-            >
-              {isMenuOpen ? <FaTimes /> : <FaBars />}
-            </button>
-          </div>
+        {/* Drawer nav */}
+        <nav className="flex flex-col flex-1 px-4 py-6 gap-1">
+          {navItems.map((item, i) => {
+            const active = isActive(item.path);
+            return (
+              <a
+                key={item.id}
+                href={item.path}
+                onClick={(e) => handleNavClick(item, e)}
+                className={`group flex items-center gap-3 px-4 py-3 rounded-xl font-mono text-sm transition-all duration-200 ${active
+                  ? 'dark:bg-cyan-400/10 bg-indigo-50 dark:text-cyan-400 text-indigo-600 dark:border dark:border-cyan-400/20 border border-indigo-200'
+                  : 'dark:text-white/40 text-slate-400 dark:hover:text-white hover:text-slate-800 dark:hover:bg-white/5 hover:bg-slate-50 border border-transparent'
+                  }`}
+              >
+                <span className={`text-xs font-mono ${active ? 'dark:text-cyan-400/70 text-indigo-400' : 'dark:text-white/20 text-slate-300 group-hover:dark:text-white/40 group-hover:text-slate-400'}`}>
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                {item.label}
+              </a>
+            );
+          })}
         </nav>
+
+        {/* Drawer footer */}
+        <div className="px-5 py-6 dark:border-t dark:border-white/[0.06] border-t border-slate-100 space-y-3">
+          <span className="flex items-center gap-2 dark:text-emerald-400 text-emerald-600 font-mono text-xs tracking-wider uppercase">
+            <span className="w-1.5 h-1.5 rounded-full dark:bg-emerald-400 bg-emerald-500 animate-pulse" />
+            Open to opportunities
+          </span>
+          <button
+            onClick={handleDownloadCV}
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl dark:border dark:border-white/10 border border-slate-200 dark:bg-white/5 bg-slate-50 dark:hover:bg-white/10 hover:bg-slate-100 dark:text-white/60 text-slate-600 dark:hover:text-white hover:text-slate-900 text-sm font-mono transition-all duration-200"
+          >
+            <FaDownload className="text-xs" />
+            Download Resume
+          </button>
+        </div>
       </div>
 
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMenuOpen && (
-          <motion.div 
-            ref={menuRef}
-            initial="closed"
-            animate="open"
-            exit="closed"
-            variants={menuVariants}
-            className="lg:hidden absolute top-full left-0 right-0 bg-terminal border-x border-b border-developer rounded-b-lg shadow-lg z-50"
-          >
-            <div className="py-4 px-4">
-              <div className="flex items-center gap-3 mb-4 p-4 bg-gradient-to-r from-syntax-blue/10 to-syntax-purple/10 rounded-lg border border-developer">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-syntax-blue to-syntax-green flex items-center justify-center text-white text-lg font-bold">
-                  <FaUser />
-                </div>
-                <div>
-                  <div className="font-bold text-terminal font-mono">Muhammad Asad</div>
-                  <div className="text-xs text-developer-secondary font-mono">
-                    Full Stack Developer
-                  </div>
-                </div>
-              </div>
-              
-              <ul className="space-y-2">
-                {navItems.map((item) => (
-                  <motion.li 
-                    key={item.id}
-                    variants={menuItemVariants}
-                  >
-                    {item.path.startsWith('/') ? (
-                      <Link
-                        to={item.path}
-                        onClick={() => {
-                          onSectionChange(item.id);
-                          setIsMenuOpen(false);
-                          simulateCompilation();
-                        }}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-lg font-mono transition-all ${
-                          isActivePage(item.path)
-                            ? 'bg-developer-secondary text-terminal border' 
-                            : 'text-developer-secondary hover:text-terminal hover:bg-developer-secondary'
-                        } border-${item.color}`}
-                      >
-                        <item.icon className={`text-${item.color}`} />
-                        <span>{item.label}</span>
-                      </Link>
-                    ) : (
-                      <a
-                        href={item.path}
-                        onClick={(e) => {
-                          handleNavClick(item, e);
-                          setIsMenuOpen(false);
-                        }}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-lg font-mono transition-all ${
-                          isActiveSection(item.id) 
-                            ? 'bg-developer-secondary text-terminal border' 
-                            : 'text-developer-secondary hover:text-terminal hover:bg-developer-secondary'
-                        } border-${item.color}`}
-                      >
-                        <item.icon className={`text-${item.color}`} />
-                        <span>{item.label}</span>
-                      </a>
-                    )}
-                  </motion.li>
-                ))}
-                
-                <motion.li 
-                  className="pt-4 mt-4 border-t border-developer"
-                  variants={menuItemVariants}
-                >
-                  <button
-                    onClick={handleDownloadCV}
-                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-syntax-blue to-syntax-green text-terminal px-6 py-3 rounded-lg font-mono hover:shadow-lg transition-all"
-                  >
-                    <FaDownload /> 
-                    <span>Download CV</span>
-                  </button>
-                </motion.li>
-              </ul>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Compilation Status Bar */}
-      <AnimatePresence>
-        {isCompiling && (
-          <motion.div 
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 4, opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="absolute bottom-0 left-0 w-full bg-developer-secondary overflow-hidden"
-          >
-            <div 
-              className="h-full bg-gradient-to-r from-syntax-blue via-syntax-green to-syntax-purple transition-all duration-300"
-              style={{ width: `${compileProgress}%` }}
-            ></div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <style jsx>{`
-        @keyframes fall {
-          from {
-            transform: translateY(-100px);
-            opacity: 0;
-          }
-          10% {
-            opacity: 0.7;
-          }
-          90% {
-            opacity: 0.7;
-          }
-          to {
-            transform: translateY(100vh);
-            opacity: 0;
-          }
-        }
-        
-        /* Reduced motion support */
-        @media (prefers-reduced-motion: reduce) {
-          * {
-            animation-duration: 0.01ms !important;
-            animation-iteration-count: 1 !important;
-            transition-duration: 0.01ms !important;
-          }
-        }
-        
-        /* Performance optimizations */
-        .will-change-transform {
-          will-change: transform;
-        }
-        
-        .backdrop-blur-lg {
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-        }
-        
-        .backdrop-blur-sm {
-          backdrop-filter: blur(8px);
-          -webkit-backdrop-filter: blur(8px);
-        }
-      `}</style>
-    </motion.header>
+      {/* Overlay */}
+      {isMenuOpen && (
+        <div
+          className="fixed inset-0 z-40 dark:bg-black/60 bg-slate-900/30 backdrop-blur-sm lg:hidden"
+          onClick={() => setIsMenuOpen(false)}
+        />
+      )}
+    </>
   );
 };
 
