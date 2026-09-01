@@ -5,6 +5,16 @@ import {
   FaCalendarAlt, FaCode, FaCheckCircle,
 } from 'react-icons/fa';
 
+/* Safe helper for rgba colors */
+const hexToRgba = (hex, alpha) => {
+  if (!hex || typeof hex !== 'string') return `rgba(100,255,218,${alpha})`;
+  let c = hex.replace('#', '');
+  if (c.length === 3) c = c.split('').map(x => x + x).join('');
+  const num = parseInt(c, 16);
+  if (isNaN(num)) return `rgba(100,255,218,${alpha})`;
+  return `rgba(${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}, ${alpha})`;
+};
+
 /* ── Data ─────────────────────────────────────────── */
 const workExperience = [
   {
@@ -16,7 +26,7 @@ const workExperience = [
     description: 'Developing and maintaining scalable full-stack web applications using React.js, Node.js, Express.js, MySQL, and MongoDB. Built RESTful APIs for authentication, user management, and business workflows. Implemented JWT-based authentication and RBAC. Integrated third-party services including Authorize.net payment gateway, SendGrid, WebSockets, and email services. Optimized relational and NoSQL database structures using MySQL, MongoDB, and Sequelize ORM.',
     projects: ['TruNorth', 'EliteSnooker (Highbridge)', 'CueMetrics', 'GI 2 AI Talent (Recruiter)', 'Watt Machinery', 'MatchXpert AI'],
     tech: ['React.js', 'Node.js', 'Express.js', 'MySQL', 'MongoDB', 'Sequelize ORM', 'JWT', 'WebSockets', 'Tailwind CSS', 'Material UI', 'Authorize.net'],
-    accent: { dark: '#67e8f9', light: '#4f46e5' },
+    accent: { dark: '#64ffda', light: '#2563eb' },
   },
   {
     position: 'Freelance Full Stack & Frontend Developer',
@@ -27,7 +37,7 @@ const workExperience = [
     description: 'Delivered end-to-end full-stack web applications and specialized e-commerce interfaces on a freelance basis. Built SCSM as Full Stack Developer (React.js + Node.js + MongoDB + Python FastAPI ML microservice for AI-assisted civic complaint triage via Socket.IO). Built PhantomProducts as Frontend Developer (responsive Under Armour UA Phantom 4 e-commerce landing page with mega-menus and product catalog).',
     projects: ['SCSM — Smart Complaint Management System', 'PhantomProducts — UA Phantom 4 E-Commerce'],
     tech: ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'Socket.IO', 'Python', 'FastAPI', 'Vite', 'Tailwind CSS v4'],
-    accent: { dark: '#fb923c', light: '#ea580c' },
+    accent: { dark: '#38bdf8', light: '#1d4ed8' },
   },
 ];
 
@@ -40,7 +50,7 @@ const educationData = [
     cgpa: '3.38',
     description: 'Four-year degree covering core CS fundamentals, software design, algorithms, and modern web/AI technologies.',
     courses: ['Data Structures', 'Algorithms', 'Database Systems', 'Software Engineering', 'Web Development', 'AI / ML', 'OOP', 'Computer Networks'],
-    accent: { dark: '#34d399', light: '#059669' },
+    accent: { dark: '#64ffda', light: '#2563eb' },
   },
 ];
 
@@ -92,21 +102,15 @@ const Education = ({ setActiveSection }) => {
     <section
       id="education"
       ref={sectionRef}
-      className="relative py-28 overflow-hidden bg-transparent dark:bg-transparent transition-colors duration-500 border-t dark:border-white/[0.06] border-slate-200"
-      style={{ scrollMarginTop: '4rem' }}
+      className="relative py-24 overflow-hidden transition-colors duration-500"
+      style={{
+        scrollMarginTop: '4rem',
+        borderTop: `1px solid ${isDark ? 'rgba(100,255,218,0.08)' : 'rgba(208,215,222,0.80)'}`,
+      }}
     >
       {/* Background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div
-          className="absolute inset-0 dark:opacity-[0.03] opacity-[0.03]"
-          style={{
-            backgroundImage: `linear-gradient(rgba(99,179,237,0.6) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(99,179,237,0.6) 1px, transparent 1px)`,
-            backgroundSize: '60px 60px',
-          }}
-        />
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] rounded-full dark:bg-violet-600/8 bg-indigo-200/20 blur-[120px]" />
-        <div className="absolute top-0 left-0 w-[400px] h-[400px] rounded-full dark:bg-emerald-600/6 bg-teal-200/20 blur-[100px]" />
+        <div className="absolute inset-0 grid-pattern" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10">
@@ -118,23 +122,28 @@ const Education = ({ setActiveSection }) => {
           transition={{ duration: 0.6 }}
           className="mb-14"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-5 rounded-full
-            dark:border dark:border-cyan-400/20 border border-indigo-200
-            dark:bg-cyan-400/5 bg-indigo-50
-            dark:text-cyan-400 text-indigo-600
-            text-[11px] font-mono tracking-[0.15em] uppercase font-medium">
+          <div
+            className="inline-flex items-center gap-2 px-4 py-1.5 mb-4 rounded-full font-mono text-[11px] tracking-[0.15em] uppercase font-semibold"
+            style={{
+              border: `1px solid var(--border-accent)`,
+              background: 'var(--accent-subtle)',
+              color: 'var(--accent)',
+            }}
+          >
             <FaBriefcase className="text-xs" />
             Background
           </div>
-          <h2 className="text-[clamp(2rem,5vw,3.2rem)] font-black leading-tight tracking-tight dark:text-white text-slate-900">
+          <h2 className="text-[clamp(2rem,5vw,3.2rem)] font-black leading-tight tracking-tight" style={{ color: 'var(--text-primary)' }}>
             Resume &{' '}
-            <span className="dark:text-transparent text-transparent bg-clip-text
-              dark:[background-image:linear-gradient(135deg,#67e8f9,#818cf8)]
-              [background-image:linear-gradient(135deg,#4f46e5,#7c3aed)]">
+            <span
+              style={{
+                color: 'var(--accent)',
+              }}
+            >
               Timeline
             </span>
           </h2>
-          <p className="mt-2 max-w-lg text-[15px] dark:text-white/45 text-slate-500 leading-relaxed font-light">
+          <p className="mt-2 max-w-lg text-[15px] leading-relaxed font-light" style={{ color: 'var(--text-muted)' }}>
             My professional journey and academic foundation in software engineering.
           </p>
         </motion.div>
@@ -151,22 +160,15 @@ const Education = ({ setActiveSection }) => {
             { key: 'education', label: 'Education', icon: FaGraduationCap },
           ].map(({ key, label, icon: TabIcon }) => {
             const active = tab === key;
-            const accent = active ? (isDark ? '#67e8f9' : '#4f46e5') : undefined;
             return (
               <button
                 key={key}
                 onClick={() => setTab(key)}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-mono font-medium border transition-all duration-200"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-[13px] font-mono font-medium border transition-all duration-200"
                 style={{
-                  background: active
-                    ? (isDark ? 'rgba(103,232,249,0.1)' : 'rgba(79,70,229,0.08)')
-                    : 'transparent',
-                  borderColor: active
-                    ? (isDark ? 'rgba(103,232,249,0.3)' : 'rgba(79,70,229,0.25)')
-                    : (isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'),
-                  color: active
-                    ? accent
-                    : (isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.45)'),
+                  background: active ? 'var(--accent-subtle)' : 'transparent',
+                  borderColor: active ? 'var(--border-accent)' : 'var(--border)',
+                  color: active ? 'var(--accent)' : 'var(--text-muted)',
                 }}
               >
                 <TabIcon className="text-xs" />
@@ -189,18 +191,24 @@ const Education = ({ setActiveSection }) => {
             >
               {workExperience.map((w, i) => {
                 const acc = w.accent[theme];
+                const bgTag = hexToRgba(acc, 0.10);
+                const borderTag = hexToRgba(acc, 0.30);
+
                 return (
                   <motion.div
                     key={i}
                     variants={itemVariant}
-                    className="group rounded-2xl border overflow-hidden transition-all duration-300 dark:bg-white/[0.025] bg-white hover:-translate-y-1"
-                    style={{ borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)' }}
+                    className="group rounded-xl border overflow-hidden transition-all duration-300 hover:-translate-y-1 shadow-sm"
+                    style={{
+                      background: 'var(--bg-card)',
+                      borderColor: 'var(--border)',
+                    }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = `${acc}35`;
-                      e.currentTarget.style.boxShadow = `0 16px 48px ${acc}15`;
+                      e.currentTarget.style.borderColor = 'var(--border-accent)';
+                      e.currentTarget.style.boxShadow = 'var(--shadow-glow)';
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)';
+                      e.currentTarget.style.borderColor = 'var(--border)';
                       e.currentTarget.style.boxShadow = '';
                     }}
                   >
@@ -208,30 +216,30 @@ const Education = ({ setActiveSection }) => {
                     <div
                       className="flex flex-wrap items-start justify-between gap-3 px-6 py-5 border-b"
                       style={{
-                        background: `${acc}08`,
-                        borderColor: `${acc}15`,
+                        background: 'var(--bg-surface)',
+                        borderColor: 'var(--border)',
                       }}
                     >
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="text-base font-bold dark:text-white text-slate-900">
+                          <h3 className="text-base font-bold" style={{ color: 'var(--text-primary)' }}>
                             {w.position}
                           </h3>
                           <span
                             className="hidden sm:inline text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full border"
-                            style={{ color: acc, borderColor: `${acc}40`, background: `${acc}12` }}
+                            style={{ color: acc, borderColor: borderTag, background: bgTag }}
                           >
                             {w.type}
                           </span>
                         </div>
                         <div className="flex items-center gap-3 flex-wrap">
                           <span className="text-sm font-semibold" style={{ color: acc }}>{w.company}</span>
-                          <span className="flex items-center gap-1 text-[12px] dark:text-white/30 text-slate-400 font-mono">
+                          <span className="flex items-center gap-1 text-[12px] font-mono" style={{ color: 'var(--text-muted)' }}>
                             <FaMapMarkerAlt className="text-[10px]" />{w.location}
                           </span>
                         </div>
                       </div>
-                      <div className="flex items-center gap-1.5 text-[12px] font-mono dark:text-white/35 text-slate-400 flex-shrink-0">
+                      <div className="flex items-center gap-1.5 text-[12px] font-mono flex-shrink-0" style={{ color: 'var(--text-muted)' }}>
                         <FaCalendarAlt className="text-[10px]" style={{ color: acc }} />
                         {w.period}
                       </div>
@@ -240,14 +248,14 @@ const Education = ({ setActiveSection }) => {
                     {/* Card body */}
                     <div className="px-6 py-5 grid md:grid-cols-[1fr_auto] gap-6">
                       <div>
-                        <p className="text-[13px] dark:text-white/50 text-slate-500 leading-relaxed mb-5 font-light">
+                        <p className="text-[13px] leading-relaxed mb-5 font-light" style={{ color: 'var(--text-muted)' }}>
                           {w.description}
                         </p>
 
                         {/* Projects worked on */}
                         {w.projects.length > 0 && (
                           <div className="mb-5">
-                            <p className="text-[10px] font-mono dark:text-white/25 text-slate-400 tracking-[0.15em] uppercase mb-2">
+                            <p className="text-[10px] font-mono tracking-[0.15em] uppercase mb-2" style={{ color: 'var(--text-muted)' }}>
                               Projects
                             </p>
                             <div className="flex flex-wrap gap-2">
@@ -257,8 +265,8 @@ const Education = ({ setActiveSection }) => {
                                   className="flex items-center gap-1.5 px-3 py-1 rounded-lg text-[12px] font-mono font-medium transition-colors cursor-default"
                                   style={{
                                     color: acc,
-                                    background: `${acc}10`,
-                                    border: `1px solid ${acc}25`,
+                                    background: bgTag,
+                                    border: `1px solid ${borderTag}`,
                                   }}
                                 >
                                   <FaCode className="text-[9px] opacity-70" />
@@ -271,17 +279,18 @@ const Education = ({ setActiveSection }) => {
 
                         {/* Tech pills */}
                         <div>
-                          <p className="text-[10px] font-mono dark:text-white/25 text-slate-400 tracking-[0.15em] uppercase mb-2">
+                          <p className="text-[10px] font-mono tracking-[0.15em] uppercase mb-2" style={{ color: 'var(--text-muted)' }}>
                             Technologies
                           </p>
                           <div className="flex flex-wrap gap-1.5">
                             {w.tech.map((t, j) => (
                               <span
                                 key={j}
-                                className="px-2.5 py-1 text-[11px] font-mono dark:text-white/40 text-slate-500 rounded-lg transition-colors duration-200 hover:dark:bg-white/10 hover:bg-slate-100"
+                                className="px-2.5 py-1 text-[11px] font-mono rounded-lg transition-colors duration-200"
                                 style={{
-                                  background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
-                                  border: `1px solid ${isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)'}`,
+                                  background: 'var(--bg-base)',
+                                  border: `1px solid var(--border)`,
+                                  color: 'var(--text-muted)',
                                 }}
                               >
                                 {t}
@@ -308,60 +317,74 @@ const Education = ({ setActiveSection }) => {
             >
               {educationData.map((e, i) => {
                 const acc = e.accent[theme];
+                const bgTag = hexToRgba(acc, 0.10);
+                const borderTag = hexToRgba(acc, 0.30);
+
                 return (
                   <motion.div
                     key={i}
                     variants={itemVariant}
-                    className="group rounded-2xl border overflow-hidden dark:bg-white/[0.025] bg-white transition-all duration-300 hover:-translate-y-1"
-                    style={{ borderColor: `${acc}25` }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.boxShadow = `0 16px 48px ${acc}15`;
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.boxShadow = '';
+                    className="group rounded-xl border overflow-hidden transition-all duration-300 hover:-translate-y-1 shadow-sm"
+                    style={{
+                      background: 'var(--bg-card)',
+                      borderColor: 'var(--border)',
                     }}
                   >
                     <div
-                      className="px-6 py-5 border-b flex flex-wrap items-start justify-between gap-4"
-                      style={{ background: `${acc}08`, borderColor: `${acc}15` }}
+                      className="flex flex-wrap items-start justify-between gap-3 px-6 py-5 border-b"
+                      style={{
+                        background: 'var(--bg-surface)',
+                        borderColor: 'var(--border)',
+                      }}
                     >
                       <div>
-                        <h3 className="text-base font-bold dark:text-white text-slate-900 mb-1">{e.degree}</h3>
-                        <span className="text-sm font-semibold" style={{ color: acc }}>{e.institution}</span>
-                        <div className="flex items-center gap-1 mt-1 text-[12px] dark:text-white/30 text-slate-400 font-mono">
-                          <FaMapMarkerAlt className="text-[10px]" />{e.location}
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="text-base font-bold" style={{ color: 'var(--text-primary)' }}>
+                            {e.degree}
+                          </h3>
+                          <span
+                            className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full border"
+                            style={{ color: acc, borderColor: borderTag, background: bgTag }}
+                          >
+                            CGPA {e.cgpa}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3 flex-wrap">
+                          <span className="text-sm font-semibold" style={{ color: acc }}>{e.institution}</span>
+                          <span className="flex items-center gap-1 text-[12px] font-mono" style={{ color: 'var(--text-muted)' }}>
+                            <FaMapMarkerAlt className="text-[10px]" />{e.location}
+                          </span>
                         </div>
                       </div>
-                      <div className="flex flex-col items-end gap-2">
-                        <div className="flex items-center gap-1.5 text-[12px] font-mono dark:text-white/35 text-slate-400">
-                          <FaCalendarAlt className="text-[10px]" style={{ color: acc }} />
-                          {e.period}
-                        </div>
-                        {e.cgpa && (
-                          <span
-                            className="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full border"
-                            style={{ color: acc, borderColor: `${acc}50`, background: `${acc}15` }}
-                          >
-                            CGPA: {e.cgpa}
-                          </span>
-                        )}
+                      <div className="flex items-center gap-1.5 text-[12px] font-mono flex-shrink-0" style={{ color: 'var(--text-muted)' }}>
+                        <FaCalendarAlt className="text-[10px]" style={{ color: acc }} />
+                        {e.period}
                       </div>
                     </div>
 
                     <div className="px-6 py-5">
-                      <p className="text-[13px] dark:text-white/50 text-slate-500 leading-relaxed mb-5 font-light">
+                      <p className="text-[13px] leading-relaxed mb-5 font-light" style={{ color: 'var(--text-muted)' }}>
                         {e.description}
                       </p>
-                      <p className="text-[10px] font-mono dark:text-white/25 text-slate-400 tracking-[0.15em] uppercase mb-3">
-                        Key Subjects
-                      </p>
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                        {e.courses.map((c, j) => (
-                          <div key={j} className="flex items-center gap-2 group/item">
-                            <FaCheckCircle className="text-xs flex-shrink-0 transition-transform duration-300 group-hover/item:scale-110" style={{ color: acc, opacity: 0.9 }} />
-                            <span className="text-[12px] font-medium transition-colors duration-200 dark:text-white/60 text-slate-600 dark:group-hover/item:text-white group-hover/item:text-slate-900">{c}</span>
-                          </div>
-                        ))}
+                      <div>
+                        <p className="text-[10px] font-mono tracking-[0.15em] uppercase mb-2" style={{ color: 'var(--text-muted)' }}>
+                          Key Coursework
+                        </p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {e.courses.map((c, j) => (
+                            <span
+                              key={j}
+                              className="px-2.5 py-1 text-[11px] font-mono rounded-lg"
+                              style={{
+                                background: 'var(--bg-base)',
+                                border: `1px solid var(--border)`,
+                                color: 'var(--text-muted)',
+                              }}
+                            >
+                              {c}
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </motion.div>

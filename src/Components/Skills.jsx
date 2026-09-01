@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { FaCode, FaServer, FaTools, FaCheckCircle } from 'react-icons/fa';
 import {
   SiReact, SiJavascript, SiTailwindcss, SiHtml5,
-  SiNodedotjs, SiExpress, SiMongodb, SiMysql,
-  SiGit, SiGithub, SiPostman, SiJsonwebtokens, SiSequelize,
+  SiNodedotjs, SiMongodb, SiMysql,
+  SiGithub, SiPostman, SiJsonwebtokens, SiSequelize,
   SiMui,
 } from 'react-icons/si';
 
@@ -14,9 +14,6 @@ const categories = [
     id: 'frontend',
     label: 'Frontend',
     icon: FaCode,
-    accent: { dark: '#67e8f9', light: '#4f46e5' },
-    bg: { dark: 'rgba(103,232,249,0.06)', light: 'rgba(79,70,229,0.04)' },
-    border: { dark: 'rgba(103,232,249,0.18)', light: 'rgba(79,70,229,0.2)' },
     skills: [
       { name: 'React.js', icon: SiReact, color: '#61dafb', level: 3 },
       { name: 'JavaScript', icon: SiJavascript, color: '#f7df1e', level: 3 },
@@ -29,9 +26,6 @@ const categories = [
     id: 'backend',
     label: 'Backend & DB',
     icon: FaServer,
-    accent: { dark: '#a78bfa', light: '#7c3aed' },
-    bg: { dark: 'rgba(167,139,250,0.06)', light: 'rgba(124,58,237,0.04)' },
-    border: { dark: 'rgba(167,139,250,0.18)', light: 'rgba(124,58,237,0.2)' },
     skills: [
       { name: 'Node.js & Express.js', icon: SiNodedotjs, color: '#68a063', level: 3 },
       { name: 'MySQL', icon: SiMysql, color: '#00758f', level: 3 },
@@ -44,14 +38,11 @@ const categories = [
     id: 'tools',
     label: 'Services & Tools',
     icon: FaTools,
-    accent: { dark: '#34d399', light: '#059669' },
-    bg: { dark: 'rgba(52,211,153,0.06)', light: 'rgba(5,150,105,0.04)' },
-    border: { dark: 'rgba(52,211,153,0.18)', light: 'rgba(5,150,105,0.2)' },
     skills: [
       { name: 'Git & GitHub', icon: SiGithub, color: '#888', level: 3 },
       { name: 'Postman & REST APIs', icon: SiPostman, color: '#ff6c37', level: 3 },
       { name: 'Authorize.net / Stripe', icon: FaTools, color: '#60a5fa', level: 3 },
-      { name: 'SendGrid / Nodemailer', icon: FaCode, color: '#22d3ee', level: 3 },
+      { name: 'SendGrid / Nodemailer', icon: FaCode, color: '#38bdf8', level: 3 },
       { name: 'OpenAI API', icon: FaCode, color: '#10a37f', level: 3 },
     ],
   },
@@ -116,64 +107,65 @@ const Skills = ({ setActiveSection }) => {
   }, [setActiveSection]);
 
   const cat = categories[activeIdx];
-  const theme = isDark ? 'dark' : 'light';
 
   return (
     <section
       id="skills"
       ref={sectionRef}
-      className="relative py-14 overflow-hidden bg-transparent dark:bg-transparent transition-colors duration-500 border-t dark:border-white/[0.06] border-slate-200"
-      style={{ scrollMarginTop: '4rem' }}
+      className="relative py-16 overflow-hidden transition-colors duration-500"
+      style={{
+        scrollMarginTop: '4rem',
+        borderTop: `1px solid ${isDark ? 'rgba(100,255,218,0.08)' : 'rgba(208,215,222,0.80)'}`,
+      }}
     >
       {/* Background grid */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div
-          className="absolute inset-0 dark:opacity-[0.03] opacity-[0.03]"
-          style={{
-            backgroundImage: `linear-gradient(rgba(99,179,237,0.6) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(99,179,237,0.6) 1px, transparent 1px)`,
-            backgroundSize: '60px 60px',
-          }}
-        />
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full dark:bg-violet-600/8 bg-indigo-300/15 blur-[120px]" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full dark:bg-cyan-500/6 bg-violet-200/20 blur-[100px]" />
+        <div className="absolute inset-0 grid-pattern" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10">
 
         {/* ── Section header ── */}
-        <div className={`mb-16 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-5 rounded-full
-            dark:border dark:border-cyan-400/20 border border-indigo-200
-            dark:bg-cyan-400/5 bg-indigo-50
-            dark:text-cyan-400 text-indigo-600
-            text-[11px] font-mono tracking-[0.15em] uppercase font-medium">
+        <div className={`mb-14 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+          <div
+            className="inline-flex items-center gap-2 px-4 py-1.5 mb-4 rounded-full font-mono text-[11px] tracking-[0.15em] uppercase font-semibold"
+            style={{
+              border: `1px solid var(--border-accent)`,
+              background: 'var(--accent-subtle)',
+              color: 'var(--accent)',
+            }}
+          >
             <FaCode className="text-xs" />
             Technical Stack
           </div>
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
             <div>
-              <h2 className="text-[clamp(1.75rem,4vw,2.75rem)] font-black leading-tight tracking-tight dark:text-white text-slate-900">
-                Core <span className="dark:text-transparent text-transparent bg-clip-text
-                  dark:[background-image:linear-gradient(135deg,#67e8f9,#818cf8)]
-                  [background-image:linear-gradient(135deg,#4f46e5,#7c3aed)]">Capabilities</span>
+              <h2 className="text-[clamp(1.75rem,4vw,2.75rem)] font-black leading-tight tracking-tight" style={{ color: 'var(--text-primary)' }}>
+                Core{' '}
+                <span style={{ color: 'var(--accent)' }}>
+                  Capabilities
+                </span>
               </h2>
-              <p className="mt-3 max-w-lg text-[15px] dark:text-white/45 text-slate-500 leading-relaxed font-light">
+              <p className="mt-2 max-w-lg text-[15px] leading-relaxed font-light" style={{ color: 'var(--text-muted)' }}>
                 Specialized in the modern full-stack web ecosystem — from pixel-perfect React UIs to scalable Node.js APIs and relational database architecture.
               </p>
             </div>
             {/* Stat badges */}
-            <div className="flex-shrink-0 flex items-center gap-3 px-5 py-3 rounded-2xl
-              dark:border dark:border-white/8 border border-slate-200
-              dark:bg-white/3 bg-white shadow-sm">
+            <div
+              className="flex-shrink-0 flex items-center gap-3 px-5 py-3 rounded-xl shadow-sm"
+              style={{
+                background: 'var(--bg-card)',
+                border: `1px solid var(--border)`,
+              }}
+            >
               <div className="text-center">
-                <div className="text-2xl font-black dark:text-white text-slate-900 leading-none">1.5+</div>
-                <div className="text-[10px] font-mono dark:text-white/35 text-slate-400 tracking-widest uppercase mt-0.5">Years</div>
+                <div className="text-2xl font-black leading-none" style={{ color: 'var(--text-primary)' }}>1.5+</div>
+                <div className="text-[10px] font-mono tracking-widest uppercase mt-0.5" style={{ color: 'var(--text-muted)' }}>Years</div>
               </div>
-              <div className="w-px h-8 dark:bg-white/10 bg-slate-200" />
+              <div className="w-px h-8" style={{ background: 'var(--border)' }} />
               <div className="text-center">
-                <div className="text-2xl font-black dark:text-white text-slate-900 leading-none">15+</div>
-                <div className="text-[10px] font-mono dark:text-white/35 text-slate-400 tracking-widest uppercase mt-0.5">Tools</div>
+                <div className="text-2xl font-black leading-none" style={{ color: 'var(--text-primary)' }}>15+</div>
+                <div className="text-[10px] font-mono tracking-widest uppercase mt-0.5" style={{ color: 'var(--text-muted)' }}>Tools</div>
               </div>
             </div>
           </div>
@@ -191,32 +183,32 @@ const Skills = ({ setActiveSection }) => {
                 <button
                   key={c.id}
                   onClick={() => setActiveIdx(i)}
-                  className="group relative text-left px-5 py-4 rounded-2xl border transition-all duration-300"
+                  className="group relative text-left px-5 py-4 rounded-xl border transition-all duration-300 cursor-pointer"
                   style={{
-                    background: active ? c.bg[theme] : 'transparent',
-                    borderColor: active ? c.border[theme] : (isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)'),
+                    background: active ? 'var(--accent-subtle)' : 'var(--bg-card)',
+                    borderColor: active ? 'var(--border-accent)' : 'var(--border)',
                   }}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       {/* Icon box */}
                       <div
-                        className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300"
+                        className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300"
                         style={{
-                          background: active ? c.bg[theme] : (isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'),
-                          border: `1px solid ${active ? c.border[theme] : (isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)')}`,
+                          background: active ? 'var(--accent-glow)' : 'transparent',
+                          border: `1px solid ${active ? 'var(--border-accent)' : 'var(--border)'}`,
                         }}
                       >
-                        <Icon className="text-sm" style={{ color: active ? c.accent[theme] : (isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.35)') }} />
+                        <Icon className="text-sm" style={{ color: active ? 'var(--accent)' : 'var(--text-muted)' }} />
                       </div>
                       <div>
                         <div
                           className="text-sm font-semibold transition-colors duration-200"
-                          style={{ color: active ? c.accent[theme] : (isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)') }}
+                          style={{ color: active ? 'var(--accent)' : 'var(--text-primary)' }}
                         >
                           {c.label}
                         </div>
-                        <div className="text-[11px] dark:text-white/25 text-slate-400 font-mono mt-0.5">
+                        <div className="text-[11px] font-mono mt-0.5" style={{ color: 'var(--text-muted)' }}>
                           {c.skills.length} technologies
                         </div>
                       </div>
@@ -225,7 +217,7 @@ const Skills = ({ setActiveSection }) => {
                     {/* Arrow */}
                     <span
                       className="text-xs font-mono transition-all duration-200"
-                      style={{ color: active ? c.accent[theme] : 'transparent' }}
+                      style={{ color: active ? 'var(--accent)' : 'transparent' }}
                     >
                       ▸
                     </span>
@@ -235,7 +227,7 @@ const Skills = ({ setActiveSection }) => {
                   {active && (
                     <span
                       className="absolute left-0 top-1/4 bottom-1/4 w-0.5 rounded-full"
-                      style={{ backgroundColor: c.accent[theme] }}
+                      style={{ backgroundColor: 'var(--accent)' }}
                     />
                   )}
                 </button>
@@ -243,8 +235,14 @@ const Skills = ({ setActiveSection }) => {
             })}
 
             {/* What I can do list */}
-            <div className="mt-2 p-5 rounded-2xl border dark:border-white/[0.06] border-slate-200 dark:bg-white/[0.02] bg-white">
-              <p className="text-[11px] font-mono dark:text-white/30 text-slate-400 tracking-[0.15em] uppercase mb-4">
+            <div
+              className="mt-2 p-5 rounded-xl border"
+              style={{
+                background: 'var(--bg-card)',
+                borderColor: 'var(--border)',
+              }}
+            >
+              <p className="text-[11px] font-mono tracking-[0.15em] uppercase mb-4" style={{ color: 'var(--text-muted)' }}>
                 What I build
               </p>
               <div className="flex flex-col gap-2.5">
@@ -252,9 +250,9 @@ const Skills = ({ setActiveSection }) => {
                   <div key={i} className="flex items-center gap-2.5">
                     <FaCheckCircle
                       className="text-xs flex-shrink-0"
-                      style={{ color: cat.accent[theme], opacity: 0.8 }}
+                      style={{ color: 'var(--accent)' }}
                     />
-                    <span className="text-[13px] dark:text-white/55 text-slate-500 font-medium">{h}</span>
+                    <span className="text-[13px] font-medium" style={{ color: 'var(--text-secondary)' }}>{h}</span>
                   </div>
                 ))}
               </div>
@@ -270,40 +268,40 @@ const Skills = ({ setActiveSection }) => {
             <div className="flex items-center gap-3 mb-5">
               <span
                 className="text-[11px] font-mono tracking-[0.15em] uppercase font-semibold"
-                style={{ color: cat.accent[theme] }}
+                style={{ color: 'var(--accent)' }}
               >
                 {cat.label}
               </span>
-              <div className="flex-1 h-px dark:bg-white/5 bg-slate-200" />
-              <span className="text-[11px] font-mono dark:text-white/20 text-slate-400">{cat.skills.length} skills</span>
+              <div className="flex-1 h-px" style={{ background: 'var(--border)' }} />
+              <span className="text-[11px] font-mono" style={{ color: 'var(--text-muted)' }}>{cat.skills.length} skills</span>
             </div>
 
-            {/* 5-card bento: first card wide, rest 2-col */}
+            {/* Skill cards */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {cat.skills.map((skill, i) => {
+              {cat.skills.map((skill) => {
                 const Icon = skill.icon;
-                const wide = i === 0;
                 return (
                   <div
                     key={skill.name}
-                    className={`group relative p-5 rounded-2xl border transition-all duration-300 cursor-default
-                      dark:bg-white/[0.025] bg-white hover:-translate-y-1 hover:shadow-xl
-                      ${wide ? 'col-span-2 sm:col-span-1' : ''}`}
+                    className="group relative p-5 rounded-xl border transition-all duration-300 cursor-default shadow-sm"
                     style={{
-                      borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)',
+                      background: 'var(--bg-card)',
+                      borderColor: 'var(--border)',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = cat.border[theme];
-                      e.currentTarget.style.boxShadow = `0 20px 40px ${cat.accent[theme]}15`;
+                      e.currentTarget.style.borderColor = 'var(--border-accent)';
+                      e.currentTarget.style.boxShadow = 'var(--shadow-glow)';
+                      e.currentTarget.style.transform = 'translateY(-2px)';
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)';
+                      e.currentTarget.style.borderColor = 'var(--border)';
                       e.currentTarget.style.boxShadow = '';
+                      e.currentTarget.style.transform = 'translateY(0)';
                     }}
                   >
                     {/* Icon */}
                     <div
-                      className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 transition-all duration-300"
+                      className="w-11 h-11 rounded-lg flex items-center justify-center mb-4 transition-all duration-300"
                       style={{
                         background: `${skill.color}15`,
                         border: `1px solid ${skill.color}30`,
@@ -316,17 +314,17 @@ const Skills = ({ setActiveSection }) => {
                     </div>
 
                     {/* Name */}
-                    <div className="text-sm font-semibold dark:text-white/80 text-slate-700 mb-2 leading-tight">
+                    <div className="text-sm font-semibold mb-2 leading-tight" style={{ color: 'var(--text-primary)' }}>
                       {skill.name}
                     </div>
 
                     {/* Level dots */}
-                    <LevelDots level={skill.level} accent={cat.accent[theme]} />
+                    <LevelDots level={skill.level} accent={isDark ? '#64ffda' : '#2563eb'} />
 
-                    {/* Subtle glow on corner */}
+                    {/* Corner glow dot */}
                     <div
                       className="absolute top-3 right-3 w-1.5 h-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                      style={{ backgroundColor: cat.accent[theme] }}
+                      style={{ backgroundColor: 'var(--accent)' }}
                     />
                   </div>
                 );
@@ -334,8 +332,8 @@ const Skills = ({ setActiveSection }) => {
             </div>
 
             {/* Proficiency legend */}
-            <div className="flex items-center gap-4 mt-5 px-1">
-              <span className="text-[10px] font-mono dark:text-white/20 text-slate-400 tracking-widest uppercase">
+            <div className="flex items-center gap-4 mt-6 px-1">
+              <span className="text-[10px] font-mono tracking-widest uppercase" style={{ color: 'var(--text-muted)' }}>
                 Proficiency
               </span>
               {[
@@ -344,8 +342,8 @@ const Skills = ({ setActiveSection }) => {
                 { label: 'Expert', dots: 3 },
               ].map((l) => (
                 <div key={l.label} className="flex items-center gap-1.5">
-                  <LevelDots level={l.dots} accent={cat.accent[theme]} />
-                  <span className="text-[10px] dark:text-white/25 text-slate-400">{l.label}</span>
+                  <LevelDots level={l.dots} accent={isDark ? '#64ffda' : '#2563eb'} />
+                  <span className="text-[10px]" style={{ color: 'var(--text-muted)' }}>{l.label}</span>
                 </div>
               ))}
             </div>
@@ -353,9 +351,12 @@ const Skills = ({ setActiveSection }) => {
 
         </div>
 
-        {/* ── Bottom scrolling pill strip ── */}
-        <div className={`mt-16 pt-8 border-t dark:border-white/[0.06] border-slate-200 transition-all duration-700 delay-300 ${visible ? 'opacity-100' : 'opacity-0'}`}>
-          <p className="text-center text-[10px] font-mono dark:text-white/20 text-slate-400 tracking-[0.2em] uppercase mb-5">
+        {/* ── Bottom strip ── */}
+        <div
+          className={`mt-14 pt-8 transition-all duration-700 delay-300 ${visible ? 'opacity-100' : 'opacity-0'}`}
+          style={{ borderTop: `1px solid var(--border)` }}
+        >
+          <p className="text-center text-[10px] font-mono tracking-[0.2em] uppercase mb-5" style={{ color: 'var(--text-muted)' }}>
             Also experienced with
           </p>
           <div className="flex flex-wrap justify-center gap-2.5">
@@ -367,13 +368,20 @@ const Skills = ({ setActiveSection }) => {
             ].map((tag) => (
               <span
                 key={tag}
-                className="px-3.5 py-1.5 rounded-full text-[12px] font-mono
-                  dark:border dark:border-white/[0.08] border border-slate-200
-                  dark:bg-white/[0.03] bg-white
-                  dark:text-white/40 text-slate-500
-                  dark:hover:border-cyan-400/30 hover:border-indigo-300
-                  dark:hover:text-cyan-400 hover:text-indigo-600
-                  transition-all duration-200 cursor-default"
+                className="px-3.5 py-1.5 rounded-full text-[12px] font-mono transition-all duration-200 cursor-default"
+                style={{
+                  border: `1px solid var(--border)`,
+                  background: 'var(--bg-card)',
+                  color: 'var(--text-muted)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border-accent)';
+                  e.currentTarget.style.color = 'var(--accent)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border)';
+                  e.currentTarget.style.color = 'var(--text-muted)';
+                }}
               >
                 {tag}
               </span>

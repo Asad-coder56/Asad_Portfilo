@@ -220,7 +220,7 @@ export const projectsData = [
             "Admin Dashboard for Product Catalog Management"
         ],
         github: "https://github.com/Asad-coder56",
-        liveDemo: false,
+        liveDemo: "https://mom-s-natural-1.vercel.app/",
         status: "Completed",
         color: "emerald"
     },
@@ -244,7 +244,7 @@ export const projectsData = [
             "Lottie Micro-Animations & Smooth Component Transitions"
         ],
         github: "https://github.com/Asad-coder56",
-        liveDemo: false,
+        liveDemo: "https://humanly-k999-wrm3.vercel.app/",
         status: "Completed",
         color: "amber"
     },
@@ -337,7 +337,7 @@ export const projectsData = [
             "Footer: Newsletter form, customer service channels, and local payment icons"
         ],
         github: "https://github.com/Asad-coder56",
-        liveDemo: false,
+        liveDemo: "https://phantom-products.vercel.app/",
         status: "Completed",
         color: "slate"
     }

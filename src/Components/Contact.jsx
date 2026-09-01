@@ -7,16 +7,6 @@ import {
   FaUser, FaCode,
 } from 'react-icons/fa';
 
-const inputBase = {
-  dark: 'dark:bg-white/[0.04] dark:border-white/[0.08] dark:text-white dark:placeholder-white/20 dark:focus:border-cyan-400/50 dark:focus:ring-cyan-400/10',
-  light: 'bg-white border-slate-200 text-slate-900 placeholder-slate-300 focus:border-indigo-400 focus:ring-indigo-400/10',
-};
-
-const INPUT_CLS = `w-full px-4 py-3.5 rounded-xl border text-sm font-medium outline-none focus:ring-2 transition-all duration-200
-  ${inputBase.dark} ${inputBase.light}`;
-
-const LABEL_CLS = 'block text-[11px] font-mono tracking-[0.12em] uppercase dark:text-white/30 text-slate-400 mb-2';
-
 /* ── Motion Variants ──────────────────────────────── */
 const staggerContainer = {
   hidden: { opacity: 0 },
@@ -84,8 +74,6 @@ const Contact = ({ setActiveSection, isStandalone = false }) => {
     }, 1500);
   };
 
-  const accent = isDark ? '#67e8f9' : '#4f46e5';
-
   const contactItems = [
     { icon: FaEnvelope, label: 'Email', value: 'kamalasad57@gmail.com', href: 'mailto:kamalasad57@gmail.com' },
     { icon: FaPhone, label: 'Phone', value: '+92 305 1958933', href: 'tel:+923051958933' },
@@ -98,25 +86,25 @@ const Contact = ({ setActiveSection, isStandalone = false }) => {
     { icon: FaEnvelope, href: 'mailto:kamalasad57@gmail.com', label: 'Email' },
   ];
 
+  const inputStyle = {
+    background: 'var(--bg-base)',
+    border: `1px solid var(--border)`,
+    color: 'var(--text-primary)',
+  };
+
   return (
     <section
       id="contact"
       ref={sectionRef}
-      className={`relative py-28 overflow-hidden bg-transparent dark:bg-transparent transition-colors duration-500 border-t dark:border-white/[0.06] border-slate-200 ${isStandalone ? 'pt-36' : ''}`}
-      style={{ scrollMarginTop: '4rem' }}
+      className={`relative py-24 overflow-hidden transition-colors duration-500 ${isStandalone ? 'pt-36' : ''}`}
+      style={{
+        scrollMarginTop: '4rem',
+        borderTop: `1px solid ${isDark ? 'rgba(100,255,218,0.08)' : 'rgba(208,215,222,0.80)'}`,
+      }}
     >
       {/* Background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div
-          className="absolute inset-0 dark:opacity-[0.03] opacity-[0.03]"
-          style={{
-            backgroundImage: `linear-gradient(rgba(99,179,237,0.6) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(99,179,237,0.6) 1px, transparent 1px)`,
-            backgroundSize: '60px 60px',
-          }}
-        />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full dark:bg-cyan-500/6 bg-indigo-200/20 blur-[120px]" />
-        <div className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full dark:bg-violet-600/6 bg-violet-200/15 blur-[100px]" />
+        <div className="absolute inset-0 grid-pattern" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10">
@@ -128,23 +116,28 @@ const Contact = ({ setActiveSection, isStandalone = false }) => {
           variants={fadeUp}
           className="mb-14"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-5 rounded-full
-            dark:border dark:border-cyan-400/20 border border-indigo-200
-            dark:bg-cyan-400/5 bg-indigo-50
-            dark:text-cyan-400 text-indigo-600
-            text-[11px] font-mono tracking-[0.15em] uppercase font-medium">
+          <div
+            className="inline-flex items-center gap-2 px-4 py-1.5 mb-4 rounded-full font-mono text-[11px] tracking-[0.15em] uppercase font-semibold"
+            style={{
+              border: `1px solid var(--border-accent)`,
+              background: 'var(--accent-subtle)',
+              color: 'var(--accent)',
+            }}
+          >
             <FaEnvelope className="text-xs" />
             Contact
           </div>
-          <h2 className="text-[clamp(2rem,5vw,3.2rem)] font-black leading-tight tracking-tight dark:text-white text-slate-900">
+          <h2 className="text-[clamp(2rem,5vw,3.2rem)] font-black leading-tight tracking-tight" style={{ color: 'var(--text-primary)' }}>
             Let's Build Something{' '}
-            <span className="dark:text-transparent text-transparent bg-clip-text
-              dark:[background-image:linear-gradient(135deg,#67e8f9,#818cf8)]
-              [background-image:linear-gradient(135deg,#4f46e5,#7c3aed)]">
+            <span
+              style={{
+                color: 'var(--accent)',
+              }}
+            >
               Together.
             </span>
           </h2>
-          <p className="mt-2 max-w-lg text-[15px] dark:text-white/45 text-slate-500 leading-relaxed font-light">
+          <p className="mt-2 max-w-lg text-[15px] leading-relaxed font-light" style={{ color: 'var(--text-muted)' }}>
             Have a project in mind, a job opportunity, or just want to say hi? Drop me a message.
           </p>
         </motion.div>
@@ -160,36 +153,45 @@ const Contact = ({ setActiveSection, isStandalone = false }) => {
             className="lg:col-span-2 flex flex-col gap-4"
           >
             {/* Contact cards */}
-            {contactItems.map(({ icon: Icon, label, value, href }, i) => (
+            {contactItems.map(({ icon: Icon, label, value, href }) => (
               <motion.div
                 key={label}
                 variants={slideRight}
-                className="group flex items-center gap-4 p-4 rounded-2xl border transition-all duration-300 dark:bg-white/[0.025] bg-white"
-                style={{ borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)' }}
+                className="group flex items-center gap-4 p-4 rounded-xl border transition-all duration-300 shadow-sm"
+                style={{
+                  background: 'var(--bg-card)',
+                  borderColor: 'var(--border)',
+                }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = `${accent}30`;
-                  e.currentTarget.style.boxShadow = `0 8px 30px ${accent}10`;
+                  e.currentTarget.style.borderColor = 'var(--border-accent)';
+                  e.currentTarget.style.boxShadow = 'var(--shadow-glow)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)';
+                  e.currentTarget.style.borderColor = 'var(--border)';
                   e.currentTarget.style.boxShadow = '';
                 }}
               >
                 {/* Icon */}
                 <div
-                  className="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center transition-all duration-300"
-                  style={{ background: `${accent}12`, border: `1px solid ${accent}25` }}
+                  className="w-10 h-10 rounded-lg flex-shrink-0 flex items-center justify-center transition-all duration-300"
+                  style={{ background: 'var(--accent-subtle)', border: `1px solid var(--border-accent)` }}
                 >
-                  <Icon className="text-sm" style={{ color: accent }} />
+                  <Icon className="text-sm" style={{ color: 'var(--accent)' }} />
                 </div>
                 <div>
-                  <p className="text-[10px] font-mono tracking-widest uppercase dark:text-white/25 text-slate-400 mb-0.5">{label}</p>
+                  <p className="text-[10px] font-mono tracking-widest uppercase mb-0.5" style={{ color: 'var(--text-muted)' }}>{label}</p>
                   {href ? (
-                    <a href={href} className="text-[13px] font-medium dark:text-white/70 text-slate-700 dark:hover:text-cyan-400 hover:text-indigo-600 transition-colors duration-200">
+                    <a
+                      href={href}
+                      className="text-[13px] font-medium transition-colors duration-200"
+                      style={{ color: 'var(--text-secondary)' }}
+                      onMouseEnter={e => e.currentTarget.style.color = 'var(--accent)'}
+                      onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}
+                    >
                       {value}
                     </a>
                   ) : (
-                    <span className="text-[13px] font-medium dark:text-white/70 text-slate-700">{value}</span>
+                    <span className="text-[13px] font-medium" style={{ color: 'var(--text-secondary)' }}>{value}</span>
                   )}
                 </div>
               </motion.div>
@@ -198,10 +200,13 @@ const Contact = ({ setActiveSection, isStandalone = false }) => {
             {/* Social links */}
             <motion.div
               variants={slideRight}
-              className="p-5 rounded-2xl border dark:bg-white/[0.025] bg-white mt-2"
-              style={{ borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)' }}
+              className="p-5 rounded-xl border mt-2"
+              style={{
+                background: 'var(--bg-card)',
+                borderColor: 'var(--border)',
+              }}
             >
-              <p className="text-[10px] font-mono tracking-[0.15em] uppercase dark:text-white/25 text-slate-400 mb-4">Find me online</p>
+              <p className="text-[10px] font-mono tracking-[0.15em] uppercase mb-4" style={{ color: 'var(--text-muted)' }}>Find me online</p>
               <div className="flex gap-2.5">
                 {socials.map(({ icon: Icon, href, label }) => (
                   <a
@@ -210,19 +215,19 @@ const Contact = ({ setActiveSection, isStandalone = false }) => {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={label}
-                    className="w-10 h-10 flex items-center justify-center rounded-xl border transition-all duration-200 hover:-translate-y-0.5"
+                    className="w-10 h-10 flex items-center justify-center rounded-lg border transition-all duration-200 hover:-translate-y-0.5"
                     style={{
-                      borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)',
-                      color: isDark ? 'rgba(255,255,255,0.35)' : 'rgba(0,0,0,0.4)',
+                      borderColor: 'var(--border)',
+                      color: 'var(--text-muted)',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = `${accent}40`;
-                      e.currentTarget.style.color = accent;
-                      e.currentTarget.style.background = `${accent}08`;
+                      e.currentTarget.style.borderColor = 'var(--border-accent)';
+                      e.currentTarget.style.color = 'var(--accent)';
+                      e.currentTarget.style.background = 'var(--accent-subtle)';
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
-                      e.currentTarget.style.color = isDark ? 'rgba(255,255,255,0.35)' : 'rgba(0,0,0,0.4)';
+                      e.currentTarget.style.borderColor = 'var(--border)';
+                      e.currentTarget.style.color = 'var(--text-muted)';
                       e.currentTarget.style.background = '';
                     }}
                   >
@@ -235,19 +240,22 @@ const Contact = ({ setActiveSection, isStandalone = false }) => {
             {/* Availability card */}
             <motion.div
               variants={slideRight}
-              className="p-5 rounded-2xl border mt-2"
+              className="p-5 rounded-xl border mt-2"
               style={{
-                borderColor: isDark ? 'rgba(52,211,153,0.2)' : 'rgba(16,185,129,0.2)',
-                background: isDark ? 'rgba(52,211,153,0.04)' : 'rgba(16,185,129,0.04)',
+                borderColor: isDark ? 'rgba(52,211,153,0.35)' : 'rgba(16,185,129,0.35)',
+                background: isDark ? 'rgba(52,211,153,0.08)' : 'rgba(16,185,129,0.08)',
               }}
             >
               <div className="flex items-center gap-2 mb-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-[11px] font-mono tracking-widest uppercase dark:text-emerald-400 text-emerald-600 font-semibold">
+                <span
+                  className="text-[11px] font-mono tracking-widest uppercase font-semibold"
+                  style={{ color: isDark ? '#34d399' : '#047857' }}
+                >
                   Available for work
                 </span>
               </div>
-              <p className="text-[13px] dark:text-white/40 text-slate-500 font-light leading-relaxed">
+              <p className="text-[13px] font-light leading-relaxed" style={{ color: 'var(--text-muted)' }}>
                 Currently open to full-time roles and freelance projects.
               </p>
             </motion.div>
@@ -262,120 +270,130 @@ const Contact = ({ setActiveSection, isStandalone = false }) => {
           >
             <form
               onSubmit={handleSubmit}
-              className="p-7 sm:p-8 rounded-2xl border dark:bg-white/[0.025] bg-white shadow-sm h-full"
-              style={{ borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)' }}
+              className="p-7 sm:p-8 rounded-xl border shadow-sm h-full"
+              style={{
+                background: 'var(--bg-card)',
+                borderColor: 'var(--border)',
+              }}
             >
               {/* Form title row */}
-              <div className="flex items-center gap-3 mb-7 pb-5 border-b"
-                style={{ borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' }}>
+              <div className="flex items-center gap-3 mb-7 pb-5 border-b" style={{ borderColor: 'var(--border)' }}>
                 <div
-                  className="w-9 h-9 rounded-xl flex items-center justify-center"
-                  style={{ background: `${accent}12`, border: `1px solid ${accent}25` }}
+                  className="w-9 h-9 rounded-lg flex items-center justify-center"
+                  style={{ background: 'var(--accent-subtle)', border: `1px solid var(--border-accent)` }}
                 >
-                  <FaCode className="text-sm" style={{ color: accent }} />
+                  <FaCode className="text-sm" style={{ color: 'var(--accent)' }} />
                 </div>
                 <div>
-                  <p className="text-sm font-bold dark:text-white text-slate-900">Send a message</p>
-                  <p className="text-[11px] font-mono dark:text-white/25 text-slate-400 mt-0.5">I usually respond within 24 hours</p>
+                  <p className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>Send a message</p>
+                  <p className="text-[11px] font-mono mt-0.5" style={{ color: 'var(--text-muted)' }}>I usually respond within 24 hours</p>
                 </div>
               </div>
 
               {/* Name + Email row */}
               <div className="grid sm:grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className={LABEL_CLS}>
+                  <label className="block text-[11px] font-mono tracking-[0.12em] uppercase mb-2" style={{ color: 'var(--text-muted)' }}>
                     <FaUser className="inline text-[9px] mr-1 opacity-60" />Your Name
                   </label>
                   <input
-                    type="text" name="name" required
-                    value={formData.name} onChange={handleChange}
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
                     placeholder="John Doe"
-                    className={INPUT_CLS}
+                    className="w-full px-4 py-3 rounded-lg text-xs font-mono transition-all outline-none"
+                    style={inputStyle}
                   />
                 </div>
                 <div>
-                  <label className={LABEL_CLS}>
-                    <FaEnvelope className="inline text-[9px] mr-1 opacity-60" />Email Address
+                  <label className="block text-[11px] font-mono tracking-[0.12em] uppercase mb-2" style={{ color: 'var(--text-muted)' }}>
+                    <FaEnvelope className="inline text-[9px] mr-1 opacity-60" />Your Email
                   </label>
                   <input
-                    type="email" name="email" required
-                    value={formData.email} onChange={handleChange}
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
                     placeholder="john@example.com"
-                    className={INPUT_CLS}
+                    className="w-full px-4 py-3 rounded-lg text-xs font-mono transition-all outline-none"
+                    style={inputStyle}
                   />
                 </div>
               </div>
 
               {/* Subject */}
               <div className="mb-4">
-                <label className={LABEL_CLS}>Subject</label>
+                <label className="block text-[11px] font-mono tracking-[0.12em] uppercase mb-2" style={{ color: 'var(--text-muted)' }}>
+                  Subject
+                </label>
                 <input
-                  type="text" name="subject" required
-                  value={formData.subject} onChange={handleChange}
-                  placeholder="What's this about?"
-                  className={INPUT_CLS}
+                  type="text"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  required
+                  placeholder="Project Inquiry / Job Opportunity"
+                  className="w-full px-4 py-3 rounded-lg text-xs font-mono transition-all outline-none"
+                  style={inputStyle}
                 />
               </div>
 
               {/* Message */}
               <div className="mb-6">
-                <label className={LABEL_CLS}>Message</label>
+                <label className="block text-[11px] font-mono tracking-[0.12em] uppercase mb-2" style={{ color: 'var(--text-muted)' }}>
+                  Message
+                </label>
                 <textarea
-                  name="message" required rows={5}
-                  value={formData.message} onChange={handleChange}
-                  placeholder="Tell me about your project or inquiry..."
-                  className={`${INPUT_CLS} resize-none`}
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                  rows={5}
+                  placeholder="Hi Asad, I'd like to discuss a project..."
+                  className="w-full px-4 py-3 rounded-lg text-xs font-mono transition-all outline-none resize-none"
+                  style={inputStyle}
                 />
               </div>
 
-              {/* Status banner */}
+              {/* Status Banner */}
               <AnimatePresence>
                 {status.message && (
                   <motion.div
-                    initial={{ opacity: 0, height: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, height: 'auto', scale: 1 }}
-                    exit={{ opacity: 0, height: 0, scale: 0.95 }}
-                    transition={{ duration: 0.3 }}
-                    className="overflow-hidden"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="mb-5 p-4 rounded-lg flex items-center gap-3 text-xs font-mono border"
+                    style={{
+                      borderColor: status.success ? 'rgba(52,211,153,0.40)' : 'rgba(239,68,68,0.40)',
+                      background: status.success ? 'rgba(52,211,153,0.10)' : 'rgba(239,68,68,0.10)',
+                      color: status.success ? (isDark ? '#34d399' : '#047857') : '#ef4444',
+                    }}
                   >
-                    <div
-                      className={`flex items-center gap-3 px-4 py-3 rounded-xl mb-5 text-[13px] font-medium border ${status.success
-                        ? 'dark:bg-emerald-500/10 bg-emerald-50 dark:text-emerald-400 text-emerald-700 dark:border-emerald-500/20 border-emerald-200'
-                        : 'dark:bg-cyan-400/10 bg-indigo-50 dark:text-cyan-400 text-indigo-700 dark:border-cyan-400/20 border-indigo-200'
-                        }`}
-                    >
-                      {status.success
-                        ? <FaCheckCircle className="text-base flex-shrink-0" />
-                        : <div className="w-4 h-4 border-2 dark:border-cyan-400 border-indigo-500 border-t-transparent rounded-full animate-spin flex-shrink-0" />
-                      }
-                      {status.message}
-                    </div>
+                    <FaCheckCircle className="text-sm flex-shrink-0" />
+                    <span>{status.message}</span>
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              {/* Submit */}
+              {/* Submit button */}
               <button
                 type="submit"
                 disabled={status.sending}
-                className="w-full group flex items-center justify-center gap-2.5 py-3.5 rounded-xl text-sm font-semibold transition-all duration-200 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed shadow-lg"
+                className="w-full flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg text-xs font-mono uppercase tracking-wider font-semibold transition-all duration-200 shadow-md active:scale-[0.98]"
                 style={{
-                  background: isDark ? '#67e8f9' : '#4f46e5',
-                  color: isDark ? '#050810' : '#ffffff',
-                  boxShadow: isDark ? '0 8px 24px rgba(103,232,249,0.2)' : '0 8px 24px rgba(79,70,229,0.25)',
+                  background: 'var(--accent)',
+                  color: isDark ? '#0a192f' : '#ffffff',
                 }}
-                onMouseEnter={(e) => { if (!status.sending) e.currentTarget.style.opacity = '0.9'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
               >
                 {status.sending ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                    Sending...
-                  </>
+                  <span>Sending...</span>
                 ) : (
                   <>
+                    <FaPaperPlane className="text-xs" />
                     Send Message
-                    <FaPaperPlane className="text-xs transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </>
                 )}
               </button>
@@ -383,6 +401,7 @@ const Contact = ({ setActiveSection, isStandalone = false }) => {
           </motion.div>
 
         </div>
+
       </div>
     </section>
   );
