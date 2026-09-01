@@ -10,24 +10,24 @@ const workExperience = [
   {
     position: 'Full Stack Developer',
     company: 'MRA Developers',
-    period: 'May 2025 – Present',
-    type: 'Full-time',
-    location: 'G11/3, Islamabad',
-    description: 'Building and maintaining enterprise-grade full-stack web applications. Designing scalable RESTful APIs, integrating third-party services (payment gateways, email, WebSockets), and implementing secure JWT-based authentication with role-based access control.',
-    projects: ['CueMetrics', 'TrueNorth', 'Recruiter', 'WatMachinery', 'MatchXpert'],
-    tech: ['React.js', 'Node.js', 'Express.js', 'MySQL', 'MongoDB', 'Sequelize', 'WebSockets', 'Authorize.net', 'Tailwind CSS'],
+    period: 'Feb 2025 – Present',
+    type: 'Full-time · Career Progression: Intern → Full Stack Developer',
+    location: 'G-10/1, Islamabad, Pakistan',
+    description: 'Developing and maintaining scalable full-stack web applications using React.js, Node.js, Express.js, MySQL, and MongoDB. Built RESTful APIs for authentication, user management, and business workflows. Implemented JWT-based authentication and RBAC. Integrated third-party services including Authorize.net payment gateway, SendGrid, WebSockets, and email services. Optimized relational and NoSQL database structures using MySQL, MongoDB, and Sequelize ORM.',
+    projects: ['TruNorth', 'EliteSnooker (Highbridge)', 'CueMetrics', 'GI 2 AI Talent (Recruiter)', 'Watt Machinery', 'MatchXpert AI'],
+    tech: ['React.js', 'Node.js', 'Express.js', 'MySQL', 'MongoDB', 'Sequelize ORM', 'JWT', 'WebSockets', 'Tailwind CSS', 'Material UI', 'Authorize.net'],
     accent: { dark: '#67e8f9', light: '#4f46e5' },
   },
   {
-    position: 'Full Stack Developer Intern',
-    company: 'MRA Developers',
-    period: 'Feb 2025 – Apr 2025',
-    type: 'Internship · 3 months',
-    location: 'G11/3, Islamabad',
-    description: 'Assisted in developing responsive full-stack web applications. Implemented JWT authentication, contributed to database schema design, and collaborated with senior developers on production features.',
-    projects: [],
-    tech: ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'MySQL', 'JWT', 'REST APIs'],
-    accent: { dark: '#a78bfa', light: '#7c3aed' },
+    position: 'Freelance Full Stack & Frontend Developer',
+    company: 'Self-Employed / Client Engagements',
+    period: '2025 – Present',
+    type: 'Freelance & Contracting',
+    location: 'Remote / Global',
+    description: 'Delivered end-to-end full-stack web applications and specialized e-commerce interfaces on a freelance basis. Built SCSM as Full Stack Developer (React.js + Node.js + MongoDB + Python FastAPI ML microservice for AI-assisted civic complaint triage via Socket.IO). Built PhantomProducts as Frontend Developer (responsive Under Armour UA Phantom 4 e-commerce landing page with mega-menus and product catalog).',
+    projects: ['SCSM — Smart Complaint Management System', 'PhantomProducts — UA Phantom 4 E-Commerce'],
+    tech: ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'Socket.IO', 'Python', 'FastAPI', 'Vite', 'Tailwind CSS v4'],
+    accent: { dark: '#fb923c', light: '#ea580c' },
   },
 ];
 
@@ -37,7 +37,8 @@ const educationData = [
     institution: 'University of Mianwali',
     period: 'Oct 2021 – May 2025',
     location: 'Mianwali, Punjab, Pakistan',
-    description: 'Four-year degree covering core CS fundamentals, software design, and modern web/AI technologies.',
+    cgpa: '3.38',
+    description: 'Four-year degree covering core CS fundamentals, software design, algorithms, and modern web/AI technologies.',
     courses: ['Data Structures', 'Algorithms', 'Database Systems', 'Software Engineering', 'Web Development', 'AI / ML', 'OOP', 'Computer Networks'],
     accent: { dark: '#34d399', light: '#059669' },
   },
@@ -148,7 +149,7 @@ const Education = ({ setActiveSection }) => {
           {[
             { key: 'experience', label: 'Experience', icon: FaBriefcase },
             { key: 'education', label: 'Education', icon: FaGraduationCap },
-          ].map(({ key, label, icon: Icon }) => {
+          ].map(({ key, label, icon: TabIcon }) => {
             const active = tab === key;
             const accent = active ? (isDark ? '#67e8f9' : '#4f46e5') : undefined;
             return (
@@ -168,7 +169,7 @@ const Education = ({ setActiveSection }) => {
                     : (isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.45)'),
                 }}
               >
-                <Icon className="text-xs" />
+                <TabIcon className="text-xs" />
                 {label}
               </button>
             );
@@ -331,9 +332,19 @@ const Education = ({ setActiveSection }) => {
                           <FaMapMarkerAlt className="text-[10px]" />{e.location}
                         </div>
                       </div>
-                      <div className="flex items-center gap-1.5 text-[12px] font-mono dark:text-white/35 text-slate-400">
-                        <FaCalendarAlt className="text-[10px]" style={{ color: acc }} />
-                        {e.period}
+                      <div className="flex flex-col items-end gap-2">
+                        <div className="flex items-center gap-1.5 text-[12px] font-mono dark:text-white/35 text-slate-400">
+                          <FaCalendarAlt className="text-[10px]" style={{ color: acc }} />
+                          {e.period}
+                        </div>
+                        {e.cgpa && (
+                          <span
+                            className="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full border"
+                            style={{ color: acc, borderColor: `${acc}50`, background: `${acc}15` }}
+                          >
+                            CGPA: {e.cgpa}
+                          </span>
+                        )}
                       </div>
                     </div>
 

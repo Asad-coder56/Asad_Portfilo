@@ -12,6 +12,8 @@ import ScrollToTop from './Components/ScrollToTop.jsx';
 import LoadingScreen from './Components/LoadingScreen.jsx';
 import './App.css';
 
+import { projectsData } from './data/projectsData.js';
+
 function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
@@ -42,80 +44,8 @@ function App() {
       });
     }, 300);
 
-    // Load mock projects
-    const mockProjects = [
-      {
-        id: 1,
-        title: "CueMetrics",
-        subtitle: "Sports & Tournament Management Platform",
-        period: "2024",
-        description: "Full-stack sports management platform designed to streamline cue sports club operations.",
-        fullDescription: "CueMetrics is a full-stack sports management platform designed to streamline cue sports club operations, including League Management, Tournament Management, Table Bookings, Player Rankings, and Club Management. Built with React.js, Node.js, Express.js, and MySQL. Features role-based dashboards, JWT Authentication, Real-time Notifications, and Automated Tournament Management.",
-        tech: ["React.js", "Node.js", "Express.js", "MySQL", "Sequelize ORM", "JWT"],
-        features: [
-          "Role-based dashboards (Super Admin, Organizations, Players, Venue Owners)",
-          "JWT Authentication",
-          "Real-time Notifications",
-          "Email Integration",
-          "Automated Tournament Management",
-          "League Management"
-        ],
-        github: "https://github.com/Asad-coder56",
-        liveDemo: "https://testcuemetrics.mradevelopers.com/",
-        images: ["/api/placeholder/800/400"],
-        status: "Completed",
-        category: "Full Stack",
-        color: "blue"
-      },
-      {
-        id: 2,
-        title: "TrueNorth",
-        subtitle: "Debt Recovery & Settlement Platform",
-        period: "2024",
-        description: "Financial technology platform designed to simplify Debt Recovery, Settlement Negotiations, and Payment Processing.",
-        fullDescription: "TrueNorth is a financial technology platform that simplifies debt recovery and payment processing. Includes an Operations Dashboard, Outreach Campaign Management, and a Client Portal to view balance and make payments. Features Authorize.net Payment Integration and Webhook Synchronization.",
-        tech: ["React.js", "Node.js", "Express.js", "PostgreSQL", "Sequelize ORM", "Authorize.net", "JWT"],
-        features: [
-          "Role-based Authentication",
-          "Authorize.net Payment Integration",
-          "Webhook Synchronization",
-          "Email Notifications",
-          "Client Portal (Account Balance, Settle, Partial/Full Payments)",
-          "Responsive UI"
-        ],
-        github: "https://github.com/Asad-coder56",
-        liveDemo: "https://trunorthlegal.com/",
-        images: ["/api/placeholder/800/400"],
-        status: "Completed",
-        category: "Full Stack",
-        color: "green"
-      },
-      {
-        id: 3,
-        title: "EliteSnooker",
-        subtitle: "Snooker Club & Tournament Management Platform",
-        period: "2024",
-        description: "Sports management platform for Snooker Clubs, Tournament, League, and Venue Management.",
-        fullDescription: "EliteSnooker is a comprehensive sports management platform for snooker clubs. It includes features like Knockout/Round Robin Brackets, League Management across multiple seasons and divisions, online table booking, and automated player rankings. Real-time updates and secure authentication are built-in.",
-        tech: ["React.js", "Node.js", "Express.js", "MySQL", "Sequelize ORM", "JWT", "Tailwind CSS"],
-        features: [
-          "Knockout Brackets & Round Robin Brackets",
-          "League Management (Multiple Seasons/Divisions)",
-          "Online Table Booking",
-          "Automated Player Rankings",
-          "Match Scoring (Frame-by-frame Results, Highest Break Tracking)",
-          "Role-based dashboards (Administrators, Venue Owners, Players)"
-        ],
-        github: "https://github.com/Asad-coder56",
-        liveDemo: "https://berrowandhighbridgesnookerleague.co.uk/",
-        images: ["/api/placeholder/800/400"],
-        status: "Completed",
-        category: "Full Stack",
-        color: "purple"
-      }
-    ];
-
-    setProjects(mockProjects);
+    // Load full projects dataset
+    setProjects(projectsData);
 
     // Complete loading after a minimum time
     const minLoadTime = 2500;
@@ -215,6 +145,15 @@ function App() {
                     />
                   </>
                 } />
+                <Route path="/projects" element={
+                  <Projects
+                    projects={projects}
+                    isStandalone={true}
+                    setActiveSection={handleSectionChange}
+                    darkMode={darkMode}
+                  />
+                } />
+
                 <Route path="/projects/:id" element={
                   <ProjectDetails
                     projects={projects}

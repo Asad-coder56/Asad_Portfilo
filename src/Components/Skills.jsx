@@ -1,74 +1,71 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { FaCode, FaServer, FaTools, FaCheckCircle } from 'react-icons/fa';
 import {
-  SiReact, SiJavascript, SiTailwindcss, SiHtml5, SiCss3,
+  SiReact, SiJavascript, SiTailwindcss, SiHtml5,
   SiNodedotjs, SiExpress, SiMongodb, SiMysql,
-  SiGit, SiGithub, SiPostman, SiJsonwebtokens,
+  SiGit, SiGithub, SiPostman, SiJsonwebtokens, SiSequelize,
+  SiMui,
 } from 'react-icons/si';
 
 /* ─── Data ─────────────────────────────────────────── */
-const itemVariant = {
-  hidden: { opacity: 0, y: 30, rotateX: 45, scale: 0.9 },
-  show: { opacity: 1, y: 0, rotateX: 0, scale: 1, transition: { type: 'spring', stiffness: 100, damping: 15 } }
-};
 
 const categories = [
   {
     id: 'frontend',
     label: 'Frontend',
     icon: FaCode,
-    accent: { dark: '#67e8f9', light: '#4f46e5' },           // cyan / indigo
+    accent: { dark: '#67e8f9', light: '#4f46e5' },
     bg: { dark: 'rgba(103,232,249,0.06)', light: 'rgba(79,70,229,0.04)' },
     border: { dark: 'rgba(103,232,249,0.18)', light: 'rgba(79,70,229,0.2)' },
     skills: [
       { name: 'React.js', icon: SiReact, color: '#61dafb', level: 3 },
       { name: 'JavaScript', icon: SiJavascript, color: '#f7df1e', level: 3 },
-      { name: 'HTML5', icon: SiHtml5, color: '#e34f26', level: 3 },
-      { name: 'CSS3', icon: SiCss3, color: '#1572b6', level: 3 },
       { name: 'Tailwind CSS', icon: SiTailwindcss, color: '#38bdf8', level: 3 },
+      { name: 'HTML5 / CSS3', icon: SiHtml5, color: '#e34f26', level: 3 },
+      { name: 'Material UI', icon: SiMui, color: '#007fff', level: 3 },
     ],
   },
   {
     id: 'backend',
-    label: 'Backend',
+    label: 'Backend & DB',
     icon: FaServer,
-    accent: { dark: '#a78bfa', light: '#7c3aed' },           // violet
+    accent: { dark: '#a78bfa', light: '#7c3aed' },
     bg: { dark: 'rgba(167,139,250,0.06)', light: 'rgba(124,58,237,0.04)' },
     border: { dark: 'rgba(167,139,250,0.18)', light: 'rgba(124,58,237,0.2)' },
     skills: [
-      { name: 'Node.js', icon: SiNodedotjs, color: '#68a063', level: 3 },
-      { name: 'Express.js', icon: SiExpress, color: '#888', level: 3 },
-      { name: 'MongoDB', icon: SiMongodb, color: '#4db33d', level: 2 },
-      { name: 'MySQL', icon: SiMysql, color: '#00758f', level: 2 },
-      { name: 'JWT Auth', icon: SiJsonwebtokens, color: '#d63aff', level: 3 },
+      { name: 'Node.js & Express.js', icon: SiNodedotjs, color: '#68a063', level: 3 },
+      { name: 'MySQL', icon: SiMysql, color: '#00758f', level: 3 },
+      { name: 'MongoDB', icon: SiMongodb, color: '#4db33d', level: 3 },
+      { name: 'Sequelize ORM', icon: SiSequelize, color: '#52b0e7', level: 3 },
+      { name: 'JWT & WebSockets', icon: SiJsonwebtokens, color: '#d63aff', level: 3 },
     ],
   },
   {
     id: 'tools',
-    label: 'Tools',
+    label: 'Services & Tools',
     icon: FaTools,
-    accent: { dark: '#34d399', light: '#059669' },           // emerald
+    accent: { dark: '#34d399', light: '#059669' },
     bg: { dark: 'rgba(52,211,153,0.06)', light: 'rgba(5,150,105,0.04)' },
     border: { dark: 'rgba(52,211,153,0.18)', light: 'rgba(5,150,105,0.2)' },
     skills: [
-      { name: 'Git', icon: SiGit, color: '#f05032', level: 3 },
-      { name: 'GitHub', icon: SiGithub, color: '#888', level: 3 },
-      { name: 'Postman', icon: SiPostman, color: '#ff6c37', level: 3 },
-      { name: 'REST APIs', icon: FaCode, color: '#60a5fa', level: 3 },
-      { name: 'VS Code', icon: FaTools, color: '#007acc', level: 3 },
+      { name: 'Git & GitHub', icon: SiGithub, color: '#888', level: 3 },
+      { name: 'Postman & REST APIs', icon: SiPostman, color: '#ff6c37', level: 3 },
+      { name: 'Authorize.net / Stripe', icon: FaTools, color: '#60a5fa', level: 3 },
+      { name: 'SendGrid / Nodemailer', icon: FaCode, color: '#22d3ee', level: 3 },
+      { name: 'OpenAI API', icon: FaCode, color: '#10a37f', level: 3 },
     ],
   },
 ];
 
 const highlights = [
   'RESTful API Design',
-  'JWT Authentication',
-  'WebSocket / Real-time',
-  'Payment Integration',
-  'Database Architecture',
-  'Responsive UI/UX',
-  'Clean Code Practices',
-  'Performance Tuning',
+  'JWT Authentication & RBAC',
+  'WebSocket / Real-time (Socket.IO)',
+  'Payment Gateway Integration',
+  'Database Architecture & ORM',
+  'Responsive UI/UX (React / MUI)',
+  'Email Services (SendGrid / Nodemailer)',
+  'Performance Optimization',
 ];
 
 /* Level dots component */
@@ -125,7 +122,7 @@ const Skills = ({ setActiveSection }) => {
     <section
       id="skills"
       ref={sectionRef}
-      className="relative py-28 overflow-hidden bg-transparent dark:bg-transparent transition-colors duration-500 border-t dark:border-white/[0.06] border-slate-200"
+      className="relative py-14 overflow-hidden bg-transparent dark:bg-transparent transition-colors duration-500 border-t dark:border-white/[0.06] border-slate-200"
       style={{ scrollMarginTop: '4rem' }}
     >
       {/* Background grid */}
@@ -162,10 +159,10 @@ const Skills = ({ setActiveSection }) => {
                   [background-image:linear-gradient(135deg,#4f46e5,#7c3aed)]">Capabilities</span>
               </h2>
               <p className="mt-3 max-w-lg text-[15px] dark:text-white/45 text-slate-500 leading-relaxed font-light">
-                Specialized in the modern full-stack web ecosystem — from pixel-perfect UIs to production-grade APIs.
+                Specialized in the modern full-stack web ecosystem — from pixel-perfect React UIs to scalable Node.js APIs and relational database architecture.
               </p>
             </div>
-            {/* Years badge */}
+            {/* Stat badges */}
             <div className="flex-shrink-0 flex items-center gap-3 px-5 py-3 rounded-2xl
               dark:border dark:border-white/8 border border-slate-200
               dark:bg-white/3 bg-white shadow-sm">
@@ -175,7 +172,7 @@ const Skills = ({ setActiveSection }) => {
               </div>
               <div className="w-px h-8 dark:bg-white/10 bg-slate-200" />
               <div className="text-center">
-                <div className="text-2xl font-black dark:text-white text-slate-900 leading-none">10+</div>
+                <div className="text-2xl font-black dark:text-white text-slate-900 leading-none">15+</div>
                 <div className="text-[10px] font-mono dark:text-white/35 text-slate-400 tracking-widest uppercase mt-0.5">Tools</div>
               </div>
             </div>
@@ -246,9 +243,7 @@ const Skills = ({ setActiveSection }) => {
             })}
 
             {/* What I can do list */}
-            <div
-              className="mt-2 p-5 rounded-2xl border dark:border-white/[0.06] border-slate-200 dark:bg-white/[0.02] bg-white"
-            >
+            <div className="mt-2 p-5 rounded-2xl border dark:border-white/[0.06] border-slate-200 dark:bg-white/[0.02] bg-white">
               <p className="text-[11px] font-mono dark:text-white/30 text-slate-400 tracking-[0.15em] uppercase mb-4">
                 What I build
               </p>
@@ -277,7 +272,7 @@ const Skills = ({ setActiveSection }) => {
                 className="text-[11px] font-mono tracking-[0.15em] uppercase font-semibold"
                 style={{ color: cat.accent[theme] }}
               >
-                {cat.label} Development
+                {cat.label}
               </span>
               <div className="flex-1 h-px dark:bg-white/5 bg-slate-200" />
               <span className="text-[11px] font-mono dark:text-white/20 text-slate-400">{cat.skills.length} skills</span>
@@ -287,7 +282,7 @@ const Skills = ({ setActiveSection }) => {
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               {cat.skills.map((skill, i) => {
                 const Icon = skill.icon;
-                const wide = i === 0; // first card spans 2 cols as highlight
+                const wide = i === 0;
                 return (
                   <div
                     key={skill.name}
@@ -296,8 +291,6 @@ const Skills = ({ setActiveSection }) => {
                       ${wide ? 'col-span-2 sm:col-span-1' : ''}`}
                     style={{
                       borderColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)',
-                      '--hover-border': cat.border[theme],
-                      '--hover-shadow': `${cat.accent[theme]}18`,
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.borderColor = cat.border[theme];
@@ -367,9 +360,10 @@ const Skills = ({ setActiveSection }) => {
           </p>
           <div className="flex flex-wrap justify-center gap-2.5">
             {[
-              'REST APIs', 'JWT', 'WebSockets', 'Payment Gateway',
-              'Email Services', 'Agile', 'MVC', 'CRUD', 'OOP',
-              'React Router', 'Axios', 'NPM',
+              'SQL', 'REST APIs', 'WebSockets', 'Role-Based Access Control',
+              'Authorize.net', 'SendGrid', 'Nodemailer', 'OpenAI API',
+              'Axios', 'React Router', 'Responsive Design', 'Debugging',
+              'API Integration', 'Database Design', 'Performance Optimization',
             ].map((tag) => (
               <span
                 key={tag}

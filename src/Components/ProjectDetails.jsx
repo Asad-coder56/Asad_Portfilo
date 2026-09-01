@@ -14,7 +14,7 @@ const ProjectDetails = ({ projects, darkMode = true }) => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const foundProject = projects?.find(p => p.id === parseInt(id));
+    const foundProject = projects?.find(p => p.id === parseInt(id) || p.slug === id || String(p.id) === String(id));
     if (foundProject) {
       setProject(foundProject);
     } else {
@@ -71,18 +71,25 @@ const ProjectDetails = ({ projects, darkMode = true }) => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
           >
-            <div
-              className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-md text-[10px] font-mono tracking-[0.2em] uppercase font-bold"
-              style={{ background: accentLight, color: accent }}
-            >
-              <FaTag className="text-[10px]" /> {project.category}
+            <div className="flex flex-wrap items-center gap-2 mb-6">
+              <div
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-md text-[10px] font-mono tracking-[0.2em] uppercase font-bold"
+                style={{ background: accentLight, color: accent }}
+              >
+                <FaTag className="text-[10px]" /> {project.category}
+              </div>
+              {project.ownership && (
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md text-[10px] font-mono tracking-[0.15em] uppercase font-semibold border dark:border-white/10 border-slate-200 dark:bg-white/5 bg-slate-100 dark:text-white/70 text-slate-700">
+                  <FaUsers className="text-[10px]" /> {project.ownership}
+                </div>
+              )}
             </div>
 
             <h1 className={`text-[clamp(2.5rem,6vw,4.5rem)] font-black leading-[1.05] tracking-tight mb-6 ${textPrimary}`}>
               {project.title}
             </h1>
 
-            <p className={`text-lg md:text-xl font-light leading-relaxed max-w-lg ${textSecondary}`}>
+            <p className={`text-lg md:text-xl font-light leading-relaxed max-w-xl ${textSecondary}`}>
               {project.subtitle}
             </p>
           </motion.div>
@@ -213,7 +220,7 @@ const ProjectDetails = ({ projects, darkMode = true }) => {
                   <span className="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style={{ background: accentLight, color: accent }}>
                     <FaCheckCircle />
                   </span>
-                  Key Deliverables
+                  Key Features & Capabilities
                 </h3>
                 <div className="grid sm:grid-cols-2 gap-4">
                   {project.features.map((feature, i) => (
@@ -245,13 +252,26 @@ const ProjectDetails = ({ projects, darkMode = true }) => {
               style={{ borderColor: borderCol, background: darkMode ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.7)' }}>
 
               <div className="flex flex-col gap-6">
+                {project.role && (
+                  <div>
+                    <div className="text-[10px] font-mono tracking-widest uppercase mb-1 opacity-50 flex items-center gap-2">
+                      <FaUsers /> My Role
+                    </div>
+                    <div className={`font-semibold text-sm ${textPrimary}`}>
+                      {project.role}
+                    </div>
+                  </div>
+                )}
+
+                {project.role && <div className="h-px w-full" style={{ background: borderCol }} />}
+
                 <div>
                   <div className="text-[10px] font-mono tracking-widest uppercase mb-2 opacity-50 flex items-center gap-2">
                     <FaRocket /> Status
                   </div>
                   <div className={`font-semibold inline-flex px-3 py-1 rounded-full text-xs border`}
                     style={{ borderColor: accent, color: accent, background: accentLight }}>
-                    {project.status}
+                    {project.status || 'Completed'}
                   </div>
                 </div>
 
@@ -262,7 +282,7 @@ const ProjectDetails = ({ projects, darkMode = true }) => {
                     <FaCalendarAlt /> Timeline
                   </div>
                   <div className={`font-medium ${textPrimary}`}>
-                    {project.period || '2024'}
+                    {project.period || '2025 – 2026'}
                   </div>
                 </div>
 
@@ -289,11 +309,11 @@ const ProjectDetails = ({ projects, darkMode = true }) => {
               style={{ borderColor: accent }}>
               <h4 className={`text-lg font-bold mb-3 ${textPrimary}`}>Need a similar solution?</h4>
               <p className={`text-sm mb-5 font-light ${textSecondary}`}>
-                Available for full-cycle development matching these capabilities.
+                Available for full-stack & frontend engineering matching these capabilities.
               </p>
-              <Link to="/contact" className="px-6 py-3 rounded-xl text-sm font-semibold transition-all hover:opacity-90 w-full lg:w-auto"
+              <Link to="/#contact" className="px-6 py-3 rounded-xl text-sm font-semibold transition-all hover:opacity-90 w-full lg:w-auto text-center"
                 style={{ background: accent, color: darkMode ? '#000' : '#fff' }}>
-                Start a Discussion
+                Get In Touch
               </Link>
             </div>
 
