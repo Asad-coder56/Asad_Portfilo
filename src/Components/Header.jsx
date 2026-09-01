@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaDownload, FaMoon, FaSun, FaBars, FaTimes } from 'react-icons/fa';
-import cvFile from '../assets/Muhammad_Asad_Kamal_Shah_CV.docx.pdf';
+import cvFile from '../assets/Muhammad_Asad_Kamal_Shah_CV 3.pdf';
 
 const Header = ({ darkMode, toggleDarkMode, activeSection, onSectionChange, scrollToSection }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -59,8 +59,8 @@ const Header = ({ darkMode, toggleDarkMode, activeSection, onSectionChange, scro
       {/* ════ HEADER ════ */}
       <header
         className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${isScrolled
-            ? 'backdrop-blur-xl py-3 shadow-lg'
-            : 'bg-transparent py-5'
+          ? 'backdrop-blur-xl py-3 shadow-lg'
+          : 'bg-transparent py-5'
           }`}
         style={isScrolled ? {
           backgroundColor: darkMode ? 'rgba(10,25,47,0.95)' : 'rgba(255,255,255,0.95)',
