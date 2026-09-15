@@ -4,7 +4,7 @@ export const projectsData = [
         slug: "cuemetrics",
         title: "CueMetrics",
         subtitle: "Enterprise Cue Sports Club & Tournament Management SaaS Platform",
-        period: "2025 – 2026",
+        period: "2025 – Present",
         role: "Full Stack Developer",
         ownership: "Company (MRA Developers)",
         category: "Full Stack",
@@ -22,7 +22,7 @@ export const projectsData = [
         ],
         github: "https://github.com/Asad-coder56",
         liveDemo: "https://testcuemetrics.mradevelopers.com/",
-        status: "Completed",
+        status: "In Progress",
         color: "blue"
     },
     {
@@ -30,7 +30,7 @@ export const projectsData = [
         slug: "trunorth",
         title: "TruNorth Financial",
         subtitle: "Debt Recovery, Settlement & Financial Management Platform",
-        period: "2025 – 2026",
+        period: "2025 – Present",
         role: "Full-Stack Developer (Sole Developer)",
         ownership: "Company (MRA Developers)",
         category: "Full Stack",
@@ -48,7 +48,7 @@ export const projectsData = [
         ],
         github: "https://github.com/Asad-coder56",
         liveDemo: "https://trunorthlegal.com/",
-        status: "Completed",
+        status: "In Progress",
         color: "green"
     },
     {
@@ -131,7 +131,7 @@ export const projectsData = [
         slug: "fineflow",
         title: "FineFlow SaaS",
         subtitle: "Automated Fleet & Penalty Charge Notice (PCN) SaaS",
-        period: "2025 – 2026",
+        period: "2025 – Present",
         role: "Frontend Developer & AI Chatbot",
         ownership: "Company (MRA Developers)",
         category: "Frontend",
@@ -148,7 +148,7 @@ export const projectsData = [
         ],
         github: "https://github.com/Asad-coder56",
         liveDemo: false,
-        status: "Completed",
+        status: "In Progress",
         color: "cyan"
     },
     {
@@ -156,7 +156,7 @@ export const projectsData = [
         slug: "watt-machinery",
         title: "Watt Machinery",
         subtitle: "Industrial B2B Laser & Metal Fabrication Machinery Catalog",
-        period: "2025 – 2026",
+        period: "2025",
         role: "Frontend Developer & API Integration",
         ownership: "Company (MRA Developers)",
         category: "Frontend",
@@ -196,7 +196,7 @@ export const projectsData = [
             "JWT Authentication & Role-Based Access Control"
         ],
         github: "https://github.com/Asad-coder56",
-        liveDemo: false,
+        liveDemo: "https://matchxpert.com/",
         status: "Completed",
         color: "rose"
     },
@@ -229,7 +229,7 @@ export const projectsData = [
         slug: "humanlyk9",
         title: "HumanlyK9",
         subtitle: "Fresh Human-Grade Dog Food Subscription Service",
-        period: "2025 – 2026",
+        period: "2025",
         role: "Frontend Developer",
         ownership: "Company (MRA Developers)",
         category: "Frontend",
@@ -253,7 +253,7 @@ export const projectsData = [
         slug: "vtax",
         title: "VTAX Solutions",
         subtitle: "Multi-Disciplinary Enterprise IoT & Software Solutions Portal",
-        period: "2025 – 2026",
+        period: "2025",
         role: "Frontend Developer",
         ownership: "Company (MRA Developers)",
         category: "Frontend",
@@ -313,7 +313,7 @@ export const projectsData = [
             "Client Case Studies Showcase & Lead Generation Contact Form"
         ],
         github: "https://github.com/Asad-coder56",
-        liveDemo: false,
+        liveDemo: "https://mradevelopers.com",
         status: "Completed",
         color: "cyan"
     },
@@ -322,7 +322,7 @@ export const projectsData = [
         slug: "phantom-products",
         title: "PhantomProducts",
         subtitle: "Under Armour UA Phantom 4 Athletic Footwear E-Commerce Site",
-        period: "2025 – 2026",
+        period: "2025",
         role: "Frontend Developer",
         ownership: "Freelance Project",
         category: "Frontend",

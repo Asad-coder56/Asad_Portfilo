@@ -64,15 +64,28 @@ const Contact = ({ setActiveSection, isStandalone = false }) => {
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setStatus({ sending: true, success: false, message: '' });
+
+    const whatsappNumber = '923051958933';
+    const text =
+      `*New Portfolio Message*%0A` +
+      `*Name:* ${encodeURIComponent(formData.name)}%0A` +
+      `*Email:* ${encodeURIComponent(formData.email)}%0A` +
+      `*Subject:* ${encodeURIComponent(formData.subject)}%0A%0A` +
+      `*Message:*%0A${encodeURIComponent(formData.message)}`;
+
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${text}`;
+
     setTimeout(() => {
-      setStatus({ sending: false, success: true, message: "Message sent! I'll get back to you shortly." });
+      window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+      setStatus({ sending: false, success: true, message: "Redirecting to WhatsApp..." });
       setFormData({ name: '', email: '', subject: '', message: '' });
-      setTimeout(() => setStatus({ sending: false, success: false, message: '' }), 5000);
-    }, 1500);
+      setTimeout(() => setStatus({ sending: false, success: false, message: '' }), 4000);
+    }, 800);
   };
+
 
   const contactItems = [
     { icon: FaEnvelope, label: 'Email', value: 'kamalasad57@gmail.com', href: 'mailto:kamalasad57@gmail.com' },
