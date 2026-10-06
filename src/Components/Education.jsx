@@ -20,10 +20,10 @@ const workExperience = [
   {
     position: 'Full Stack Developer',
     company: 'MRA Developers',
-    period: 'Feb 2025 – Present',
-    type: 'Full-time · Career Progression: Intern → Full Stack Developer',
+    period: 'Oct 2024 – Sep 2026',
+    type: 'Full-time · Intern (Oct 2024 – Dec 2024) → Full Stack Developer (Jan 2025 – Sep 2026)',
     location: 'G-10/1, Islamabad, Pakistan',
-    description: 'Developing and maintaining scalable full-stack web applications using React.js, Node.js, Express.js, MySQL, and MongoDB. Built RESTful APIs for authentication, user management, and business workflows. Implemented JWT-based authentication and RBAC. Integrated third-party services including Authorize.net payment gateway, SendGrid, WebSockets, and email services. Optimized relational and NoSQL database structures using MySQL, MongoDB, and Sequelize ORM.',
+    description: 'Joined MRA Developers as a Full Stack Developer Intern (Oct 2024 – Dec 2024), completing a 3-month internship before progressing to full-time Full Stack Developer (Jan 2025 – Sep 2026). Developed and maintained scalable full-stack web applications using React.js, Node.js, Express.js, MySQL, and MongoDB. Built RESTful APIs for authentication, user management, and business workflows. Implemented JWT-based authentication and RBAC. Integrated third-party services including Authorize.net payment gateway, SendGrid, WebSockets, and email services. Optimized relational and NoSQL database structures using MySQL, MongoDB, and Sequelize ORM.',
     projects: ['TruNorth', 'EliteSnooker (Highbridge)', 'CueMetrics', 'GI 2 AI Talent (Recruiter)', 'Watt Machinery', 'MatchXpert AI'],
     tech: ['React.js', 'Node.js', 'Express.js', 'MySQL', 'MongoDB', 'Sequelize ORM', 'JWT', 'WebSockets', 'Tailwind CSS', 'Material UI', 'Authorize.net'],
     accent: { dark: '#64ffda', light: '#2563eb' },

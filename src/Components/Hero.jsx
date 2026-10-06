@@ -70,7 +70,7 @@ const Hero = ({ setActiveSection, scrollToSection }) => {
   ];
 
   const stats = [
-    { value: '1.5+', label: 'Years Exp.' },
+    { value: '2+', label: 'Years Exp.' },
     { value: '14+', label: 'Projects' },
     { value: 'MERN', label: 'Core Stack' },
   ];
@@ -164,7 +164,7 @@ const Hero = ({ setActiveSection, scrollToSection }) => {
             {/* Bio */}
             <p className="max-w-xl mb-8 text-[15px] sm:text-base leading-[1.82] font-light" style={{ color: 'var(--text-muted)' }}>
               Full-Stack Developer with{' '}
-              <span className="font-semibold" style={{ color: 'var(--accent)' }}>1.5+ years</span>{' '}
+              <span className="font-semibold" style={{ color: 'var(--accent)' }}>2+ years</span>{' '}
               of professional experience at{' '}
               <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>MRA Developers</span>,
               building scalable web apps with React.js, Node.js, Express.js, MySQL, and MongoDB.

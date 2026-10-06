@@ -159,7 +159,7 @@ const Skills = ({ setActiveSection }) => {
               }}
             >
               <div className="text-center">
-                <div className="text-2xl font-black leading-none" style={{ color: 'var(--text-primary)' }}>1.5+</div>
+                <div className="text-2xl font-black leading-none" style={{ color: 'var(--text-primary)' }}>2+</div>
                 <div className="text-[10px] font-mono tracking-widest uppercase mt-0.5" style={{ color: 'var(--text-muted)' }}>Years</div>
               </div>
               <div className="w-px h-8" style={{ background: 'var(--border)' }} />
