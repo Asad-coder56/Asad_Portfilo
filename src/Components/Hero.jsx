@@ -58,7 +58,7 @@ const Hero = ({ setActiveSection, scrollToSection }) => {
   }, [setActiveSection]);
 
   const handleCopyConfig = () => {
-    navigator.clipboard.writeText(`const developer = { name: "Asad Kamal Shah", role: "Full-Stack Dev", stack: ["React 19", "Node.js", "MySQL", "MongoDB"], projects: 14 };`);
+    navigator.clipboard.writeText(`const developer = { name: "Asad Kamal Shah", role: "Full-Stack Dev", stack: ["React.js", "Node.js", "MySQL"], hired: "full-time after 3 months" };`);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -76,10 +76,10 @@ const Hero = ({ setActiveSection, scrollToSection }) => {
   ];
 
   const floatingBadges = [
-    { icon: FaCode, text: 'React 19', pos: '-top-4 -left-4', color: isDark ? '#64ffda' : '#1d4ed8' },
+    { icon: FaCode, text: 'React.js', pos: '-top-4 -left-4', color: isDark ? '#64ffda' : '#1d4ed8' },
     { icon: FaServer, text: 'Node.js', pos: 'top-1/4 -right-6', color: isDark ? '#34d399' : '#047857' },
     { icon: FaDatabase, text: 'MySQL / Mongo', pos: 'bottom-16 -left-6', color: isDark ? '#a78bfa' : '#6d28d9' },
-    { icon: FaBrain, text: 'FastAPI AI', pos: '-bottom-4 right-2', color: isDark ? '#fb923c' : '#c2410c' },
+    { icon: FaBrain, text: 'OpenAI API', pos: '-bottom-4 right-2', color: isDark ? '#fb923c' : '#c2410c' },
   ];
 
   return (
@@ -165,9 +165,12 @@ const Hero = ({ setActiveSection, scrollToSection }) => {
             <p className="max-w-xl mb-8 text-[15px] sm:text-base leading-[1.82] font-light" style={{ color: 'var(--text-muted)' }}>
               Full-Stack Developer with{' '}
               <span className="font-semibold" style={{ color: 'var(--accent)' }}>2+ years</span>{' '}
-              of professional experience at{' '}
-              <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>MRA Developers</span>,
-              building scalable web apps with React.js, Node.js, Express.js, MySQL, and MongoDB.
+              of production experience at{' '}
+              <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>MRA Developers</span>.
+              {' '}Built live platforms with React.js, Node.js, MySQL & Authorize.net. Led{' '}
+              <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>CueMetrics</span>
+              {' '}and co-developed{' '}
+              <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>TrueNorth</span>.
               {' '}Based in{' '}
               <span className="inline-flex items-center gap-1 font-medium" style={{ color: 'var(--text-primary)' }}>
                 <FaMapMarkerAlt className="text-xs text-rose-500" /> Islamabad, Pakistan.
@@ -377,15 +380,15 @@ const Hero = ({ setActiveSection, scrollToSection }) => {
                 <span style={{ color: 'var(--text-muted)' }}>,</span>
                 <br />
                 <span className="pl-3.5" style={{ color: 'var(--text-muted)' }}>stack:</span>{' '}
-                <span style={{ color: isDark ? '#fb923c' : '#c2410c' }}>"React · Node · MySQL · MongoDB"</span>
+                <span style={{ color: isDark ? '#fb923c' : '#c2410c' }}>"React.js · Node.js · MySQL"</span>
                 <span style={{ color: 'var(--text-muted)' }}>,</span>
                 <br />
                 <span className="pl-3.5" style={{ color: 'var(--text-muted)' }}>role:</span>{' '}
                 <span style={{ color: 'var(--accent)' }}>"Full-Stack Dev"</span>
                 <span style={{ color: 'var(--text-muted)' }}>,</span>
                 <br />
-                <span className="pl-3.5" style={{ color: 'var(--text-muted)' }}>projects:</span>{' '}
-                <span style={{ color: isDark ? '#fb923c' : '#c2410c' }} className="font-bold">14</span>
+                <span className="pl-3.5" style={{ color: 'var(--text-muted)' }}>hired:</span>{' '}
+                <span style={{ color: isDark ? '#34d399' : '#047857' }}>"full-time after 3 months"</span>
                 <span style={{ color: 'var(--text-muted)' }}>,</span>
                 <br />
                 <span style={{ color: 'var(--text-muted)' }}>&#125;;</span>

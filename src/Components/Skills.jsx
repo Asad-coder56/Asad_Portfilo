@@ -31,7 +31,7 @@ const categories = [
       { name: 'MySQL', icon: SiMysql, color: '#00758f', level: 3 },
       { name: 'MongoDB', icon: SiMongodb, color: '#4db33d', level: 3 },
       { name: 'Sequelize ORM', icon: SiSequelize, color: '#52b0e7', level: 3 },
-      { name: 'JWT & WebSockets', icon: SiJsonwebtokens, color: '#d63aff', level: 3 },
+      { name: 'JWT & RBAC', icon: SiJsonwebtokens, color: '#d63aff', level: 3 },
     ],
   },
   {
@@ -41,7 +41,7 @@ const categories = [
     skills: [
       { name: 'Git & GitHub', icon: SiGithub, color: '#888', level: 3 },
       { name: 'Postman & REST APIs', icon: SiPostman, color: '#ff6c37', level: 3 },
-      { name: 'Authorize.net / Stripe', icon: FaTools, color: '#60a5fa', level: 3 },
+      { name: 'Authorize.net', icon: FaTools, color: '#60a5fa', level: 3 },
       { name: 'SendGrid / Nodemailer', icon: FaCode, color: '#38bdf8', level: 3 },
       { name: 'OpenAI API', icon: FaCode, color: '#10a37f', level: 3 },
     ],
@@ -361,10 +361,11 @@ const Skills = ({ setActiveSection }) => {
           </p>
           <div className="flex flex-wrap justify-center gap-2.5">
             {[
-              'SQL', 'REST APIs', 'WebSockets', 'Role-Based Access Control',
+              'SQL', 'REST APIs', 'Role-Based Access Control',
               'Authorize.net', 'SendGrid', 'Nodemailer', 'OpenAI API',
               'Axios', 'React Router', 'Responsive Design', 'Debugging',
               'API Integration', 'Database Design', 'Performance Optimization',
+              'Git', 'VS Code', 'Postman',
             ].map((tag) => (
               <span
                 key={tag}
